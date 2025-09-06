@@ -948,7 +948,7 @@
                                             <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
                                                 stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
-                                        <span>Create up to {{ $plan->no_of_quiz ?? 0 }} quizzes</span>
+                                        <span>Create up to {{ $plan->no_of_quiz ?? 0 }} exams</span>
                                     </li>
                                     @if ($loop->index == 0)
                                         <li class="feature-item disabled">
@@ -957,7 +957,7 @@
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"
                                                     stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
-                                            <span>Generate quizzes from PDFs/URLs</span>
+                                            <span>Generate exams from PDFs/URLs</span>
                                         </li>
                                         <li class="feature-item disabled">
                                             <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
@@ -990,7 +990,7 @@
                                                 <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
                                                     stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
-                                            <span>Generate quizzes from PDFs/URLs</span>
+                                            <span>Generate exams from PDFs/URLs</span>
                                         </li>
                                         <li class="feature-item">
                                             <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
@@ -1023,7 +1023,7 @@
                                                 <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
                                                     stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
-                                            <span>Generate quizzes from PDFs/URLs</span>
+                                            <span>Generate exams from PDFs/URLs</span>
                                         </li>
                                         <li class="feature-item">
                                             <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
