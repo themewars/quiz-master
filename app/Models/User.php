@@ -35,6 +35,8 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
         'name',
         'email',
         'password',
+        'balance',
+        'used_balance',
     ];
 
     /**
@@ -55,6 +57,8 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'balance' => 'decimal:2',
+        'used_balance' => 'decimal:2',
     ];
 
     const ADMIN_ROLE = 'admin';
@@ -97,6 +101,61 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
     public function subscription()
     {
         return $this->hasOne(Subscription::class);
+    }
+
+    public function balanceTransactions()
+    {
+        return $this->hasMany(BalanceTransaction::class);
+    }
+
+    public function getRemainingBalanceAttribute()
+    {
+        return $this->balance - $this->used_balance;
+    }
+
+    public function addBalance($amount, $description = 'Balance added by admin', $adminId = null)
+    {
+        $balanceBefore = $this->balance;
+        $this->balance += $amount;
+        $this->save();
+
+        BalanceTransaction::create([
+            'user_id' => $this->id,
+            'admin_id' => $adminId,
+            'type' => 'credit',
+            'amount' => $amount,
+            'balance_before' => $balanceBefore,
+            'balance_after' => $this->balance,
+            'description' => $description,
+            'reference_type' => 'admin_add',
+        ]);
+
+        return $this;
+    }
+
+    public function deductBalance($amount, $description = 'Balance used for exam creation', $referenceType = 'exam_creation', $referenceId = null)
+    {
+        if ($this->balance < $amount) {
+            throw new \Exception('Insufficient balance');
+        }
+
+        $balanceBefore = $this->balance;
+        $this->balance -= $amount;
+        $this->used_balance += $amount;
+        $this->save();
+
+        BalanceTransaction::create([
+            'user_id' => $this->id,
+            'type' => 'debit',
+            'amount' => $amount,
+            'balance_before' => $balanceBefore,
+            'balance_after' => $this->balance,
+            'description' => $description,
+            'reference_type' => $referenceType,
+            'reference_id' => $referenceId,
+        ]);
+
+        return $this;
     }
 
     public static function getForm()
@@ -164,6 +223,23 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
                     ->searchable()
                     ->required()
                     ->native(false),
+                TextInput::make('balance')
+                    ->label(__('messages.user.balance') . ':')
+                    ->validationAttribute(__('messages.user.balance'))
+                    ->numeric()
+                    ->default(0)
+                    ->step(0.01)
+                    ->minValue(0)
+                    ->visibleOn('edit'),
+                TextInput::make('used_balance')
+                    ->label(__('messages.user.used_balance') . ':')
+                    ->validationAttribute(__('messages.user.used_balance'))
+                    ->numeric()
+                    ->default(0)
+                    ->step(0.01)
+                    ->minValue(0)
+                    ->visibleOn('edit')
+                    ->disabled(),
             ])->columns(2),
 
         ];

@@ -206,6 +206,12 @@ return [
         'account_deactivate' => 'Your account has been deactivated. For assistance, please reach out to the system administrator.',
         'your_account_information' => 'Your Account Information',
         'email_not_verified' => 'Please verify your email before login.',
+        'balance' => 'Balance',
+        'used_balance' => 'Used Balance',
+        'remaining_balance' => 'Remaining Balance',
+        'add_balance' => 'Add Balance',
+        'balance_added_successfully' => 'Balance added successfully',
+        'insufficient_balance' => 'Insufficient balance',
         'quizzes_and_polls' => 'Exams / Polls',
     ],
 
