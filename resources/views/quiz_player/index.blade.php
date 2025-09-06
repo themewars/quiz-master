@@ -60,12 +60,12 @@
                 @if (isset($quiz->quiz_expiry_date) && \Carbon\Carbon::parse($quiz->quiz_expiry_date)->isPast())
                     <a type="button"
                         class="rounded-full text-center py-3 md:px-[100px] md:py-5 bg-red-600 text-white w-full sm:max-w-[383px] max-w-[280px] sm:text-xl text-md font-semibold block mx-auto">
-                        {{ __('Quiz is expired') }}
+                        {{ __('Exam is expired') }}
                     </a>
                 @elseif ($quiz->status == 0)
                     <a type="button"
                         class="rounded-full text-center py-3 md:px-[100px] md:py-5 bg-red-600 text-white w-full sm:max-w-[383px] max-w-[280px] sm:text-xl text-md font-semibold block mx-auto">
-                        {{ __('Quiz is Not Active') }}
+                        {{ __('Exam is Not Active') }}
                     </a>
                 @else
                     <a href="{{ route('create.quiz-player', $quiz->unique_code) }}"

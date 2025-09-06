@@ -32,7 +32,7 @@ return [
     'time' => 'Time',
     'time_label' => 'Time',
     'time_question' => 'Per Question',
-    'time_quiz' => 'Total Quiz',
+    'time_quiz' => 'Total Exam',
     'time_type' => 'Time Type',
     'basic' => 'Basic',
     'intermediate' => 'Intermediate',
