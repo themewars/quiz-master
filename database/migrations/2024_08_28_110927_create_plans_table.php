@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('frequency')->default(1);
-            $table->integer('no_of_quiz');
+            $table->integer('no_of_exam');
             $table->double('price');
             $table->integer('trial_days')->nullable();
             $table->boolean('assign_default')->default(false);
