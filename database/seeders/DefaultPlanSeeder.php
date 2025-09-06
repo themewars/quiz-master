@@ -28,7 +28,7 @@ class DefaultPlanSeeder extends Seeder
         Plan::create([
             'name' => 'Default Plan',
             'frequency' => PlanFrequency::WEEKLY,
-            'no_of_exam' => 2,
+            'no_of_quiz' => 2,
             'assign_default' => 1,
             'price' => 0,
             'status' => 1,
