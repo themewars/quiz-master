@@ -44,7 +44,7 @@ class UpgradeSubscription extends Page
                         'price' => $plan->price,
                         'currency_icon' => $plan->currency->symbol,
                         'trial_days' => $plan->trial_days,
-                        'no_of_quiz' => $plan->no_of_quiz,
+                        'no_of_exam' => $plan->no_of_exam,
                         'assign_default' => $plan->assign_default,
                     ];
                 });

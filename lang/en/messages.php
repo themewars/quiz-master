@@ -281,6 +281,7 @@ return [
         'remaining_balance' => 'Remaining Balance',
         'pay_switch_plan' => 'Pay / Switch Plan',
         'no_of_quiz' => 'No of Exam',
+        'no_of_exam' => 'No of Exam',
         'days' => 'Days',
         'manual_transaction_request_is_pending' => 'Your Manual Transaction Request Is Pending.',
         'user_details' => 'User Details',

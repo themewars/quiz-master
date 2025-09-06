@@ -88,13 +88,13 @@
                 </div>
                 <div class="py-5 my-5"></div>
                 <div class="pt-3">
-                    <p class="text-sm font-medium opacity-70">{{ __('messages.subscription.no_of_quiz') }}</p>
+                    <p class="text-sm font-medium opacity-70">{{ __('messages.subscription.no_of_exam') }}</p>
                     <h4 class="text-3xl font-bold tracking-tight xl:text-2xl">
-                        {{ isset($subscription) ? $subscription->plan->no_of_quiz ?? __('messages.common.n/a') : __('messages.common.n/a') }}
+                        {{ isset($subscription) ? $subscription->plan->no_of_exam ?? __('messages.common.n/a') : __('messages.common.n/a') }}
                     </h4>
 
                     <p class="text-sm opacity-70">
-                        <span>Total Used Quizzes : </span>
+                        <span>Total Used Exams : </span>
                         <span>{{ $totalQuizzes }}</span>
                     </p>
                 </div>
