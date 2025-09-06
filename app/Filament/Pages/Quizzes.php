@@ -32,12 +32,12 @@ class Quizzes extends Page implements HasTable, HasForms
 
     public static function getNavigationLabel(): string
     {
-        return __('messages.quiz.quizzes');
+        return __('messages.quiz.exams');
     }
 
     public function getTitle(): string
     {
-        return __('messages.quiz.quizzes');
+        return __('messages.quiz.exams');
     }
     public  function table(Table $table): Table
     {
