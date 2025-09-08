@@ -22,6 +22,18 @@ class ExportQuiz extends Page
 
     public Quiz $record;
 
+    public function mount(): void
+    {
+        parent::mount();
+        
+        // Initialize form with default values
+        $this->form->fill([
+            'exportFormat' => 'pdf',
+            'exportTemplate' => 'standard',
+            'includeInstructions' => false,
+        ]);
+    }
+
     public function updatedData($property, $value): void
     {
         // Trigger preview update when any form field changes
@@ -89,12 +101,16 @@ class ExportQuiz extends Page
         try {
             $exportService = new ExamExportService();
             
-            // Get form data using Filament's method
+            // Try multiple methods to get form data
             $formData = $this->form->getState();
+            if (empty($formData)) {
+                $formData = $this->data ?? [];
+            }
             
             // Debug: Log the form data
             Log::info('Export form data:', [
                 'formData' => $formData,
+                'this->data' => $this->data ?? 'empty',
                 'exportFormat' => $formData['exportFormat'] ?? 'pdf',
                 'exportTemplate' => $formData['exportTemplate'] ?? 'standard',
                 'includeInstructions' => $formData['includeInstructions'] ?? false,
