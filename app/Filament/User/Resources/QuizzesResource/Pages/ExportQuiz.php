@@ -87,34 +87,30 @@ class ExportQuiz extends Page
     public function exportExamPaper()
     {
         try {
-            // Validate form data first
-            $this->validate([
-                'data.exportFormat' => 'required|in:pdf,word,html',
-                'data.exportTemplate' => 'required|string',
-                'data.includeInstructions' => 'boolean',
-            ]);
-            
             $exportService = new ExamExportService();
+            
+            // Get form data using Filament's method
+            $formData = $this->form->getState();
             
             // Debug: Log the form data
             Log::info('Export form data:', [
-                'data' => $this->data,
-                'exportFormat' => $this->data['exportFormat'] ?? 'pdf',
-                'exportTemplate' => $this->data['exportTemplate'] ?? 'standard',
-                'includeInstructions' => $this->data['includeInstructions'] ?? false,
+                'formData' => $formData,
+                'exportFormat' => $formData['exportFormat'] ?? 'pdf',
+                'exportTemplate' => $formData['exportTemplate'] ?? 'standard',
+                'includeInstructions' => $formData['includeInstructions'] ?? false,
             ]);
             
             $result = $exportService->exportExamPaper(
                 $this->record,
-                $this->data['exportFormat'],
-                $this->data['exportTemplate'],
-                (bool) ($this->data['includeInstructions'] ?? false)
+                $formData['exportFormat'] ?? 'pdf',
+                $formData['exportTemplate'] ?? 'standard',
+                (bool) ($formData['includeInstructions'] ?? false)
             );
 
             Notification::make()
                 ->success()
                 ->title('Exam Paper Exported Successfully!')
-                ->body("Your exam paper has been exported as " . ($this->data['exportFormat'] ?? 'pdf') . " format.")
+                ->body("Your exam paper has been exported as " . ($formData['exportFormat'] ?? 'pdf') . " format.")
                 ->actions([
                     \Filament\Notifications\Actions\Action::make('download')
                         ->label('Download')
@@ -126,8 +122,8 @@ class ExportQuiz extends Page
         } catch (\Exception $e) {
             Log::error('Export exam failed', [
                 'quiz_id' => $this->record->id ?? null,
-                'format' => $this->data['exportFormat'] ?? null,
-                'template' => $this->data['exportTemplate'] ?? null,
+                'format' => $formData['exportFormat'] ?? null,
+                'template' => $formData['exportTemplate'] ?? null,
                 'message' => $e->getMessage(),
             ]);
             Notification::make()
@@ -175,8 +171,8 @@ class ExportQuiz extends Page
                 'examDate' => $examDate,
                 'timeLimit' => $timeLimit,
                 'answerKey' => $answerKey,
-                'template' => $this->data['exportTemplate'] ?? 'standard',
-                'includeInstructions' => (bool) ($this->data['includeInstructions'] ?? false),
+                'template' => $this->form->getState()['exportTemplate'] ?? 'standard',
+                'includeInstructions' => (bool) ($this->form->getState()['includeInstructions'] ?? false),
             ])->render();
         } catch (\Throwable $e) {
             Log::error('Export preview failed', [
