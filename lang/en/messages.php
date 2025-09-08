@@ -305,6 +305,8 @@ return [
         'quizzes' => 'Exams',
         'exams' => 'Exams',
         'quiz' => 'Exam',
+        'create_exam' => 'Create Exam',
+        'image' => 'Image',
         'no_quizzes' => 'No Exams',
         'question_type' => 'Question Type',
         'no_of_questions' => 'No of Questions',

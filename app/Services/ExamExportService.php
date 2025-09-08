@@ -17,28 +17,44 @@ class ExamExportService
     /**
      * Export quiz as exam paper in multiple formats
      */
-    public function exportExamPaper(Quiz $quiz, $format = 'pdf', $template = 'standard', bool $includeInstructions = true)
+    public function exportExamPaper(Quiz $quiz, $format = 'pdf', $template = 'standard', bool $includeInstructions = true, bool $includeAnswerKey = false, string $fontSize = 'medium')
     {
         switch ($format) {
             case 'pdf':
-                return $this->exportToPDF($quiz, $template, $includeInstructions);
+                return $this->exportToPDF($quiz, $template, $includeInstructions, $includeAnswerKey, $fontSize);
             case 'word':
-                return $this->exportToWord($quiz, $template, $includeInstructions);
+                return $this->exportToWord($quiz, $template, $includeInstructions, $includeAnswerKey, $fontSize);
             case 'html':
-                return $this->exportToHTML($quiz, $template, $includeInstructions);
+                return $this->exportToHTML($quiz, $template, $includeInstructions, $includeAnswerKey, $fontSize);
             default:
                 throw new \InvalidArgumentException('Unsupported export format');
         }
     }
 
     /**
-     * Export to PDF format
+     * Generate preview HTML
      */
-    protected function exportToPDF(Quiz $quiz, $template, bool $includeInstructions)
+    public function generatePreviewHtml(Quiz $quiz, $template = 'standard', bool $includeInstructions = true, bool $includeAnswerKey = false, string $fontSize = 'medium')
     {
-        $data = $this->prepareExamData($quiz, $includeInstructions);
+        $data = $this->prepareExamData($quiz, $includeInstructions, $includeAnswerKey, $fontSize);
         $data['template'] = $template;
         $data['includeInstructions'] = $includeInstructions;
+        $data['includeAnswerKey'] = $includeAnswerKey;
+        $data['fontSize'] = $fontSize;
+        
+        return view('exports.exam-paper-preview', $data)->render();
+    }
+
+    /**
+     * Export to PDF format
+     */
+    protected function exportToPDF(Quiz $quiz, $template, bool $includeInstructions, bool $includeAnswerKey, string $fontSize)
+    {
+        $data = $this->prepareExamData($quiz, $includeInstructions, $includeAnswerKey, $fontSize);
+        $data['template'] = $template;
+        $data['includeInstructions'] = $includeInstructions;
+        $data['includeAnswerKey'] = $includeAnswerKey;
+        $data['fontSize'] = $fontSize;
         
         $pdf = Pdf::loadView('exports.exam-paper-pdf', $data);
         $pdf->setPaper('A4', 'portrait');
@@ -58,7 +74,7 @@ class ExamExportService
     /**
      * Export to Word format (.docx)
      */
-    protected function exportToWord(Quiz $quiz, $template, bool $includeInstructions)
+    protected function exportToWord(Quiz $quiz, $template, bool $includeInstructions, bool $includeAnswerKey, string $fontSize)
     {
         $phpWord = new PhpWord();
         
@@ -196,11 +212,13 @@ class ExamExportService
     /**
      * Export to HTML format
      */
-    protected function exportToHTML(Quiz $quiz, $template, bool $includeInstructions)
+    protected function exportToHTML(Quiz $quiz, $template, bool $includeInstructions, bool $includeAnswerKey, string $fontSize)
     {
-        $data = $this->prepareExamData($quiz, $includeInstructions);
+        $data = $this->prepareExamData($quiz, $includeInstructions, $includeAnswerKey, $fontSize);
         $data['template'] = $template;
         $data['includeInstructions'] = $includeInstructions;
+        $data['includeAnswerKey'] = $includeAnswerKey;
+        $data['fontSize'] = $fontSize;
         
         $html = view('exports.exam-paper-html', $data)->render();
         
@@ -219,7 +237,7 @@ class ExamExportService
     /**
      * Prepare exam data for export
      */
-    protected function prepareExamData(Quiz $quiz, bool $includeInstructions)
+    protected function prepareExamData(Quiz $quiz, bool $includeInstructions, bool $includeAnswerKey = false, string $fontSize = 'medium')
     {
         $questions = $quiz->questions()->with('answers')->get();
         
@@ -230,6 +248,8 @@ class ExamExportService
             'examDate' => now()->format('d/m/Y'),
             'timeLimit' => $quiz->time_configuration ? $quiz->time . ' ' . ($quiz->time_type == 1 ? 'minutes per question' : 'minutes total') : 'No time limit',
             'includeInstructions' => $includeInstructions,
+            'includeAnswerKey' => $includeAnswerKey,
+            'fontSize' => $fontSize,
         ];
 
         // Prepare answer key

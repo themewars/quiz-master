@@ -6,6 +6,8 @@ use App\Models\Quiz;
 use App\Services\ExamExportService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
 use Filament\Notifications\Notification;
@@ -18,6 +20,10 @@ class ExportQuiz extends Page
 
     public Quiz $record;
     public $includeInstructions = false;
+    public $includeAnswerKey = false;
+    public $exportTemplate = 'standard';
+    public $fontSize = 'medium';
+    public $previewHtml = '';
 
     public function form(Form $form): Form
     {
@@ -26,7 +32,37 @@ class ExportQuiz extends Page
                 Toggle::make('includeInstructions')
                     ->label('Include Instructions')
                     ->default(false)
-                    ->live(),
+                    ->live()
+                    ->afterStateUpdated(fn () => $this->generatePreview()),
+                
+                Toggle::make('includeAnswerKey')
+                    ->label('Include Answer Key')
+                    ->default(false)
+                    ->live()
+                    ->afterStateUpdated(fn () => $this->generatePreview()),
+                
+                Select::make('exportTemplate')
+                    ->label('Export Template')
+                    ->options([
+                        'standard' => 'Standard',
+                        'academic' => 'Academic',
+                        'professional' => 'Professional',
+                        'minimal' => 'Minimal'
+                    ])
+                    ->default('standard')
+                    ->live()
+                    ->afterStateUpdated(fn () => $this->generatePreview()),
+                
+                Radio::make('fontSize')
+                    ->label('Font Size')
+                    ->options([
+                        'small' => 'Small (10pt)',
+                        'medium' => 'Medium (12pt)',
+                        'large' => 'Large (14pt)'
+                    ])
+                    ->default('medium')
+                    ->live()
+                    ->afterStateUpdated(fn () => $this->generatePreview()),
             ])
             ->statePath('data');
     }
@@ -39,6 +75,12 @@ class ExportQuiz extends Page
                 ->url(fn() => $this->getResource()::getUrl('view', ['record' => $this->record]))
                 ->color('gray'),
         ];
+    }
+
+    public function mount(): void
+    {
+        parent::mount();
+        $this->generatePreview();
     }
 
     protected function getFormActions(): array
@@ -79,6 +121,28 @@ class ExportQuiz extends Page
         $this->exportExamPaper('html');
     }
 
+    public function generatePreview()
+    {
+        try {
+            $exportService = new ExamExportService();
+            
+            $includeInstructions = $this->data['includeInstructions'] ?? false;
+            $includeAnswerKey = $this->data['includeAnswerKey'] ?? false;
+            $template = $this->data['exportTemplate'] ?? 'standard';
+            $fontSize = $this->data['fontSize'] ?? 'medium';
+            
+            $this->previewHtml = $exportService->generatePreviewHtml(
+                $this->record,
+                $template,
+                $includeInstructions,
+                $includeAnswerKey,
+                $fontSize
+            );
+        } catch (\Exception $e) {
+            $this->previewHtml = '<div class="text-red-500">Preview generation failed: ' . $e->getMessage() . '</div>';
+        }
+    }
+
     private function exportExamPaper($format)
     {
         try {
@@ -86,14 +150,19 @@ class ExportQuiz extends Page
             
             $exportService = new ExamExportService();
             
-            // Get include instructions setting
+            // Get all export settings
             $includeInstructions = $this->data['includeInstructions'] ?? false;
+            $includeAnswerKey = $this->data['includeAnswerKey'] ?? false;
+            $template = $this->data['exportTemplate'] ?? 'standard';
+            $fontSize = $this->data['fontSize'] ?? 'medium';
             
             $result = $exportService->exportExamPaper(
                 $this->record,
                 $format,
-                'standard',
-                $includeInstructions
+                $template,
+                $includeInstructions,
+                $includeAnswerKey,
+                $fontSize
             );
 
             Notification::make()

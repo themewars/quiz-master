@@ -44,9 +44,11 @@
 
         <!-- Preview Section -->
         <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Preview</h3>
-            <div class="prose max-w-none border border-gray-200 rounded-lg p-4">
-                <div class="text-gray-500">Preview will be available after export functionality is working.</div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Live Preview</h3>
+            <div class="prose max-w-none border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <div wire:key="preview-{{ $this->data['includeInstructions'] ?? false }}-{{ $this->data['includeAnswerKey'] ?? false }}-{{ $this->data['exportTemplate'] ?? 'standard' }}-{{ $this->data['fontSize'] ?? 'medium' }}">
+                    {!! $this->previewHtml !!}
+                </div>
             </div>
         </div>
 
