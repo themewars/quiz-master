@@ -7,6 +7,7 @@ use App\Services\ExamExportService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
@@ -21,6 +22,7 @@ class ExportQuiz extends Page
     public Quiz $record;
     public $exportFormat = 'pdf';
     public $exportTemplate = 'standard';
+    public $includeInstructions = true;
 
     protected function getHeaderActions(): array
     {
@@ -56,6 +58,11 @@ class ExportQuiz extends Page
                     ->boolean()
                     ->default(true)
                     ->helperText('Include answer key in the exported document'),
+
+                Toggle::make('includeInstructions')
+                    ->label('Include Instructions')
+                    ->default(true)
+                    ->live(),
             ])
             ->statePath('data');
     }
@@ -79,7 +86,8 @@ class ExportQuiz extends Page
             $result = $exportService->exportExamPaper(
                 $this->record,
                 $this->exportFormat,
-                $this->exportTemplate
+                $this->exportTemplate,
+                (bool) ($this->data['includeInstructions'] ?? $this->includeInstructions)
             );
 
             Notification::make()

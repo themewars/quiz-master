@@ -197,7 +197,7 @@
         </div>
 
         <div class="content">
-            @if($quiz->quiz_description)
+            @if(($includeInstructions ?? true) && $quiz->quiz_description)
             <div class="instructions">
                 <h3>📋 Instructions</h3>
                 {{ $quiz->quiz_description }}
