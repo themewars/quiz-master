@@ -16,9 +16,9 @@ class CreatePlan extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         if ($data['assign_default']) {
-            $existingDefaultPlan = Plan::where('assign_default', 1)->first();
-            if ($existingDefaultPlan && $existingDefaultPlan->count() > 0) {
-                $existingDefaultPlan->update(['assign_default' => 0]);
+            $existingDefaultPlan = Plan::where('assign_default', true)->first();
+            if ($existingDefaultPlan) {
+                $existingDefaultPlan->update(['assign_default' => false]);
             }
         }
 

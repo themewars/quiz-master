@@ -31,7 +31,7 @@ class Plan extends Model
         'name',
         'description',
         'frequency',
-        'no_of_quiz',
+        'no_of_exam',
         'price',
         'trial_days',
         'assign_default',
@@ -48,7 +48,7 @@ class Plan extends Model
 
         'name' => 'string',
         'frequency' => 'integer',
-        'no_of_quiz' => 'integer',
+        'no_of_exam' => 'integer',
         'price' => 'double',
         'trial_days' => 'integer',
         'assign_default' => 'boolean',
@@ -88,7 +88,7 @@ class Plan extends Model
                     ->validationAttribute(__('messages.plan.trial_days'))
                     ->numeric()
                     ->integer(),
-                TextInput::make('no_of_quiz')
+                TextInput::make('no_of_exam')
                     ->numeric()
                     ->label(__('messages.plan.no_of_quizzes') . ':')
                     ->placeholder(__('messages.plan.no_of_quizzes'))
