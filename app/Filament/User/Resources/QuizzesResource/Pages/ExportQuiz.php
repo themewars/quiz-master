@@ -62,7 +62,10 @@ class ExportQuiz extends Page
                 Toggle::make('includeInstructions')
                     ->label('Include Instructions')
                     ->default(true)
-                    ->live(),
+                    ->live()
+                    ->afterStateUpdated(function (Get $get) {
+                        $this->includeInstructions = (bool) $get('includeInstructions');
+                    }),
             ])
             ->statePath('data');
     }
@@ -87,7 +90,7 @@ class ExportQuiz extends Page
                 $this->record,
                 $this->exportFormat,
                 $this->exportTemplate,
-                (bool) ($this->data['includeInstructions'] ?? $this->includeInstructions)
+                (bool) $this->includeInstructions
             );
 
             Notification::make()
@@ -155,7 +158,7 @@ class ExportQuiz extends Page
                 'timeLimit' => $timeLimit,
                 'answerKey' => $answerKey,
                 'template' => $this->exportTemplate,
-                'includeInstructions' => (bool) ($this->data['includeInstructions'] ?? $this->includeInstructions),
+                'includeInstructions' => (bool) $this->includeInstructions,
             ])->render();
         } catch (\Throwable $e) {
             Log::error('Export preview failed', [
