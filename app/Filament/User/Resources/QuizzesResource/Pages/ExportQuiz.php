@@ -27,12 +27,10 @@ class ExportQuiz extends Page
         parent::mount();
     }
 
-    public function updatedData($property, $value): void
+    public function updatedData(): void
     {
         // Trigger preview update when any form field changes
-        if (in_array($property, ['includeInstructions', 'exportFormat', 'exportTemplate'])) {
-            $this->dispatch('$refresh');
-        }
+        $this->dispatch('$refresh');
     }
 
     protected function getHeaderActions(): array
@@ -178,8 +176,8 @@ class ExportQuiz extends Page
                 'examDate' => $examDate,
                 'timeLimit' => $timeLimit,
                 'answerKey' => $answerKey,
-                'template' => $this->form->getState()['exportTemplate'] ?? 'standard',
-                'includeInstructions' => (bool) ($this->form->getState()['includeInstructions'] ?? false),
+                'template' => 'standard',
+                'includeInstructions' => false,
             ])->render();
         } catch (\Throwable $e) {
             Log::error('Export preview failed', [
