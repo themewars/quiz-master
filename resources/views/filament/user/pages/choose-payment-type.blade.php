@@ -369,6 +369,18 @@
                     };
                     const rzp = new Razorpay(options);
                     rzp.open();
+                },
+                error: function(xhr){
+                    let message = 'Payment initialization failed.';
+                    try {
+                        const json = xhr.responseJSON || JSON.parse(xhr.responseText);
+                        if (json && json.message) message = json.message;
+                    } catch (e) {}
+                    if (window.FilamentNotification) {
+                        new FilamentNotification().title(message).danger().send();
+                    } else {
+                        alert(message);
+                    }
                 }
             });
         });
