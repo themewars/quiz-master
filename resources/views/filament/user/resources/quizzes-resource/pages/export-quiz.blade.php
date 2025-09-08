@@ -25,11 +25,17 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Export Options</h3>
             
-            {{ $this->form }}
-            
-            <div class="mt-6 flex justify-end space-x-3">
-                <x-filament::button color="success" icon="heroicon-o-document-arrow-down" wire:click="exportExamPaper">
-                    Export Exam Paper
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <x-filament::button color="success" icon="heroicon-o-document-arrow-down" wire:click="exportPDF" class="w-full">
+                    Export PDF
+                </x-filament::button>
+                
+                <x-filament::button color="primary" icon="heroicon-o-document-text" wire:click="exportWord" class="w-full">
+                    Export Word
+                </x-filament::button>
+                
+                <x-filament::button color="warning" icon="heroicon-o-code-bracket" wire:click="exportHTML" class="w-full">
+                    Export HTML
                 </x-filament::button>
             </div>
         </div>

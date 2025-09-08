@@ -5,8 +5,6 @@ namespace App\Filament\User\Resources\QuizzesResource\Pages;
 use App\Models\Quiz;
 use App\Services\ExamExportService;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
@@ -17,34 +15,6 @@ class ExportQuiz extends Page
     protected static string $view = 'filament.user.resources.quizzes-resource.pages.export-quiz';
 
     public Quiz $record;
-    public $exportFormat = 'pdf';
-
-    public function mount(): void
-    {
-        parent::mount();
-    }
-
-    public function updatedExportFormat($value): void
-    {
-        $this->exportFormat = $value;
-        Log::info('Format updated:', ['new_format' => $value]);
-    }
-
-    public function form(Form $form): Form
-    {
-        $exportService = new ExamExportService();
-        
-        return $form
-            ->schema([
-                Select::make('exportFormat')
-                    ->label('Export Format')
-                    ->options($exportService->getAvailableFormats())
-                    ->default('pdf')
-                    ->required()
-                    ->live(),
-            ])
-            ->statePath('data');
-    }
 
     protected function getHeaderActions(): array
     {
@@ -59,32 +29,51 @@ class ExportQuiz extends Page
     protected function getFormActions(): array
     {
         return [
-            Action::make('export')
-                ->label('Export Exam Paper (PDF)')
+            Action::make('export-pdf')
+                ->label('Export PDF')
                 ->color('success')
                 ->icon('heroicon-o-document-arrow-down')
-                ->action('exportExamPaper'),
+                ->action('exportPDF'),
+            
+            Action::make('export-word')
+                ->label('Export Word')
+                ->color('primary')
+                ->icon('heroicon-o-document-text')
+                ->action('exportWord'),
+            
+            Action::make('export-html')
+                ->label('Export HTML')
+                ->color('warning')
+                ->icon('heroicon-o-code-bracket')
+                ->action('exportHTML'),
         ];
     }
 
-    public function exportExamPaper()
+    public function exportPDF()
+    {
+        $this->exportExamPaper('pdf');
+    }
+
+    public function exportWord()
+    {
+        $this->exportExamPaper('word');
+    }
+
+    public function exportHTML()
+    {
+        $this->exportExamPaper('html');
+    }
+
+    private function exportExamPaper($format)
     {
         try {
-            Log::info('Export started', ['quiz_id' => $this->record->id]);
+            Log::info('Export started', ['quiz_id' => $this->record->id, 'format' => $format]);
             
             $exportService = new ExamExportService();
             
-            // For now, use property value
-            $selectedFormat = $this->exportFormat ?? 'pdf';
-            
-            Log::info('Format selection debug:', [
-                'this->exportFormat' => $this->exportFormat ?? 'empty',
-                'selectedFormat' => $selectedFormat,
-            ]);
-            
             $result = $exportService->exportExamPaper(
                 $this->record,
-                $selectedFormat,
+                $format,
                 'standard',
                 false // Don't include instructions for now
             );
@@ -92,7 +81,7 @@ class ExportQuiz extends Page
             Notification::make()
                 ->success()
                 ->title('Exam Paper Exported Successfully!')
-                ->body('Your exam paper has been exported as ' . strtoupper($selectedFormat) . ' format.')
+                ->body('Your exam paper has been exported as ' . strtoupper($format) . ' format.')
                 ->actions([
                     \Filament\Notifications\Actions\Action::make('download')
                         ->label('Download')
@@ -104,6 +93,7 @@ class ExportQuiz extends Page
         } catch (\Exception $e) {
             Log::error('Export failed', [
                 'quiz_id' => $this->record->id,
+                'format' => $format,
                 'message' => $e->getMessage(),
             ]);
             Notification::make()
