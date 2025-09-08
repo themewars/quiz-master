@@ -56,102 +56,30 @@ class ExportQuiz extends Page
     public function exportExamPaper()
     {
         try {
-            $exportService = new ExamExportService();
+            Log::info('Export button clicked', ['quiz_id' => $this->record->id]);
             
-            // For now, use default values to test export functionality
-            $exportFormat = 'pdf'; // Will be updated later
-            $exportTemplate = 'standard';
-            $includeInstructions = false;
-            
-            // Debug: Log the attempt
-            Log::info('Export attempt:', [
-                'quiz_id' => $this->record->id,
-                'exportFormat' => $exportFormat,
-                'exportTemplate' => $exportTemplate,
-                'includeInstructions' => $includeInstructions,
-            ]);
-            
-            $result = $exportService->exportExamPaper(
-                $this->record,
-                $exportFormat,
-                $exportTemplate,
-                $includeInstructions
-            );
-
             Notification::make()
                 ->success()
-                ->title('Exam Paper Exported Successfully!')
-                ->body("Your exam paper has been exported as " . $exportFormat . " format.")
-                ->actions([
-                    \Filament\Notifications\Actions\Action::make('download')
-                        ->label('Download')
-                        ->url($result['download_url'])
-                        ->openUrlInNewTab()
-                ])
+                ->title('Export Test')
+                ->body('Export button is working! Quiz ID: ' . $this->record->id)
                 ->send();
 
         } catch (\Exception $e) {
-            Log::error('Export exam failed', [
+            Log::error('Export test failed', [
                 'quiz_id' => $this->record->id ?? null,
-                'format' => $exportFormat ?? null,
-                'template' => $exportTemplate ?? null,
                 'message' => $e->getMessage(),
             ]);
             Notification::make()
                 ->danger()
-                ->title('Export Failed')
-                ->body('There was an error exporting your exam paper. '.(config('app.debug') ? $e->getMessage() : 'Please try again.'))
+                ->title('Export Test Failed')
+                ->body('Error: ' . $e->getMessage())
                 ->send();
         }
     }
 
-    /**
-     * Live preview HTML of the exam paper (used in the page preview panel)
-     */
     public function getPreviewHtmlProperty(): string
     {
-        try {
-            $quiz = $this->record->load(['questions.answers']);
-
-            $questions = $quiz->questions;
-            $totalQuestions = $questions->count();
-            $examDate = now()->format('d/m/Y');
-            $timeLimit = $quiz->time_configuration
-                ? ($quiz->time . ' ' . ($quiz->time_type == 1 ? 'minutes per question' : 'minutes total'))
-                : 'No time limit';
-
-            $answerKey = [];
-            foreach ($questions as $index => $question) {
-                $correctAnswers = $question->answers()->where('is_correct', true)->get();
-                $correctOptions = [];
-                foreach ($correctAnswers as $answer) {
-                    $answerIndex = $question->answers->search(function ($item) use ($answer) {
-                        return $item->id === $answer->id;
-                    });
-                    if ($answerIndex !== false) {
-                        $correctOptions[] = chr(65 + $answerIndex);
-                    }
-                }
-                $answerKey[$index + 1] = implode(', ', $correctOptions);
-            }
-
-            return view('exports.exam-paper-html', [
-                'quiz' => $quiz,
-                'questions' => $questions,
-                'totalQuestions' => $totalQuestions,
-                'examDate' => $examDate,
-                'timeLimit' => $timeLimit,
-                'answerKey' => $answerKey,
-                'template' => 'standard',
-                'includeInstructions' => false,
-            ])->render();
-        } catch (\Throwable $e) {
-            Log::error('Export preview failed', [
-                'quiz_id' => $this->record->id ?? null,
-                'message' => $e->getMessage(),
-            ]);
-            return '<div style="color:#b91c1c">Preview unavailable.</div>';
-        }
+        return '<div class="text-gray-500">Preview will be available after export functionality is working.</div>';
     }
 
     public function getTitle(): string
