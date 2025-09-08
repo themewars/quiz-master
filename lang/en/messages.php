@@ -303,6 +303,7 @@ return [
 
     'quiz' => [
         'quizzes' => 'Exams',
+        'exams' => 'Exams',
         'quiz' => 'Exam',
         'no_quizzes' => 'No Exams',
         'question_type' => 'Question Type',
