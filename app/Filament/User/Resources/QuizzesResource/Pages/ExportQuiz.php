@@ -19,6 +19,16 @@ class ExportQuiz extends Page
     public Quiz $record;
     public $exportFormat = 'pdf';
 
+    public function mount(): void
+    {
+        parent::mount();
+        
+        // Initialize form with default values
+        $this->form->fill([
+            'exportFormat' => 'pdf',
+        ]);
+    }
+
     public function form(Form $form): Form
     {
         $exportService = new ExamExportService();
@@ -63,8 +73,30 @@ class ExportQuiz extends Page
             
             $exportService = new ExamExportService();
             
-            // Get selected format from form
-            $selectedFormat = $this->data['exportFormat'] ?? 'pdf';
+            // Get selected format from form - try multiple methods
+            $selectedFormat = 'pdf'; // Default fallback
+            
+            // Try to get from form state
+            try {
+                $formData = $this->form->getState();
+                if (!empty($formData['exportFormat'])) {
+                    $selectedFormat = $formData['exportFormat'];
+                }
+            } catch (\Exception $e) {
+                Log::warning('Could not get form state: ' . $e->getMessage());
+            }
+            
+            // Fallback to property
+            if ($selectedFormat === 'pdf' && !empty($this->exportFormat)) {
+                $selectedFormat = $this->exportFormat;
+            }
+            
+            Log::info('Format selection debug:', [
+                'formData' => $formData ?? 'empty',
+                'this->data' => $this->data ?? 'empty',
+                'this->exportFormat' => $this->exportFormat ?? 'empty',
+                'selectedFormat' => $selectedFormat,
+            ]);
             
             $result = $exportService->exportExamPaper(
                 $this->record,
