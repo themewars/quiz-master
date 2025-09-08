@@ -9,7 +9,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Log;
@@ -27,11 +26,6 @@ class ExportQuiz extends Page
         parent::mount();
     }
 
-    public function updatedData(): void
-    {
-        // Trigger preview update when any form field changes
-        $this->dispatch('$refresh');
-    }
 
     protected function getHeaderActions(): array
     {
@@ -45,35 +39,7 @@ class ExportQuiz extends Page
 
     public function form(Form $form): Form
     {
-        $exportService = new ExamExportService();
-        
-        return $form
-            ->schema([
-                Select::make('exportFormat')
-                    ->label('Export Format')
-                    ->options($exportService->getAvailableFormats())
-                    ->default('pdf')
-                    ->required()
-                    ->live(),
-                
-                Select::make('exportTemplate')
-                    ->label('Template Style')
-                    ->options($exportService->getAvailableTemplates())
-                    ->default('standard')
-                    ->required(),
-                
-                Radio::make('includeAnswerKey')
-                    ->label('Include Answer Key')
-                    ->boolean()
-                    ->default(true)
-                    ->helperText('Include answer key in the exported document'),
-
-                Toggle::make('includeInstructions')
-                    ->label('Include Instructions')
-                    ->default(false)
-                    ->live(),
-            ])
-            ->statePath('data');
+        return $form->schema([]);
     }
 
     protected function getFormActions(): array
