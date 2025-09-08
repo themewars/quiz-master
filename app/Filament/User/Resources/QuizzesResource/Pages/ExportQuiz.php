@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Log;
@@ -20,9 +21,6 @@ class ExportQuiz extends Page
     protected static string $view = 'filament.user.resources.quizzes-resource.pages.export-quiz';
 
     public Quiz $record;
-    public $exportFormat = 'pdf';
-    public $exportTemplate = 'standard';
-    public $includeInstructions = true;
 
     protected function getHeaderActions(): array
     {
@@ -62,10 +60,7 @@ class ExportQuiz extends Page
                 Toggle::make('includeInstructions')
                     ->label('Include Instructions')
                     ->default(true)
-                    ->live()
-                    ->afterStateUpdated(function (Get $get) {
-                        $this->includeInstructions = (bool) $get('includeInstructions');
-                    }),
+                    ->live(),
             ])
             ->statePath('data');
     }
@@ -88,15 +83,15 @@ class ExportQuiz extends Page
             
             $result = $exportService->exportExamPaper(
                 $this->record,
-                $this->exportFormat,
-                $this->exportTemplate,
-                (bool) $this->includeInstructions
+                $this->data['exportFormat'] ?? 'pdf',
+                $this->data['exportTemplate'] ?? 'standard',
+                (bool) ($this->data['includeInstructions'] ?? true)
             );
 
             Notification::make()
                 ->success()
                 ->title('Exam Paper Exported Successfully!')
-                ->body("Your exam paper has been exported as {$this->exportFormat} format.")
+                ->body("Your exam paper has been exported as " . ($this->data['exportFormat'] ?? 'pdf') . " format.")
                 ->actions([
                     \Filament\Notifications\Actions\Action::make('download')
                         ->label('Download')
@@ -108,8 +103,8 @@ class ExportQuiz extends Page
         } catch (\Exception $e) {
             Log::error('Export exam failed', [
                 'quiz_id' => $this->record->id ?? null,
-                'format' => $this->exportFormat ?? null,
-                'template' => $this->exportTemplate ?? null,
+                'format' => $this->data['exportFormat'] ?? null,
+                'template' => $this->data['exportTemplate'] ?? null,
                 'message' => $e->getMessage(),
             ]);
             Notification::make()
@@ -157,8 +152,8 @@ class ExportQuiz extends Page
                 'examDate' => $examDate,
                 'timeLimit' => $timeLimit,
                 'answerKey' => $answerKey,
-                'template' => $this->exportTemplate,
-                'includeInstructions' => (bool) $this->includeInstructions,
+                'template' => $this->data['exportTemplate'] ?? 'standard',
+                'includeInstructions' => (bool) ($this->data['includeInstructions'] ?? true),
             ])->render();
         } catch (\Throwable $e) {
             Log::error('Export preview failed', [
