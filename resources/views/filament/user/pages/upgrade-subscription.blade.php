@@ -45,7 +45,7 @@
                                         </li>
                                     @endif
                                     <li class="text-gray-900 font-medium text-sm">
-                                        {{ $plan['no_of_quiz'] }}
+                                        {{ $plan['no_of_exam'] ?? $plan['no_of_quiz'] ?? '' }}
                                         {{ __('messages.subscription.no_of_quiz') }}
                                     </li>
                                 </ul>
