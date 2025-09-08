@@ -77,10 +77,6 @@ class ExportQuiz extends Page
         }
     }
 
-    public function getPreviewHtmlProperty(): string
-    {
-        return '<div class="text-gray-500">Preview will be available after export functionality is working.</div>';
-    }
 
     public function getTitle(): string
     {
