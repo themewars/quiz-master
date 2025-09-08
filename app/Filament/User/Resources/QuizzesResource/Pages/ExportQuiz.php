@@ -5,6 +5,8 @@ namespace App\Filament\User\Resources\QuizzesResource\Pages;
 use App\Models\Quiz;
 use App\Services\ExamExportService;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +17,19 @@ class ExportQuiz extends Page
     protected static string $view = 'filament.user.resources.quizzes-resource.pages.export-quiz';
 
     public Quiz $record;
+    public $includeInstructions = false;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Toggle::make('includeInstructions')
+                    ->label('Include Instructions')
+                    ->default(false)
+                    ->live(),
+            ])
+            ->statePath('data');
+    }
 
     protected function getHeaderActions(): array
     {
@@ -71,11 +86,14 @@ class ExportQuiz extends Page
             
             $exportService = new ExamExportService();
             
+            // Get include instructions setting
+            $includeInstructions = $this->data['includeInstructions'] ?? false;
+            
             $result = $exportService->exportExamPaper(
                 $this->record,
                 $format,
                 'standard',
-                false // Don't include instructions for now
+                $includeInstructions
             );
 
             Notification::make()

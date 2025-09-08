@@ -25,7 +25,9 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Export Options</h3>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {{ $this->form }}
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <x-filament::button color="success" icon="heroicon-o-document-arrow-down" wire:click="exportPDF" class="w-full">
                     Export PDF
                 </x-filament::button>
