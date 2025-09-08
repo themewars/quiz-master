@@ -10,6 +10,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
+use Illuminate\Support\Facades\Log;
 
 class ExportQuiz extends Page
 {
@@ -93,10 +94,16 @@ class ExportQuiz extends Page
                 ->send();
 
         } catch (\Exception $e) {
+            Log::error('Export exam failed', [
+                'quiz_id' => $this->record->id ?? null,
+                'format' => $this->exportFormat ?? null,
+                'template' => $this->exportTemplate ?? null,
+                'message' => $e->getMessage(),
+            ]);
             Notification::make()
                 ->danger()
                 ->title('Export Failed')
-                ->body('There was an error exporting your exam paper. Please try again.')
+                ->body('There was an error exporting your exam paper. '.(config('app.debug') ? $e->getMessage() : 'Please try again.'))
                 ->send();
         }
     }
