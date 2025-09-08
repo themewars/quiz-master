@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Razorpay\Api\Api;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -17,30 +18,59 @@ class RazorpayController extends AppBaseController
 {
     public function purchase(Request $request)
     {
-        $plan = $request->plan;
+        try {
+            $plan = $request->json('plan', $request->input('plan'));
+            if (is_string($plan)) {
+                $decoded = json_decode($plan, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $plan = $decoded;
+                }
+            }
 
-        $razorpayPayment = getPaymentSetting();
-        $api = new Api($razorpayPayment->razorpay_key, $razorpayPayment->razorpay_secret);
+            if (!is_array($plan) || empty($plan['id'])) {
+                return response()->json(['message' => 'Invalid plan payload.'], 422);
+            }
 
-        $orderData = [
-            'receipt' => '1',
-            'amount' => $plan['payable_amount'] * 100,
-            'currency' => isset($plan['currency']['code']) ? strtoupper($plan['currency']['code']) : "INR",
-            'notes' => [
-                'plan_id' => $plan['id'],
-                'payable_amount' => $plan['payable_amount'],
-                'payment_mode' => Subscription::TYPE_RAZORPAY,
-            ],
-        ];
-        $razorpayOrder = $api->order->create($orderData);
+            $razorpayPayment = PaymentSetting::first();
+            if (!$razorpayPayment || empty($razorpayPayment->razorpay_key) || empty($razorpayPayment->razorpay_secret)) {
+                return response()->json(['message' => 'Razorpay is not configured. Please set key/secret in Payment Settings.'], 422);
+            }
 
-        $data['order_id'] = $razorpayOrder->id;
-        $data['payable_amount'] = $plan['payable_amount'];
-        $data['currency'] = isset($plan['currency']['code']) ? strtoupper($plan['currency']['code']) : "INR";
-        $data['payment_mode'] = Subscription::TYPE_RAZORPAY;
-        $data['plan_id'] =  $plan['id'];
+            $api = new Api($razorpayPayment->razorpay_key, $razorpayPayment->razorpay_secret);
 
-        return $this->sendResponse($data, 'Razorpay order created successfully.');
+            $amountPaise = (int) round(($plan['payable_amount'] ?? 0) * 100);
+            if ($amountPaise <= 0) {
+                return response()->json(['message' => 'Payable amount must be greater than zero.'], 422);
+            }
+
+            $currency = isset($plan['currency']['code']) ? strtoupper($plan['currency']['code']) : 'INR';
+
+            $orderData = [
+                'receipt' => (string) ($plan['id'] ?? '1'),
+                'amount' => $amountPaise,
+                'currency' => $currency,
+                'notes' => [
+                    'plan_id' => $plan['id'],
+                    'payable_amount' => $plan['payable_amount'] ?? 0,
+                    'payment_mode' => Subscription::TYPE_RAZORPAY,
+                ],
+            ];
+
+            $razorpayOrder = $api->order->create($orderData);
+
+            $data['order_id'] = $razorpayOrder->id;
+            $data['payable_amount'] = $plan['payable_amount'] ?? 0;
+            $data['currency'] = $currency;
+            $data['payment_mode'] = Subscription::TYPE_RAZORPAY;
+            $data['plan_id'] =  $plan['id'];
+
+            return $this->sendResponse($data, 'Razorpay order created successfully.');
+        } catch (\Throwable $e) {
+            Log::error('Razorpay purchase error: '.$e->getMessage(), [
+                'exception' => $e,
+            ]);
+            return response()->json(['message' => 'Payment initialization failed.'], 500);
+        }
     }
 
     public function success(Request $request)
