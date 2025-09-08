@@ -22,6 +22,14 @@ class ExportQuiz extends Page
 
     public Quiz $record;
 
+    public function updatedData($property, $value): void
+    {
+        // Trigger preview update when any form field changes
+        if (in_array($property, ['includeInstructions', 'exportFormat', 'exportTemplate'])) {
+            $this->dispatch('$refresh');
+        }
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -59,7 +67,7 @@ class ExportQuiz extends Page
 
                 Toggle::make('includeInstructions')
                     ->label('Include Instructions')
-                    ->default(true)
+                    ->default(false)
                     ->live(),
             ])
             ->statePath('data');
@@ -85,7 +93,7 @@ class ExportQuiz extends Page
                 $this->record,
                 $this->data['exportFormat'] ?? 'pdf',
                 $this->data['exportTemplate'] ?? 'standard',
-                (bool) ($this->data['includeInstructions'] ?? true)
+                (bool) ($this->data['includeInstructions'] ?? false)
             );
 
             Notification::make()
@@ -153,7 +161,7 @@ class ExportQuiz extends Page
                 'timeLimit' => $timeLimit,
                 'answerKey' => $answerKey,
                 'template' => $this->data['exportTemplate'] ?? 'standard',
-                'includeInstructions' => (bool) ($this->data['includeInstructions'] ?? true),
+                'includeInstructions' => (bool) ($this->data['includeInstructions'] ?? false),
             ])->render();
         } catch (\Throwable $e) {
             Log::error('Export preview failed', [
