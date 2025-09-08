@@ -28,7 +28,9 @@
             {{ $this->form }}
             
             <div class="mt-6 flex justify-end space-x-3">
-                {{ $this->exportAction }}
+                <x-filament::button color="success" icon="heroicon-o-document-arrow-down" wire:click="exportExamPaper">
+                    Export Exam Paper
+                </x-filament::button>
             </div>
         </div>
 
