@@ -87,12 +87,27 @@ class ExportQuiz extends Page
     public function exportExamPaper()
     {
         try {
+            // Validate form data first
+            $this->validate([
+                'data.exportFormat' => 'required|in:pdf,word,html',
+                'data.exportTemplate' => 'required|string',
+                'data.includeInstructions' => 'boolean',
+            ]);
+            
             $exportService = new ExamExportService();
+            
+            // Debug: Log the form data
+            Log::info('Export form data:', [
+                'data' => $this->data,
+                'exportFormat' => $this->data['exportFormat'] ?? 'pdf',
+                'exportTemplate' => $this->data['exportTemplate'] ?? 'standard',
+                'includeInstructions' => $this->data['includeInstructions'] ?? false,
+            ]);
             
             $result = $exportService->exportExamPaper(
                 $this->record,
-                $this->data['exportFormat'] ?? 'pdf',
-                $this->data['exportTemplate'] ?? 'standard',
+                $this->data['exportFormat'],
+                $this->data['exportTemplate'],
                 (bool) ($this->data['includeInstructions'] ?? false)
             );
 
