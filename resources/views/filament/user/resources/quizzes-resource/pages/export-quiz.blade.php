@@ -25,9 +25,11 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Export Options</h3>
             
+            {{ $this->form }}
+            
             <div class="mt-6 flex justify-end space-x-3">
                 <x-filament::button color="success" icon="heroicon-o-document-arrow-down" wire:click="exportExamPaper">
-                    Export Exam Paper (PDF)
+                    Export Exam Paper
                 </x-filament::button>
             </div>
         </div>

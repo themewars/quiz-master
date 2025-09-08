@@ -5,6 +5,8 @@ namespace App\Filament\User\Resources\QuizzesResource\Pages;
 use App\Models\Quiz;
 use App\Services\ExamExportService;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +17,23 @@ class ExportQuiz extends Page
     protected static string $view = 'filament.user.resources.quizzes-resource.pages.export-quiz';
 
     public Quiz $record;
+    public $exportFormat = 'pdf';
+
+    public function form(Form $form): Form
+    {
+        $exportService = new ExamExportService();
+        
+        return $form
+            ->schema([
+                Select::make('exportFormat')
+                    ->label('Export Format')
+                    ->options($exportService->getAvailableFormats())
+                    ->default('pdf')
+                    ->required()
+                    ->live(),
+            ])
+            ->statePath('data');
+    }
 
     protected function getHeaderActions(): array
     {
@@ -44,9 +63,12 @@ class ExportQuiz extends Page
             
             $exportService = new ExamExportService();
             
+            // Get selected format from form
+            $selectedFormat = $this->data['exportFormat'] ?? 'pdf';
+            
             $result = $exportService->exportExamPaper(
                 $this->record,
-                'pdf',
+                $selectedFormat,
                 'standard',
                 false // Don't include instructions for now
             );
@@ -54,7 +76,7 @@ class ExportQuiz extends Page
             Notification::make()
                 ->success()
                 ->title('Exam Paper Exported Successfully!')
-                ->body('Your exam paper has been exported as PDF format.')
+                ->body('Your exam paper has been exported as ' . strtoupper($selectedFormat) . ' format.')
                 ->actions([
                     \Filament\Notifications\Actions\Action::make('download')
                         ->label('Download')
