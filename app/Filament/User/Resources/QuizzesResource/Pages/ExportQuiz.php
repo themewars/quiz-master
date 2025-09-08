@@ -155,6 +155,7 @@ class ExportQuiz extends Page
                 'timeLimit' => $timeLimit,
                 'answerKey' => $answerKey,
                 'template' => $this->exportTemplate,
+                'includeInstructions' => (bool) ($this->data['includeInstructions'] ?? $this->includeInstructions),
             ])->render();
         } catch (\Throwable $e) {
             Log::error('Export preview failed', [
