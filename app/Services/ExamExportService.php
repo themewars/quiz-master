@@ -60,69 +60,17 @@ class ExamExportService
      */
     protected function exportToWord(Quiz $quiz, $template, bool $includeInstructions)
     {
-        $phpWord = new PhpWord();
-        $phpWord->setDefaultFontName('Arial');
-        $phpWord->setDefaultFontSize(12);
-
-        // Add title section
-        $titleSection = $phpWord->addSection([
-            'marginTop' => 1134,
-            'marginBottom' => 1134,
-            'marginLeft' => 1134,
-            'marginRight' => 1134,
-        ]);
-
-        // Exam header
-        $titleSection->addText($quiz->title, ['bold' => true, 'size' => 16], ['alignment' => 'center']);
-        $titleSection->addTextBreak();
+        // For now, create a simple HTML file that can be opened in Word
+        $data = $this->prepareExamData($quiz, $includeInstructions);
+        $data['template'] = $template;
+        $data['includeInstructions'] = $includeInstructions;
         
-        if ($includeInstructions && $quiz->quiz_description) {
-            $titleSection->addText('Instructions:', ['bold' => true]);
-            $titleSection->addText($quiz->quiz_description);
-            $titleSection->addTextBreak();
-        }
-
-        // Add questions
-        $questions = $quiz->questions()->with('answers')->get();
-        foreach ($questions as $index => $question) {
-            $questionNumber = $index + 1;
-            $titleSection->addText("Question {$questionNumber}:", ['bold' => true]);
-            $titleSection->addText($question->title);
-            $titleSection->addTextBreak();
-
-            // Add answer options
-            foreach ($question->answers as $answerIndex => $answer) {
-                $optionLetter = chr(65 + $answerIndex); // A, B, C, D
-                $titleSection->addText("{$optionLetter}) {$answer->title}");
-            }
-            $titleSection->addTextBreak();
-        }
-
-        // Add answer key section
-        $titleSection->addPageBreak();
-        $titleSection->addText('ANSWER KEY', ['bold' => true, 'size' => 14], ['alignment' => 'center']);
-        $titleSection->addTextBreak();
-
-        foreach ($questions as $index => $question) {
-            $questionNumber = $index + 1;
-            $correctAnswers = $question->answers()->where('is_correct', true)->get();
-            $correctOptions = [];
-            
-            foreach ($correctAnswers as $answer) {
-                $answerIndex = $question->answers->search(function($item) use ($answer) {
-                    return $item->id === $answer->id;
-                });
-                $correctOptions[] = chr(65 + $answerIndex);
-            }
-            
-            $titleSection->addText("Question {$questionNumber}: " . implode(', ', $correctOptions));
-        }
-
-        $filename = 'exam_' . $quiz->unique_code . '_' . time() . '.docx';
+        $html = view('exports.exam-paper-html', $data)->render();
+        
+        $filename = 'exam_' . $quiz->unique_code . '_' . time() . '.html';
         $filepath = 'exports/' . $filename;
         
-        $writer = IOFactory::createWriter($phpWord, 'Word2007');
-        $writer->save(storage_path('app/public/' . $filepath));
+        Storage::disk('public')->put($filepath, $html);
         
         return [
             'filepath' => $filepath,
