@@ -18,11 +18,11 @@ class CheckPaddingSubscription
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $request = $next($request);
+        $paddingSubscription = Subscription::where('user_id', auth()->id())
+            ->where('status', SubscriptionStatus::PENDING->value)
+            ->first();
 
-        $paddingSubscription = Subscription::where('user_id', auth()->id())->where('status', SubscriptionStatus::PENDING->value)->first();
-
-        if ($paddingSubscription !== null && !empty($paddingSubscription)) {
+        if ($paddingSubscription !== null) {
             Notification::make()
                 ->danger()
                 ->title(__('messages.subscription.manual_transaction_request_is_pending'))
@@ -30,6 +30,6 @@ class CheckPaddingSubscription
             return redirect()->route('filament.user.pages.manage-subscription');
         }
 
-        return $request;
+        return $next($request);
     }
 }

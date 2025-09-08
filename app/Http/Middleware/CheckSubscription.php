@@ -36,7 +36,7 @@ class CheckSubscription
             return $next($request);
         }
 
-        $subscription = Subscription::with('plan')->where('status', SubscriptionStatus::ACTIVE)
+        $subscription = Subscription::with('plan')->where('status', SubscriptionStatus::ACTIVE->value)
             ->where('user_id', Auth::id())
             ->first();
 
@@ -48,7 +48,7 @@ class CheckSubscription
             return redirect()->route('filament.user.pages.upgrade-subscription');
         }
 
-        if ($subscription->isExpired()) {
+        if (method_exists($subscription, 'isExpired') && $subscription->isExpired()) {
             Notification::make()
                 ->danger()
                 ->title(__('messages.plan.your_plan_expired_and_choose_plan'))
