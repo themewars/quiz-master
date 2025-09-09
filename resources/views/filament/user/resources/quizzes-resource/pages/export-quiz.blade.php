@@ -46,7 +46,7 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Live Preview</h3>
             <div class="prose max-w-none border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <div wire:key="preview-{{ $this->data['includeInstructions'] ?? false }}-{{ $this->data['includeAnswerKey'] ?? false }}-{{ $this->data['exportTemplate'] ?? 'standard' }}-{{ $this->data['fontSize'] ?? 'medium' }}">
+                <div wire:key="preview-{{ $this->includeInstructions }}-{{ $this->includeAnswerKey }}-{{ $this->exportTemplate }}-{{ $this->fontSize }}">
                     {!! $this->previewHtml !!}
                 </div>
             </div>

@@ -24,6 +24,7 @@ class ExportQuiz extends Page
     public $exportTemplate = 'standard';
     public $fontSize = 'medium';
     public $previewHtml = '';
+    public $data = [];
 
     public function form(Form $form): Form
     {
@@ -80,7 +81,20 @@ class ExportQuiz extends Page
     public function mount(): void
     {
         parent::mount();
-        $this->generatePreview();
+        
+        // Initialize form data with defaults
+        $this->data = [
+            'includeInstructions' => false,
+            'includeAnswerKey' => false,
+            'exportTemplate' => 'standard',
+            'fontSize' => 'medium'
+        ];
+        
+        try {
+            $this->generatePreview();
+        } catch (\Exception $e) {
+            $this->previewHtml = '<div class="text-red-500">Preview initialization failed: ' . $e->getMessage() . '</div>';
+        }
     }
 
     protected function getFormActions(): array
@@ -126,10 +140,13 @@ class ExportQuiz extends Page
         try {
             $exportService = new ExamExportService();
             
-            $includeInstructions = $this->data['includeInstructions'] ?? false;
-            $includeAnswerKey = $this->data['includeAnswerKey'] ?? false;
-            $template = $this->data['exportTemplate'] ?? 'standard';
-            $fontSize = $this->data['fontSize'] ?? 'medium';
+            // Get form data safely
+            $formData = $this->form->getState();
+            
+            $includeInstructions = $formData['includeInstructions'] ?? false;
+            $includeAnswerKey = $formData['includeAnswerKey'] ?? false;
+            $template = $formData['exportTemplate'] ?? 'standard';
+            $fontSize = $formData['fontSize'] ?? 'medium';
             
             $this->previewHtml = $exportService->generatePreviewHtml(
                 $this->record,
@@ -151,10 +168,11 @@ class ExportQuiz extends Page
             $exportService = new ExamExportService();
             
             // Get all export settings
-            $includeInstructions = $this->data['includeInstructions'] ?? false;
-            $includeAnswerKey = $this->data['includeAnswerKey'] ?? false;
-            $template = $this->data['exportTemplate'] ?? 'standard';
-            $fontSize = $this->data['fontSize'] ?? 'medium';
+            $formData = $this->form->getState();
+            $includeInstructions = $formData['includeInstructions'] ?? false;
+            $includeAnswerKey = $formData['includeAnswerKey'] ?? false;
+            $template = $formData['exportTemplate'] ?? 'standard';
+            $fontSize = $formData['fontSize'] ?? 'medium';
             
             $result = $exportService->exportExamPaper(
                 $this->record,
