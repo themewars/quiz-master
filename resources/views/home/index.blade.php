@@ -918,8 +918,8 @@
                     <div class="pricing-grid">
 
                         @foreach ($plans as $plan)
-                            <div class="pricing-card animate-fade-in {{ $plan->badge_text ? 'popular' : '' }}">
-                                @if ($plan->badge_text)
+                            <div class="pricing-card animate-fade-in {{ (isset($plan->badge_text) && $plan->badge_text) ? 'popular' : '' }}">
+                                @if (isset($plan->badge_text) && $plan->badge_text)
                                     <span class="popular-badge">{{ $plan->badge_text }}</span>
                                 @endif
                                 <div class="pricing-header">
@@ -948,18 +948,20 @@
                                             <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                         <span>
-                                            @if($plan->exams_per_month == -1)
+                                            @if(isset($plan->exams_per_month) && $plan->exams_per_month == -1)
                                                 Unlimited exams
-                                            @else
+                                            @elseif(isset($plan->exams_per_month))
                                                 Create up to {{ $plan->exams_per_month }} exams
+                                            @else
+                                                Create up to {{ $plan->no_of_quiz ?? 0 }} exams
                                             @endif
                                         </span>
                                     </li>
 
                                     <!-- PDF Export -->
-                                    <li class="feature-item {{ $plan->pdf_export_enabled ? '' : 'disabled' }}">
+                                    <li class="feature-item {{ (isset($plan->pdf_export_enabled) && $plan->pdf_export_enabled) ? '' : 'disabled' }}">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            @if($plan->pdf_export_enabled)
+                                            @if(isset($plan->pdf_export_enabled) && $plan->pdf_export_enabled)
                                                 <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @else
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -969,9 +971,9 @@
                                     </li>
 
                                     <!-- Word Export -->
-                                    <li class="feature-item {{ $plan->word_export_enabled ? '' : 'disabled' }}">
+                                    <li class="feature-item {{ (isset($plan->word_export_enabled) && $plan->word_export_enabled) ? '' : 'disabled' }}">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            @if($plan->word_export_enabled)
+                                            @if(isset($plan->word_export_enabled) && $plan->word_export_enabled)
                                                 <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @else
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -981,9 +983,9 @@
                                     </li>
 
                                     <!-- YouTube Quiz -->
-                                    <li class="feature-item {{ $plan->youtube_quiz_enabled ? '' : 'disabled' }}">
+                                    <li class="feature-item {{ (isset($plan->youtube_quiz_enabled) && $plan->youtube_quiz_enabled) ? '' : 'disabled' }}">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            @if($plan->youtube_quiz_enabled)
+                                            @if(isset($plan->youtube_quiz_enabled) && $plan->youtube_quiz_enabled)
                                                 <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @else
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -993,9 +995,9 @@
                                     </li>
 
                                     <!-- PPT Quiz -->
-                                    <li class="feature-item {{ $plan->ppt_quiz_enabled ? '' : 'disabled' }}">
+                                    <li class="feature-item {{ (isset($plan->ppt_quiz_enabled) && $plan->ppt_quiz_enabled) ? '' : 'disabled' }}">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            @if($plan->ppt_quiz_enabled)
+                                            @if(isset($plan->ppt_quiz_enabled) && $plan->ppt_quiz_enabled)
                                                 <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @else
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -1005,9 +1007,9 @@
                                     </li>
 
                                     <!-- Answer Key -->
-                                    <li class="feature-item {{ $plan->answer_key_enabled ? '' : 'disabled' }}">
+                                    <li class="feature-item {{ (isset($plan->answer_key_enabled) && $plan->answer_key_enabled) ? '' : 'disabled' }}">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            @if($plan->answer_key_enabled)
+                                            @if(isset($plan->answer_key_enabled) && $plan->answer_key_enabled)
                                                 <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @else
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -1017,9 +1019,9 @@
                                     </li>
 
                                     <!-- White Label -->
-                                    <li class="feature-item {{ $plan->white_label_enabled ? '' : 'disabled' }}">
+                                    <li class="feature-item {{ (isset($plan->white_label_enabled) && $plan->white_label_enabled) ? '' : 'disabled' }}">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            @if($plan->white_label_enabled)
+                                            @if(isset($plan->white_label_enabled) && $plan->white_label_enabled)
                                                 <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @else
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -1029,9 +1031,9 @@
                                     </li>
 
                                     <!-- Priority Support -->
-                                    <li class="feature-item {{ $plan->priority_support_enabled ? '' : 'disabled' }}">
+                                    <li class="feature-item {{ (isset($plan->priority_support_enabled) && $plan->priority_support_enabled) ? '' : 'disabled' }}">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            @if($plan->priority_support_enabled)
+                                            @if(isset($plan->priority_support_enabled) && $plan->priority_support_enabled)
                                                 <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @else
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -1046,20 +1048,24 @@
                                             <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                         <span>
-                                            @php
-                                                $questionTypeLabels = [
-                                                    'mcq' => 'Multiple Choice Questions',
-                                                    'short_answer' => 'Short Answer',
-                                                    'long_answer' => 'Long Answer',
-                                                    'true_false' => 'True/False',
-                                                    'fill_blank' => 'Fill in the Blank',
-                                                ];
-                                                $displayTypes = [];
-                                                foreach (($plan->allowed_question_types ?? ['mcq']) as $type) {
-                                                    $displayTypes[] = $questionTypeLabels[$type] ?? ucfirst(str_replace('_', ' ', $type));
-                                                }
-                                            @endphp
-                                            {{ implode(', ', $displayTypes) }}
+                                            @if(isset($plan->allowed_question_types) && is_array($plan->allowed_question_types))
+                                                @php
+                                                    $questionTypeLabels = [
+                                                        'mcq' => 'Multiple Choice Questions',
+                                                        'short_answer' => 'Short Answer',
+                                                        'long_answer' => 'Long Answer',
+                                                        'true_false' => 'True/False',
+                                                        'fill_blank' => 'Fill in the Blank',
+                                                    ];
+                                                    $displayTypes = [];
+                                                    foreach ($plan->allowed_question_types as $type) {
+                                                        $displayTypes[] = $questionTypeLabels[$type] ?? ucfirst(str_replace('_', ' ', $type));
+                                                    }
+                                                @endphp
+                                                {{ implode(', ', $displayTypes) }}
+                                            @else
+                                                Multiple Choice Questions
+                                            @endif
                                         </span>
                                     </li>
                                 </ul>
