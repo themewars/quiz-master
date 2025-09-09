@@ -13,8 +13,8 @@
                 <div class="flex-1">
                     <h3 class="text-lg font-semibold text-gray-900">{{ $record->title }}</h3>
                     <p class="text-sm text-gray-500">
-                        {{ $record->questions()->count() }} Questions • 
-                        {{ $record->quizUser()->count() }} Participants • 
+                        {{ $record->questions()->count() }} Questions •
+                        {{ $record->quizUser()->count() }} Participants •
                         Created {{ $record->created_at->diffForHumans() }}
                     </p>
                 </div>
@@ -24,53 +24,6 @@
         <!-- Export Options -->
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Export Options</h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Include Instructions -->
-                <div class="flex items-center space-x-3">
-                    <input type="checkbox" 
-                           wire:model.live="includeInstructions" 
-                           id="includeInstructions"
-                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                    <label for="includeInstructions" class="text-sm font-medium text-gray-700">
-                        Include Instructions
-                    </label>
-                </div>
-                
-                <!-- Include Answer Key -->
-                <div class="flex items-center space-x-3">
-                    <input type="checkbox" 
-                           wire:model.live="includeAnswerKey" 
-                           id="includeAnswerKey"
-                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                    <label for="includeAnswerKey" class="text-sm font-medium text-gray-700">
-                        Include Answer Key
-                    </label>
-                </div>
-                
-                <!-- Export Template -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Export Template</label>
-                    <select wire:model.live="exportTemplate" 
-                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                        <option value="standard">Standard</option>
-                        <option value="academic">Academic</option>
-                        <option value="professional">Professional</option>
-                        <option value="minimal">Minimal</option>
-                    </select>
-                </div>
-                
-                <!-- Font Size -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
-                    <select wire:model.live="fontSize" 
-                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                        <option value="small">Small (10pt)</option>
-                        <option value="medium">Medium (12pt)</option>
-                        <option value="large">Large (14pt)</option>
-                    </select>
-                </div>
-            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <x-filament::button color="success" icon="heroicon-o-document-arrow-down" wire:click="exportPDF" class="w-full">
@@ -84,16 +37,6 @@
                 <x-filament::button color="warning" icon="heroicon-o-code-bracket" wire:click="exportHTML" class="w-full">
                     Export HTML
                 </x-filament::button>
-            </div>
-        </div>
-
-        <!-- Preview Section -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Live Preview</h3>
-            <div class="prose max-w-none border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <div wire:key="preview-{{ $this->includeInstructions }}-{{ $this->includeAnswerKey }}-{{ $this->exportTemplate }}-{{ $this->fontSize }}">
-                    {!! $this->previewHtml !!}
-                </div>
             </div>
         </div>
 

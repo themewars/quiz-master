@@ -5,10 +5,6 @@ namespace App\Filament\User\Resources\QuizzesResource\Pages;
 use App\Models\Quiz;
 use App\Services\ExamExportService;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
@@ -19,17 +15,6 @@ class ExportQuiz extends Page
     protected static string $view = 'filament.user.resources.quizzes-resource.pages.export-quiz';
 
     public Quiz $record;
-    public $includeInstructions = false;
-    public $includeAnswerKey = false;
-    public $exportTemplate = 'standard';
-    public $fontSize = 'medium';
-    public $previewHtml = '';
-    public $data = [];
-
-    public function form(Form $form): Form
-    {
-        return $form->schema([]);
-    }
 
     protected function getHeaderActions(): array
     {
@@ -38,40 +23,6 @@ class ExportQuiz extends Page
                 ->label('Back to Quiz')
                 ->url(fn() => $this->getResource()::getUrl('view', ['record' => $this->record]))
                 ->color('gray'),
-        ];
-    }
-
-    public function mount(): void
-    {
-        parent::mount();
-        
-        try {
-            $this->generatePreview();
-        } catch (\Exception $e) {
-            $this->previewHtml = '<div class="text-red-500">Preview initialization failed: ' . $e->getMessage() . '</div>';
-        }
-    }
-
-    protected function getFormActions(): array
-    {
-        return [
-            Action::make('export-pdf')
-                ->label('Export PDF')
-                ->color('success')
-                ->icon('heroicon-o-document-arrow-down')
-                ->action('exportPDF'),
-            
-            Action::make('export-word')
-                ->label('Export Word')
-                ->color('primary')
-                ->icon('heroicon-o-document-text')
-                ->action('exportWord'),
-            
-            Action::make('export-html')
-                ->label('Export HTML')
-                ->color('warning')
-                ->icon('heroicon-o-code-bracket')
-                ->action('exportHTML'),
         ];
     }
 
@@ -90,43 +41,6 @@ class ExportQuiz extends Page
         $this->exportExamPaper('html');
     }
 
-    public function generatePreview()
-    {
-        try {
-            $exportService = new ExamExportService();
-            
-            $this->previewHtml = $exportService->generatePreviewHtml(
-                $this->record,
-                $this->exportTemplate,
-                $this->includeInstructions,
-                $this->includeAnswerKey,
-                $this->fontSize
-            );
-        } catch (\Exception $e) {
-            $this->previewHtml = '<div class="text-red-500">Preview generation failed: ' . $e->getMessage() . '</div>';
-        }
-    }
-
-    public function updatedIncludeInstructions()
-    {
-        $this->generatePreview();
-    }
-
-    public function updatedIncludeAnswerKey()
-    {
-        $this->generatePreview();
-    }
-
-    public function updatedExportTemplate()
-    {
-        $this->generatePreview();
-    }
-
-    public function updatedFontSize()
-    {
-        $this->generatePreview();
-    }
-
     private function exportExamPaper($format)
     {
         try {
@@ -134,19 +48,13 @@ class ExportQuiz extends Page
             
             $exportService = new ExamExportService();
             
-            // Get all export settings
-            $includeInstructions = $this->includeInstructions;
-            $includeAnswerKey = $this->includeAnswerKey;
-            $template = $this->exportTemplate;
-            $fontSize = $this->fontSize;
-            
             $result = $exportService->exportExamPaper(
                 $this->record,
                 $format,
-                $template,
-                $includeInstructions,
-                $includeAnswerKey,
-                $fontSize
+                'standard',
+                false, // includeInstructions
+                false, // includeAnswerKey
+                'medium' // fontSize
             );
 
             Notification::make()
@@ -167,6 +75,7 @@ class ExportQuiz extends Page
                 'format' => $format,
                 'message' => $e->getMessage(),
             ]);
+            
             Notification::make()
                 ->danger()
                 ->title('Export Failed')
