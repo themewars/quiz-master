@@ -1078,12 +1078,12 @@
                                     @else
                                         @role('user')
                                             <a class="btn btn-primary full-width"
-                                                href="{{ route('filament.user.pages.choose-payment-type', ['plan' => $plan['id']]) }}">{{ __('messages.subscription.choose_plan') }}</a>
+                                                href="{{ route('filament.user.pages.choose-payment-type', ['plan' => $plan['id']]) }}">Join Now</a>
                                         @endrole
                                     @endif
                                 @else
                                     <a class="btn btn-primary full-width"
-                                        href="{{ route('filament.auth.auth.register') }}">{{ __('messages.home.sign_up_free') }}</a>
+                                        href="{{ route('filament.auth.auth.register') }}">Join Now</a>
                                 @endauth
 
                             </div>
