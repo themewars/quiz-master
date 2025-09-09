@@ -991,7 +991,7 @@
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @endif
                                         </svg>
-                                        <span>Website → Quiz</span>
+                                        <span>Website → Exam</span>
                                     </li>
 
                                     <!-- PPT Quiz -->
@@ -1003,7 +1003,7 @@
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @endif
                                         </svg>
-                                        <span>PPT → Quiz</span>
+                                        <span>PPT → Exam</span>
                                     </li>
 
                                     <!-- Answer Key -->
