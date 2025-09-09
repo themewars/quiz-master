@@ -310,7 +310,6 @@ class Plan extends Model
                         ->placeholder('Razorpay/Stripe plan ID')
                         ->helperText('External payment gateway plan identifier'),
                 ])->columns(2),
-            ])->columns(2)
         ];
     }
 }
