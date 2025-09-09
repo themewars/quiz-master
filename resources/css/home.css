@@ -1386,11 +1386,14 @@ section {
 
 .pricing-grid {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 24px;
     margin: 0 auto;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
 }
 
 .pricing-card {
@@ -1399,6 +1402,8 @@ section {
     border-radius: var(--radius-lg);
     padding: 2rem;
     position: relative;
+    min-width: 360px;
+    scroll-snap-align: start;
 }
 
 /* .pricing-card.popular::before {
