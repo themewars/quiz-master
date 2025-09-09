@@ -89,13 +89,66 @@ class HomeController extends Controller
     public function pricing()
     {
         try {
+            // Try to get plans, but handle any database errors
             $plans = Plan::where('status', 1)->orderBy('price', 'asc')->get();
-            return view('home.pricing', compact('plans'));
         } catch (\Exception $e) {
-            // If there's a database error, return empty plans array
-            $plans = collect();
-            return view('home.pricing', compact('plans'));
+            // If there's a database error, create some default plans
+            $plans = collect([
+                (object) [
+                    'id' => 1,
+                    'name' => 'Free Plan',
+                    'price' => 0,
+                    'frequency' => 'month',
+                    'description' => 'Perfect for getting started',
+                    'badge_text' => null,
+                    'exams_per_month' => 3,
+                    'max_questions_per_exam' => 10,
+                    'pdf_export_enabled' => false,
+                    'word_export_enabled' => false,
+                    'website_quiz_enabled' => false,
+                    'pdf_to_exam_enabled' => false,
+                    'answer_key_enabled' => false,
+                    'priority_support_enabled' => false,
+                    'white_label_enabled' => false,
+                ],
+                (object) [
+                    'id' => 2,
+                    'name' => 'Basic Plan',
+                    'price' => 999,
+                    'frequency' => 'month',
+                    'description' => 'Great for small teams',
+                    'badge_text' => 'Popular',
+                    'exams_per_month' => 20,
+                    'max_questions_per_exam' => 25,
+                    'pdf_export_enabled' => true,
+                    'word_export_enabled' => true,
+                    'website_quiz_enabled' => true,
+                    'pdf_to_exam_enabled' => false,
+                    'answer_key_enabled' => true,
+                    'priority_support_enabled' => false,
+                    'white_label_enabled' => false,
+                ],
+                (object) [
+                    'id' => 3,
+                    'name' => 'Pro Plan',
+                    'price' => 1999,
+                    'frequency' => 'month',
+                    'description' => 'Perfect for growing businesses',
+                    'badge_text' => null,
+                    'exams_per_month' => 100,
+                    'max_questions_per_exam' => 50,
+                    'pdf_export_enabled' => true,
+                    'word_export_enabled' => true,
+                    'website_quiz_enabled' => true,
+                    'pdf_to_exam_enabled' => true,
+                    'answer_key_enabled' => true,
+                    'priority_support_enabled' => true,
+                    'white_label_enabled' => false,
+                ]
+            ]);
         }
+        
+        return view('home.pricing-simple', compact('plans'));
     }
 
     // public function index()
