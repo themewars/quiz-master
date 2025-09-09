@@ -221,6 +221,7 @@
                 @endforeach
             </div>
 
+            @if($includeAnswerKey && count($answerKey) > 0)
             <div class="answer-key">
                 <div class="answer-key-title">🔑 ANSWER KEY</div>
                 @foreach($answerKey as $questionNumber => $correctAnswer)
@@ -229,6 +230,7 @@
                 </div>
                 @endforeach
             </div>
+            @endif
         </div>
 
         <div class="footer">
