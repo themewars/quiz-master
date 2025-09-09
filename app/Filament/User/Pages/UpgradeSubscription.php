@@ -46,8 +46,6 @@ class UpgradeSubscription extends Page
                         'currency_icon' => optional($plan->currency)->symbol ?? '$',
                         'trial_days' => $plan->trial_days,
                         'no_of_exam' => $plan->no_of_exam,
-                        'exams_per_month' => $plan->exams_per_month,
-                        'max_questions_per_exam' => $plan->max_questions_per_exam,
                         'assign_default' => $plan->assign_default,
                     ];
                 });

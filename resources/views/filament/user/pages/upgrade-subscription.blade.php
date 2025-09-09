@@ -45,11 +45,8 @@
                                         </li>
                                     @endif
                                     <li class="text-gray-900 font-medium text-sm">
-                                        {{ $plan['exams_per_month'] == -1 ? 'Unlimited' : $plan['exams_per_month'] }}
-                                        {{ __('messages.subscription.no_of_quiz') }} per month
-                                    </li>
-                                    <li class="text-gray-900 font-medium text-sm">
-                                        Up to {{ $plan['max_questions_per_exam'] == -1 ? 'Unlimited' : $plan['max_questions_per_exam'] }} questions per exam
+                                        {{ $plan['no_of_exam'] ?? $plan['no_of_quiz'] ?? '' }}
+                                        {{ __('messages.subscription.no_of_quiz') }}
                                     </li>
                                 </ul>
                                 @if ($currentActivePlan != null && $currentActivePlan->plan_id == $plan['id'] && !$currentActivePlan->isExpired())

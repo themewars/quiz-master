@@ -27,10 +27,7 @@ class HomeController extends Controller
 
             return redirect()->route('filament.auth.auth.login');
         }
-        // Show only active plans, ordered by price so Free appears first
-        $plans = Plan::where('status', 1)
-            ->orderBy('price', 'asc')
-            ->get();
+        $plans = Plan::take(3)->orderBy('updated_at', 'desc')->get();
         $testimonials = Testimonial::all();
         $quizzes = Quiz::with('category')->whereNotNull('category_id')
             ->where('status', 1)->where('is_show_home', 1)

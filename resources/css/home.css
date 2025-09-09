@@ -1385,11 +1385,11 @@ section {
 }
 
 .pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    align-items: stretch;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
     margin: 0 auto;
 }
 
@@ -1399,17 +1399,6 @@ section {
     border-radius: var(--radius-lg);
     padding: 2rem;
     position: relative;
-}
-
-/* Responsive column counts */
-@media (max-width: 1280px) {
-    .pricing-grid { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 1000px) {
-    .pricing-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 640px) {
-    .pricing-grid { grid-template-columns: 1fr; }
 }
 
 /* .pricing-card.popular::before {
@@ -1464,18 +1453,18 @@ section {
 }
 
 .pricing-header h3 {
-    font-size: 1.25rem;
-    margin-bottom: 0.25rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .price {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
-    margin-bottom: 0.125rem;
+    margin-bottom: 0.25rem;
 }
 
 .price .frequency {
-    font-size: 1.125rem;
+    font-size: 1.5rem;
     font-weight: 400;
     color: var(--slate-800);
 }
@@ -1489,7 +1478,6 @@ section {
 .pricing-header p {
     color: var(--slate-500);
     margin-bottom: 0;
-    font-size: 0.9rem;
 }
 
 .pricing-divider {
@@ -1505,8 +1493,7 @@ section {
 .feature-item {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
 }
 
 .feature-icon {

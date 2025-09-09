@@ -16,6 +16,14 @@ class ExportQuiz extends Page
 
     public Quiz $record;
     public $includeAnswerKey = false;
+    public $includeInstructions = true;
+    public $fontSize = 'medium';
+    public $template = 'standard';
+    public $pageSize = 'A4';
+    public $orientation = 'portrait';
+    public $compactMode = false;
+    public $includeStudentInfo = true;
+    public $includeTimestamp = true;
 
     protected function getHeaderActions(): array
     {
@@ -42,6 +50,32 @@ class ExportQuiz extends Page
         $this->exportExamPaper('html');
     }
 
+    public function exportCompactPDF()
+    {
+        $this->compactMode = true;
+        $this->fontSize = 'small';
+        $this->includeInstructions = false;
+        $this->exportExamPaper('pdf');
+    }
+
+    public function exportLargePDF()
+    {
+        $this->fontSize = 'large';
+        $this->exportExamPaper('pdf');
+    }
+
+    public function exportLandscapePDF()
+    {
+        $this->orientation = 'landscape';
+        $this->exportExamPaper('pdf');
+    }
+
+    public function exportA3PDF()
+    {
+        $this->pageSize = 'A3';
+        $this->exportExamPaper('pdf');
+    }
+
     private function exportExamPaper($format)
     {
         try {
@@ -52,10 +86,15 @@ class ExportQuiz extends Page
             $result = $exportService->exportExamPaper(
                 $this->record,
                 $format,
-                'standard',
-                false, // includeInstructions
-                $this->includeAnswerKey, // includeAnswerKey
-                'medium' // fontSize
+                $this->template,
+                $this->includeInstructions,
+                $this->includeAnswerKey,
+                $this->fontSize,
+                $this->pageSize,
+                $this->orientation,
+                $this->compactMode,
+                $this->includeStudentInfo,
+                $this->includeTimestamp
             );
 
             Notification::make()

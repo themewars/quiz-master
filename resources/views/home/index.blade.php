@@ -918,9 +918,9 @@
                     <div class="pricing-grid">
 
                         @foreach ($plans as $plan)
-                            <div class="pricing-card animate-fade-in {{ !empty($plan->badge_text) ? 'popular' : '' }}">
-                                @if (!empty($plan->badge_text))
-                                    <span class="popular-badge">{{ $plan->badge_text }}</span>
+                            <div class="pricing-card animate-fade-in {{ $loop->index == 1 ? 'popular' : '' }}">
+                                @if ($loop->index == 1)
+                                    <span class="popular-badge">{{ __('messages.home.popular') }}</span>
                                 @endif
                                 <div class="pricing-header">
                                     <h3>{{ $plan->name }}</h3>
@@ -942,142 +942,113 @@
 
                                 <div class="pricing-divider"></div>
                                 <ul class="pricing-features">
-                                    <!-- Exam Limits -->
                                     <li class="feature-item">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
                                             fill="none">
                                             <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
                                                 stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
-                                        <span>Create up to {{ $plan->exams_per_month == -1 ? 'Unlimited' : $plan->exams_per_month }} exams{{ $plan->exams_per_month != -1 ? ' per month' : '' }}</span>
+                                        <span>Create up to {{ $plan->no_of_quiz ?? 0 }} exams</span>
                                     </li>
-                                    
-                                    <!-- Question Limits -->
-                                    <li class="feature-item">
-                                        <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
-                                            fill="none">
-                                            <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        <span>Up to {{ $plan->max_questions_per_exam == -1 ? 'Unlimited' : $plan->max_questions_per_exam }} questions per exam</span>
-                                    </li>
-                                    
-                                    <!-- Question Types -->
-                                    <li class="feature-item">
-                                        <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
-                                            fill="none">
-                                            <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        @php
-                                            $typeLabels = [
-                                                'mcq' => 'MCQ',
-                                                'short_answer' => 'Short Answer',
-                                                'long_answer' => 'Long Answer',
-                                                'true_false' => 'True/False',
-                                                'fill_blank' => 'Fill in the Blank',
-                                            ];
-                                            $selectedTypes = collect($plan->allowed_question_types ?? ['mcq'])
-                                                ->map(fn($t) => $typeLabels[$t] ?? ucfirst(str_replace('_',' ', $t)))
-                                                ->implode(', ');
-                                        @endphp
-                                        <span>Question types: {{ $selectedTypes }}</span>
-                                    </li>
-                                    
-                                    <!-- PDF Export -->
-                                    <li class="feature-item {{ $plan->pdf_export_enabled ? '' : 'disabled' }}">
-                                        <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
-                                            fill="none">
-                                            @if($plan->pdf_export_enabled)
-                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                            @else
+                                    @if ($loop->index == 0)
+                                        <li class="feature-item disabled">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"
                                                     stroke-linecap="round" stroke-linejoin="round" />
-                                            @endif
-                                        </svg>
-                                        <span>PDF Export</span>
-                                    </li>
-                                    
-                                    <!-- Word Export -->
-                                    <li class="feature-item {{ $plan->word_export_enabled ? '' : 'disabled' }}">
-                                        <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
-                                            fill="none">
-                                            @if($plan->word_export_enabled)
-                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                            @else
+                                            </svg>
+                                            <span>Generate exams from PDFs/URLs</span>
+                                        </li>
+                                        <li class="feature-item disabled">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"
                                                     stroke-linecap="round" stroke-linejoin="round" />
-                                            @endif
-                                        </svg>
-                                        <span>Word Export</span>
-                                    </li>
-                                    
-                                    <!-- Answer Key -->
-                                    <li class="feature-item {{ $plan->answer_key_enabled ? '' : 'disabled' }}">
-                                        <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
-                                            fill="none">
-                                            @if($plan->answer_key_enabled)
-                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                            @else
+                                            </svg>
+                                            <span>Display leaderboard</span>
+                                        </li>
+                                        <li class="feature-item disabled">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"
                                                     stroke-linecap="round" stroke-linejoin="round" />
-                                            @endif
-                                        </svg>
-                                        <span>Answer Key Generation</span>
-                                    </li>
-                                    
-                                    <!-- YouTube Quiz -->
-                                    <li class="feature-item {{ $plan->youtube_quiz_enabled ? '' : 'disabled' }}">
-                                        <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
-                                            fill="none">
-                                            @if($plan->youtube_quiz_enabled)
-                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                            @else
+                                            </svg>
+                                            <span>Share results with participants</span>
+                                        </li>
+                                        <li class="feature-item disabled">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"
                                                     stroke-linecap="round" stroke-linejoin="round" />
-                                            @endif
-                                        </svg>
-                                        <span>YouTube → Quiz</span>
-                                    </li>
-                                    
-                                    <!-- White Label -->
-                                    @if($plan->white_label_enabled)
-                                    <li class="feature-item">
-                                        <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
-                                            fill="none">
-                                            <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        <span>White-label Branding</span>
-                                    </li>
-                                    @endif
-                                    
-                                    <!-- Multi-teacher -->
-                                    @if($plan->multi_teacher_enabled)
-                                    <li class="feature-item">
-                                        <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
-                                            fill="none">
-                                            <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        <span>Multi-teacher Accounts</span>
-                                    </li>
-                                    @endif
-                                    
-                                    <!-- Watermark -->
-                                    @if($plan->watermark_enabled)
-                                    <li class="feature-item">
-                                        <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
-                                            fill="none">
-                                            <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        <span>Watermark on Exports</span>
-                                    </li>
+                                            </svg>
+                                            <span>Email participants</span>
+                                        </li>
+                                    @elseif ($loop->index == 1)
+                                        <li class="feature-item">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
+                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            <span>Generate exams from PDFs/URLs</span>
+                                        </li>
+                                        <li class="feature-item">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
+                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            <span>Display leaderboard</span>
+                                        </li>
+                                        <li class="feature-item disabled">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
+                                                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            <span>Share results with participants</span>
+                                        </li>
+                                        <li class="feature-item disabled">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
+                                                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            <span>Email participants</span>
+                                        </li>
+                                    @else
+                                        <li class="feature-item">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
+                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            <span>Generate exams from PDFs/URLs</span>
+                                        </li>
+                                        <li class="feature-item">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
+                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            <span>Display leaderboard</span>
+                                        </li>
+                                        <li class="feature-item">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
+                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            <span>Share results with participants</span>
+                                        </li>
+                                        <li class="feature-item">
+                                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24"
+                                                fill="none">
+                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            <span>Email participants</span>
+                                        </li>
                                     @endif
                                 </ul>
 
