@@ -35,6 +35,23 @@ class HeroSection extends Page implements HasForms
         $generalSetting = Setting::first();
 
         if ($generalSetting !== null) {
+            // If hero data is empty, add default data
+            if (empty($generalSetting->hero_title) && empty($generalSetting->hero_sub_title) && empty($generalSetting->hero_description)) {
+                $generalSetting->update([
+                    'hero_sub_title' => 'Welcome to ExamGenerator AI',
+                    'hero_title' => 'Create Amazing Exams with AI',
+                    'hero_description' => 'Generate professional exams, quizzes, and assessments using advanced AI technology. Perfect for educators, trainers, and organizations.',
+                ]);
+                $generalSetting->refresh();
+            }
+            
+            // Debug: Log the data
+            \Log::info('Hero Section Data:', [
+                'hero_title' => $generalSetting->hero_title,
+                'hero_sub_title' => $generalSetting->hero_sub_title,
+                'hero_description' => $generalSetting->hero_description,
+            ]);
+            
             $this->form->fill($generalSetting->toArray());
         } else {
             $this->form->fill([]);
