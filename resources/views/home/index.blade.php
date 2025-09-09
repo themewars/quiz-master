@@ -969,7 +969,19 @@
                                             <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"
                                                 stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
-                                        <span>{{ count($plan->allowed_question_types ?? ['mcq']) }} question types</span>
+                                        @php
+                                            $typeLabels = [
+                                                'mcq' => 'MCQ',
+                                                'short_answer' => 'Short Answer',
+                                                'long_answer' => 'Long Answer',
+                                                'true_false' => 'True/False',
+                                                'fill_blank' => 'Fill in the Blank',
+                                            ];
+                                            $selectedTypes = collect($plan->allowed_question_types ?? ['mcq'])
+                                                ->map(fn($t) => $typeLabels[$t] ?? ucfirst(str_replace('_',' ', $t)))
+                                                ->implode(', ');
+                                        @endphp
+                                        <span>Question types: {{ $selectedTypes }}</span>
                                     </li>
                                     
                                     <!-- PDF Export -->
