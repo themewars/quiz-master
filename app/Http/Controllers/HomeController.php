@@ -88,8 +88,14 @@ class HomeController extends Controller
 
     public function pricing()
     {
-        $plans = Plan::where('status', 1)->orderBy('price', 'asc')->get();
-        return view('home.pricing', compact('plans'));
+        try {
+            $plans = Plan::where('status', 1)->orderBy('price', 'asc')->get();
+            return view('home.pricing', compact('plans'));
+        } catch (\Exception $e) {
+            // If there's a database error, return empty plans array
+            $plans = collect();
+            return view('home.pricing', compact('plans'));
+        }
     }
 
     // public function index()

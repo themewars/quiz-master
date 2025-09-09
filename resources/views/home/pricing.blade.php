@@ -21,24 +21,24 @@
         </div>
 
         <div class="pricing-grid">
-            @foreach($plans as $plan)
-            <div class="pricing-card {{ $plan->badge_text ? 'popular' : '' }}">
-                @if($plan->badge_text)
+            @forelse($plans as $plan)
+            <div class="pricing-card {{ isset($plan->badge_text) && $plan->badge_text ? 'popular' : '' }}">
+                @if(isset($plan->badge_text) && $plan->badge_text)
                     <div class="badge">{{ $plan->badge_text }}</div>
                 @endif
                 
                 <div class="plan-header">
-                    <h3>{{ $plan->name }}</h3>
+                    <h3>{{ $plan->name ?? 'Plan' }}</h3>
                     <div class="price">
-                        @if($plan->price == 0)
+                        @if(isset($plan->price) && $plan->price == 0)
                             <span class="currency">Free</span>
                         @else
                             <span class="currency">₹</span>
-                            <span class="amount">{{ number_format($plan->price) }}</span>
-                            <span class="period">/{{ $plan->frequency }}</span>
+                            <span class="amount">{{ number_format($plan->price ?? 0) }}</span>
+                            <span class="period">/{{ $plan->frequency ?? 'month' }}</span>
                         @endif
                     </div>
-                    <p class="description">{{ $plan->description }}</p>
+                    <p class="description">{{ $plan->description ?? 'No description available' }}</p>
                 </div>
 
                 <div class="plan-features">
@@ -119,14 +119,20 @@
                 </div>
 
                 <div class="plan-action">
-                    @if($plan->price == 0)
+                    @if(isset($plan->price) && $plan->price == 0)
                         <a href="{{ route('filament.auth.register') }}" class="btn btn-outline">Get Started Free</a>
                     @else
-                        <a href="{{ route('filament.user.pages.choose-payment-type', ['plan' => $plan->id]) }}" class="btn btn-primary">Choose Plan</a>
+                        <a href="{{ route('filament.user.pages.choose-payment-type', ['plan' => $plan->id ?? 1]) }}" class="btn btn-primary">Choose Plan</a>
                     @endif
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div class="no-plans">
+                <h3>No Plans Available</h3>
+                <p>Pricing plans are currently being updated. Please check back later or contact us for more information.</p>
+                <a href="{{ route('contact') }}" class="btn btn-primary">Contact Us</a>
+            </div>
+            @endforelse
         </div>
 
         <div class="pricing-faq">
@@ -363,6 +369,25 @@
 
 .faq-item a:hover {
     text-decoration: underline;
+}
+
+.no-plans {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.no-plans h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.no-plans p {
+    color: #666;
+    margin-bottom: 2rem;
 }
 </style>
 @endsection
