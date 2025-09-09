@@ -42,7 +42,8 @@ class Plan extends Model
         'max_questions_per_month',
         'pdf_export_enabled',
         'word_export_enabled',
-        'youtube_quiz_enabled',
+        'website_quiz_enabled',
+        'pdf_to_exam_enabled',
         'ppt_quiz_enabled',
         'answer_key_enabled',
         'white_label_enabled',
@@ -72,7 +73,8 @@ class Plan extends Model
         'max_questions_per_month' => 'integer',
         'pdf_export_enabled' => 'boolean',
         'word_export_enabled' => 'boolean',
-        'youtube_quiz_enabled' => 'boolean',
+        'website_quiz_enabled' => 'boolean',
+        'pdf_to_exam_enabled' => 'boolean',
         'ppt_quiz_enabled' => 'boolean',
         'answer_key_enabled' => 'boolean',
         'white_label_enabled' => 'boolean',
@@ -137,7 +139,8 @@ class Plan extends Model
         $featureMap = [
             'pdf_export' => 'pdf_export_enabled',
             'word_export' => 'word_export_enabled',
-            'youtube_quiz' => 'youtube_quiz_enabled',
+            'website_quiz' => 'website_quiz_enabled',
+            'pdf_to_exam' => 'pdf_to_exam_enabled',
             'ppt_quiz' => 'ppt_quiz_enabled',
             'answer_key' => 'answer_key_enabled',
             'white_label' => 'white_label_enabled',
@@ -262,13 +265,16 @@ class Plan extends Model
                         Toggle::make('word_export_enabled')
                             ->label('Word Export Enabled')
                             ->default(false),
-                        Toggle::make('youtube_quiz_enabled')
-                            ->label('YouTube Quiz Enabled')
+                        Toggle::make('website_quiz_enabled')
+                            ->label('Website to Exam Enabled')
+                            ->default(false),
+                        Toggle::make('pdf_to_exam_enabled')
+                            ->label('PDF to Exam Enabled')
                             ->default(false),
                         Toggle::make('ppt_quiz_enabled')
                             ->label('PPT Quiz Enabled')
                             ->default(false),
-                    ])->columns(4),
+                    ])->columns(5),
                     
                     Group::make([
                         Toggle::make('answer_key_enabled')

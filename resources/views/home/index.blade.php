@@ -982,10 +982,10 @@
                                         <span>Word Export</span>
                                     </li>
 
-                                    <!-- Website Quiz -->
-                                    <li class="feature-item {{ (isset($plan->youtube_quiz_enabled) && $plan->youtube_quiz_enabled) ? '' : 'disabled' }}">
+                                    <!-- Website to Exam -->
+                                    <li class="feature-item {{ (isset($plan->website_quiz_enabled) && $plan->website_quiz_enabled) ? '' : 'disabled' }}">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                            @if(isset($plan->youtube_quiz_enabled) && $plan->youtube_quiz_enabled)
+                                            @if(isset($plan->website_quiz_enabled) && $plan->website_quiz_enabled)
                                                 <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @else
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -994,7 +994,19 @@
                                         <span>Website → Exam</span>
                                     </li>
 
-                                    <!-- PPT Quiz -->
+                                    <!-- PDF to Exam -->
+                                    <li class="feature-item {{ (isset($plan->pdf_to_exam_enabled) && $plan->pdf_to_exam_enabled) ? '' : 'disabled' }}">
+                                        <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                            @if(isset($plan->pdf_to_exam_enabled) && $plan->pdf_to_exam_enabled)
+                                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                            @else
+                                                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                            @endif
+                                        </svg>
+                                        <span>PDF → Exam</span>
+                                    </li>
+
+                                    <!-- PPT to Exam -->
                                     <li class="feature-item {{ (isset($plan->ppt_quiz_enabled) && $plan->ppt_quiz_enabled) ? '' : 'disabled' }}">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                                             @if(isset($plan->ppt_quiz_enabled) && $plan->ppt_quiz_enabled)
