@@ -1385,15 +1385,12 @@ section {
 }
 
 .pricing-grid {
-    display: flex;
-    align-items: stretch;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
+    align-items: stretch;
+    justify-content: center;
     margin: 0 auto;
-    overflow-x: auto;
-    padding-bottom: 8px;
-    scroll-snap-type: x mandatory;
 }
 
 .pricing-card {
@@ -1402,8 +1399,17 @@ section {
     border-radius: var(--radius-lg);
     padding: 2rem;
     position: relative;
-    min-width: 360px;
-    scroll-snap-align: start;
+}
+
+/* Responsive column counts */
+@media (max-width: 1280px) {
+    .pricing-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 1000px) {
+    .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+    .pricing-grid { grid-template-columns: 1fr; }
 }
 
 /* .pricing-card.popular::before {
@@ -1458,18 +1464,18 @@ section {
 }
 
 .pricing-header h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.price {
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: 1.25rem;
     margin-bottom: 0.25rem;
 }
 
+.price {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.125rem;
+}
+
 .price .frequency {
-    font-size: 1.5rem;
+    font-size: 1.125rem;
     font-weight: 400;
     color: var(--slate-800);
 }
@@ -1483,6 +1489,7 @@ section {
 .pricing-header p {
     color: var(--slate-500);
     margin-bottom: 0;
+    font-size: 0.9rem;
 }
 
 .pricing-divider {
@@ -1498,7 +1505,8 @@ section {
 .feature-item {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
 }
 
 .feature-icon {
