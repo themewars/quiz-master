@@ -982,7 +982,7 @@
                                         <span>Word Export</span>
                                     </li>
 
-                                    <!-- YouTube Quiz -->
+                                    <!-- Website Quiz -->
                                     <li class="feature-item {{ (isset($plan->youtube_quiz_enabled) && $plan->youtube_quiz_enabled) ? '' : 'disabled' }}">
                                         <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                                             @if(isset($plan->youtube_quiz_enabled) && $plan->youtube_quiz_enabled)
@@ -991,7 +991,7 @@
                                                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             @endif
                                         </svg>
-                                        <span>YouTube → Quiz</span>
+                                        <span>Website → Quiz</span>
                                     </li>
 
                                     <!-- PPT Quiz -->
