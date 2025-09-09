@@ -21,7 +21,7 @@ class ExportQuiz extends Page
     {
         return [
             Action::make('back')
-                ->label('Back to Quiz')
+                ->label('Back to Exam')
                 ->url(fn() => $this->getResource()::getUrl('view', ['record' => $this->record]))
                 ->color('gray'),
         ];

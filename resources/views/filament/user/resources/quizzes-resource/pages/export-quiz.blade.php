@@ -14,7 +14,7 @@
                     <h3 class="text-lg font-semibold text-gray-900">{{ $record->title }}</h3>
                     <p class="text-sm text-gray-500">
                         {{ $record->questions()->count() }} Questions •
-                        {{ $record->quizUser()->count() }} Participants •
+                        {{ $record->quizUser()->count() }} Students •
                         Created {{ $record->created_at->diffForHumans() }}
                     </p>
                 </div>
