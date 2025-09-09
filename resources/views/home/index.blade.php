@@ -918,9 +918,9 @@
                     <div class="pricing-grid">
 
                         @foreach ($plans as $plan)
-                            <div class="pricing-card animate-fade-in {{ $loop->index == 1 ? 'popular' : '' }}">
-                                @if ($loop->index == 1)
-                                    <span class="popular-badge">{{ __('messages.home.popular') }}</span>
+                            <div class="pricing-card animate-fade-in {{ !empty($plan->badge_text) ? 'popular' : '' }}">
+                                @if (!empty($plan->badge_text))
+                                    <span class="popular-badge">{{ $plan->badge_text }}</span>
                                 @endif
                                 <div class="pricing-header">
                                     <h3>{{ $plan->name }}</h3>
