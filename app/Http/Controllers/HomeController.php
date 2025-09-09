@@ -27,7 +27,7 @@ class HomeController extends Controller
 
             return redirect()->route('filament.auth.auth.login');
         }
-        $plans = Plan::take(3)->orderBy('updated_at', 'desc')->get();
+        $plans = Plan::where('status', 1)->take(3)->orderBy('updated_at', 'desc')->get();
         $testimonials = Testimonial::all();
         $quizzes = Quiz::with('category')->whereNotNull('category_id')
             ->where('status', 1)->where('is_show_home', 1)
