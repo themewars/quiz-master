@@ -67,6 +67,10 @@ Route::middleware('SetLanguage')->group(function () {
     Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
     Route::get('/privacy', [HomeController::class, 'policy'])->name('policy');
     Route::get('/cookie', [HomeController::class, 'cookie'])->name('cookie');
+    Route::get('/refund', [HomeController::class, 'refund'])->name('refund');
+    Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+    Route::get('/about', [HomeController::class, 'about'])->name('about');
+    Route::get('/pricing', [HomeController::class, 'pricing'])->name('pricing');
 
     // Route of Poll votes
     Route::get('p/{code}', [PollResultController::class, 'create'])->name('poll.create');

@@ -67,6 +67,31 @@ class HomeController extends Controller
         return view('home.cookie', compact('cookie'));
     }
 
+    public function refund()
+    {
+        $seeting = Setting::first();
+
+        $refund = $seeting->refund_policy ?? '';
+
+        return view('home.refund', compact('refund'));
+    }
+
+    public function contact()
+    {
+        return view('home.contact');
+    }
+
+    public function about()
+    {
+        return view('home.about');
+    }
+
+    public function pricing()
+    {
+        $plans = Plan::where('status', 1)->orderBy('price', 'asc')->get();
+        return view('home.pricing', compact('plans'));
+    }
+
     // public function index()
     // {
     //     /** @var User $user */

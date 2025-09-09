@@ -20,6 +20,15 @@ class SitemapController extends Controller
             
             // Exam showcase (exists)
             $sitemap .= $this->addUrl(url('/exams'), now(), '0.8', 'weekly');
+            
+            // Pricing page (exists)
+            $sitemap .= $this->addUrl(url('/pricing'), now(), '0.8', 'weekly');
+            
+            // About page (exists)
+            $sitemap .= $this->addUrl(url('/about'), now(), '0.7', 'monthly');
+            
+            // Contact page (exists)
+            $sitemap .= $this->addUrl(url('/contact'), now(), '0.6', 'monthly');
         
             // Public quizzes (if table exists)
             try {
@@ -59,6 +68,7 @@ class SitemapController extends Controller
             $sitemap .= $this->addUrl(url('/terms'), now(), '0.5', 'monthly');
             $sitemap .= $this->addUrl(url('/privacy'), now(), '0.5', 'monthly');
             $sitemap .= $this->addUrl(url('/cookie'), now(), '0.5', 'monthly');
+            $sitemap .= $this->addUrl(url('/refund'), now(), '0.5', 'monthly');
         
             $sitemap .= '</urlset>';
             
@@ -71,9 +81,13 @@ class SitemapController extends Controller
             $basicSitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
             $basicSitemap .= $this->addUrl(url('/'), now(), '1.0', 'daily');
             $basicSitemap .= $this->addUrl(url('/exams'), now(), '0.8', 'weekly');
+            $basicSitemap .= $this->addUrl(url('/pricing'), now(), '0.8', 'weekly');
+            $basicSitemap .= $this->addUrl(url('/about'), now(), '0.7', 'monthly');
+            $basicSitemap .= $this->addUrl(url('/contact'), now(), '0.6', 'monthly');
             $basicSitemap .= $this->addUrl(url('/terms'), now(), '0.5', 'monthly');
             $basicSitemap .= $this->addUrl(url('/privacy'), now(), '0.5', 'monthly');
             $basicSitemap .= $this->addUrl(url('/cookie'), now(), '0.5', 'monthly');
+            $basicSitemap .= $this->addUrl(url('/refund'), now(), '0.5', 'monthly');
             $basicSitemap .= '</urlset>';
             
             return response($basicSitemap, 200)

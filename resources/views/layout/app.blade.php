@@ -117,22 +117,23 @@
                     </div>
                 </div>
 
-                @if (getSetting() && (getSetting()->terms_and_condition || getSetting()->privacy_policy || getSetting()->cookie_policy))
-                    <div class="footer-links">
-                        <ul>
-                            @if (getSetting() && getSetting()->terms_and_condition)
-                                <li><a href="{{ route('terms') }}">{{ __('messages.home.terms_and_conditions') }}</a>
-                                </li>
-                            @endif
-                            @if (getSetting() && getSetting()->privacy_policy)
-                                <li><a href="{{ route('policy') }}">{{ __('messages.home.privacy_policy') }}</a></li>
-                            @endif
-                            @if (getSetting() && getSetting()->cookie_policy)
-                                <li><a href="{{ route('cookie') }}">{{ __('messages.home.cookie_policy') }}</a></li>
-                            @endif
-                        </ul>
-                    </div>
-                @endif
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="{{ route('about') }}">About Us</a></li>
+                        <li><a href="{{ route('pricing') }}">Pricing</a></li>
+                        <li><a href="{{ route('contact') }}">Contact</a></li>
+                        @if (getSetting() && getSetting()->terms_and_condition)
+                            <li><a href="{{ route('terms') }}">{{ __('messages.home.terms_and_conditions') }}</a></li>
+                        @endif
+                        @if (getSetting() && getSetting()->privacy_policy)
+                            <li><a href="{{ route('policy') }}">{{ __('messages.home.privacy_policy') }}</a></li>
+                        @endif
+                        @if (getSetting() && getSetting()->cookie_policy)
+                            <li><a href="{{ route('cookie') }}">{{ __('messages.home.cookie_policy') }}</a></li>
+                        @endif
+                        <li><a href="{{ route('refund') }}">Refund Policy</a></li>
+                    </ul>
+                </div>
             </div>
 
             <div class="footer-bottom">
