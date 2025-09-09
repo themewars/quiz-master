@@ -4,6 +4,7 @@ namespace App\Filament\Clusters\Settings\Resources\LegalPageResource\Pages;
 
 use App\Filament\Clusters\Settings\Resources\LegalPageResource;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Actions;
 
 class ManageLegalPages extends ManageRecords
 {
@@ -12,7 +13,7 @@ class ManageLegalPages extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Resources\Pages\ListRecords\CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }
