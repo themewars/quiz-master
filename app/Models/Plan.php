@@ -37,6 +37,22 @@ class Plan extends Model
         'assign_default',
         'status',
         'currency_id',
+        // New advanced plan fields
+        'exams_per_month',
+        'max_questions_per_exam',
+        'max_questions_per_month',
+        'pdf_export_enabled',
+        'word_export_enabled',
+        'youtube_quiz_enabled',
+        'ppt_quiz_enabled',
+        'answer_key_enabled',
+        'white_label_enabled',
+        'watermark_enabled',
+        'priority_support_enabled',
+        'multi_teacher_enabled',
+        'allowed_question_types',
+        'badge_text',
+        'payment_gateway_plan_id',
     ];
 
     /**
@@ -45,7 +61,6 @@ class Plan extends Model
      * @var array
      */
     protected $casts = [
-
         'name' => 'string',
         'frequency' => 'integer',
         'no_of_exam' => 'integer',
@@ -53,11 +68,86 @@ class Plan extends Model
         'trial_days' => 'integer',
         'assign_default' => 'boolean',
         'status' => 'boolean',
+        // New advanced plan fields
+        'exams_per_month' => 'integer',
+        'max_questions_per_exam' => 'integer',
+        'max_questions_per_month' => 'integer',
+        'pdf_export_enabled' => 'boolean',
+        'word_export_enabled' => 'boolean',
+        'youtube_quiz_enabled' => 'boolean',
+        'ppt_quiz_enabled' => 'boolean',
+        'answer_key_enabled' => 'boolean',
+        'white_label_enabled' => 'boolean',
+        'watermark_enabled' => 'boolean',
+        'priority_support_enabled' => 'boolean',
+        'multi_teacher_enabled' => 'boolean',
+        'allowed_question_types' => 'array',
     ];
 
     public function currency()
     {
         return $this->belongsTo(Currency::class);
+    }
+
+    /**
+     * Check if plan allows unlimited exams
+     */
+    public function hasUnlimitedExams(): bool
+    {
+        return $this->exams_per_month === -1;
+    }
+
+    /**
+     * Check if plan allows unlimited questions per exam
+     */
+    public function hasUnlimitedQuestionsPerExam(): bool
+    {
+        return $this->max_questions_per_exam === -1;
+    }
+
+    /**
+     * Check if plan allows unlimited questions per month
+     */
+    public function hasUnlimitedQuestionsPerMonth(): bool
+    {
+        return $this->max_questions_per_month === -1;
+    }
+
+    /**
+     * Get allowed question types for this plan
+     */
+    public function getAllowedQuestionTypes(): array
+    {
+        return $this->allowed_question_types ?? ['mcq'];
+    }
+
+    /**
+     * Check if plan allows specific question type
+     */
+    public function allowsQuestionType(string $type): bool
+    {
+        return in_array($type, $this->getAllowedQuestionTypes());
+    }
+
+    /**
+     * Check if plan allows specific feature
+     */
+    public function allowsFeature(string $feature): bool
+    {
+        $featureMap = [
+            'pdf_export' => 'pdf_export_enabled',
+            'word_export' => 'word_export_enabled',
+            'youtube_quiz' => 'youtube_quiz_enabled',
+            'ppt_quiz' => 'ppt_quiz_enabled',
+            'answer_key' => 'answer_key_enabled',
+            'white_label' => 'white_label_enabled',
+            'watermark' => 'watermark_enabled',
+            'priority_support' => 'priority_support_enabled',
+            'multi_teacher' => 'multi_teacher_enabled',
+        ];
+
+        $field = $featureMap[$feature] ?? null;
+        return $field ? $this->$field : false;
     }
 
     public static function getForm()
@@ -95,6 +185,24 @@ class Plan extends Model
                     ->validationAttribute(__('messages.plan.no_of_quizzes'))
                     ->minValue(1)
                     ->required(),
+                TextInput::make('exams_per_month')
+                    ->numeric()
+                    ->label('Exams per Month (-1 for unlimited):')
+                    ->placeholder('Exams per month')
+                    ->default(3)
+                    ->helperText('Number of exams allowed per month. Use -1 for unlimited.'),
+                TextInput::make('max_questions_per_exam')
+                    ->numeric()
+                    ->label('Max Questions per Exam:')
+                    ->placeholder('Max questions per exam')
+                    ->default(10)
+                    ->minValue(1)
+                    ->required(),
+                TextInput::make('max_questions_per_month')
+                    ->numeric()
+                    ->label('Max Questions per Month (optional):')
+                    ->placeholder('Max questions per month')
+                    ->helperText('Leave empty for no monthly question limit.'),
                 Select::make('currency_id')
                     ->label(__('messages.currency.currency') . ':')
                     ->placeholder(__('messages.currency.currency'))
@@ -135,6 +243,72 @@ class Plan extends Model
                                     ->send();
                             }
                         }),
+                ])->columns(2),
+            ])->columns(2),
+            
+            // Feature Toggles Section
+            Section::make('Plan Features')
+                ->schema([
+                    Group::make([
+                        Toggle::make('pdf_export_enabled')
+                            ->label('PDF Export')
+                            ->default(false),
+                        Toggle::make('word_export_enabled')
+                            ->label('Word Export')
+                            ->default(false),
+                        Toggle::make('youtube_quiz_enabled')
+                            ->label('YouTube → Quiz')
+                            ->default(false),
+                        Toggle::make('ppt_quiz_enabled')
+                            ->label('PPT → Quiz')
+                            ->default(false),
+                        Toggle::make('answer_key_enabled')
+                            ->label('Answer Key Generation')
+                            ->default(false),
+                        Toggle::make('white_label_enabled')
+                            ->label('White-label Branding')
+                            ->default(false),
+                    ])->columns(3),
+                    Group::make([
+                        Toggle::make('watermark_enabled')
+                            ->label('Watermark on Exports')
+                            ->default(true),
+                        Toggle::make('priority_support_enabled')
+                            ->label('Priority Support')
+                            ->default(false),
+                        Toggle::make('multi_teacher_enabled')
+                            ->label('Multi-teacher Accounts')
+                            ->default(false),
+                    ])->columns(3),
+                ]),
+            
+            // Question Types Section
+            Section::make('Allowed Question Types')
+                ->schema([
+                    Select::make('allowed_question_types')
+                        ->label('Question Types')
+                        ->multiple()
+                        ->options([
+                            'mcq' => 'Multiple Choice Questions',
+                            'short_answer' => 'Short Answer',
+                            'long_answer' => 'Long Answer',
+                            'true_false' => 'True/False',
+                            'fill_blank' => 'Fill in the Blank',
+                        ])
+                        ->default(['mcq'])
+                        ->required(),
+                ]),
+            
+            // Plan Metadata Section
+            Section::make('Plan Metadata')
+                ->schema([
+                    TextInput::make('badge_text')
+                        ->label('Badge Text (e.g., "Recommended")')
+                        ->placeholder('Plan badge text'),
+                    TextInput::make('payment_gateway_plan_id')
+                        ->label('Payment Gateway Plan ID')
+                        ->placeholder('Razorpay/Stripe plan ID')
+                        ->helperText('External payment gateway plan identifier'),
                 ])->columns(2),
             ])->columns(2)
         ];
