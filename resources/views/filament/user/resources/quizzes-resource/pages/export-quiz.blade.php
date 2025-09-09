@@ -25,6 +25,22 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Export Options</h3>
             
+            <!-- Include Answer Key Toggle -->
+            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center space-x-3">
+                    <input type="checkbox" 
+                           wire:model="includeAnswerKey" 
+                           id="includeAnswerKey"
+                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="includeAnswerKey" class="text-sm font-medium text-gray-700">
+                        Include Answer Key in Export
+                    </label>
+                </div>
+                <p class="text-xs text-gray-500 mt-1 ml-7">
+                    Check this to include correct answers with the exam paper
+                </p>
+            </div>
+            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <x-filament::button color="success" icon="heroicon-o-document-arrow-down" wire:click="exportPDF" class="w-full">
                     Export PDF

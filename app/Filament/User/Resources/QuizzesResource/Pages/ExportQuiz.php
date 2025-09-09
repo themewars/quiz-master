@@ -15,6 +15,7 @@ class ExportQuiz extends Page
     protected static string $view = 'filament.user.resources.quizzes-resource.pages.export-quiz';
 
     public Quiz $record;
+    public $includeAnswerKey = false;
 
     protected function getHeaderActions(): array
     {
@@ -53,7 +54,7 @@ class ExportQuiz extends Page
                 $format,
                 'standard',
                 false, // includeInstructions
-                false, // includeAnswerKey
+                $this->includeAnswerKey, // includeAnswerKey
                 'medium' // fontSize
             );
 
