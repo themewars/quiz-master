@@ -1385,12 +1385,27 @@ section {
 }
 
 .pricing-grid {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
     margin: 0 auto;
+    align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+    .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        max-width: 400px;
+    }
 }
 
 .pricing-card {
@@ -1399,6 +1414,16 @@ section {
     border-radius: var(--radius-lg);
     padding: 2rem;
     position: relative;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.pricing-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* .pricing-card.popular::before {
@@ -1488,6 +1513,7 @@ section {
 
 .pricing-features {
     margin-bottom: 2rem;
+    flex-grow: 1;
 }
 
 .feature-item {
@@ -1527,7 +1553,40 @@ section {
 .enterprise-card p {
     max-width: 32rem;
     margin: 0 auto 1.5rem;
-    color: var(--slate-600);
+}
+
+/* Button Styling for Pricing Cards */
+.pricing-card .btn {
+    margin-top: auto;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+.pricing-card .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--purple));
+    color: white;
+}
+
+.pricing-card .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-dark), var(--purple));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(133, 149, 255, 0.4);
+}
+
+.pricing-card .btn-primary:disabled {
+    background: var(--slate-300);
+    color: var(--slate-500);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* FAQ Section */
