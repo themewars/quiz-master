@@ -28,6 +28,16 @@ class LegalPages extends Page implements HasForms
 
     protected static ?int $navigationSort = AdminSettingSidebar::LEGAL_PAGES->value;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.setting.legal_pages');
+    }
+
+    public function getTitle(): string
+    {
+        return __('messages.setting.legal_pages');
+    }
+
     public function mount()
     {
         $seeting = Setting::first();
