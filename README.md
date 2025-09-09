@@ -1,4 +1,4 @@
-# 🎓 QuizWhiz AI v1.2.0
+# 🎓 ExamGenerator AI v1.2.0
 
 A powerful AI-powered exam and quiz generation platform built with Laravel and Filament.
 
@@ -62,7 +62,7 @@ A powerful AI-powered exam and quiz generation platform built with Laravel and F
 
 ### Environment Variables (.env)
 ```env
-APP_NAME="QuizWhiz AI"
+APP_NAME="ExamGenerator AI"
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://yourdomain.com
@@ -211,7 +211,7 @@ This project is licensed under the MIT License.
 
 ## 🎉 Success!
 
-Your QuizWhiz AI is now ready to generate amazing exams and quizzes!
+Your ExamGenerator AI is now ready to generate amazing exams and quizzes!
 
 **Default Admin Credentials:**
 - Email: admin@quizwhiz.ai

@@ -1,4 +1,4 @@
-# 🚀 QuizWhiz AI - Complete Setup Guide
+# 🚀 ExamGenerator AI - Complete Setup Guide
 
 ## ✅ **What's Already Done**
 
@@ -193,7 +193,7 @@ php artisan serve
 
 ## 🚀 **Ready for Production**
 
-Your **QuizWhiz AI** platform is **95% ready**! 
+Your **ExamGenerator AI** platform is **95% ready**! 
 
 ### **What Works Right Now:**
 1. **Upload PDF** → AI generates questions → Export exam paper ✅
@@ -243,7 +243,7 @@ php artisan serve
 
 ## 🎉 **Congratulations!**
 
-Your **QuizWhiz AI** platform is ready with:
+Your **ExamGenerator AI** platform is ready with:
 
 - ✅ **AI-Powered Question Generation**
 - ✅ **Multiple Input Sources** (PDF, URL, Text, Image)
