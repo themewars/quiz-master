@@ -32,7 +32,7 @@ class HeroSection extends Page implements HasForms
 
     public function mount(): void
     {
-        $generalSetting = getSetting();
+        $generalSetting = Setting::first();
 
         if ($generalSetting !== null) {
             $this->form->fill($generalSetting->toArray());
@@ -43,7 +43,7 @@ class HeroSection extends Page implements HasForms
 
     public function form(Form $form): Form
     {
-        $form->model = getSetting();
+        $form->model = Setting::first();
 
         return $form
             ->schema([
@@ -89,8 +89,15 @@ class HeroSection extends Page implements HasForms
     public function save(): void
     {
         try {
-            $this->form->getState();
-            getSetting()->update($this->form->getState());
+            $data = $this->form->getState();
+            $setting = Setting::first();
+            
+            if ($setting) {
+                $setting->update($data);
+            } else {
+                Setting::create($data);
+            }
+            
             Notification::make()
                 ->success()
                 ->title(__('messages.setting.hero_section_updated_success'))
