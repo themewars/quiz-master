@@ -40,11 +40,9 @@ class QuizzesResource extends Resource implements HasForms
 
     public static function canCreate(): bool
     {
-        $totalExams = Quiz::where('user_id', auth()->id())->count();
-        if (getActiveSubscription() && getActiveSubscription()->plan && getActiveSubscription()->plan->no_of_exam > 0) {
-            return $totalExams < getActiveSubscription()->plan->no_of_exam;
-        }
-        return true;
+        $planValidation = app(\App\Services\PlanValidationService::class);
+        $validation = $planValidation->canCreateExam();
+        return $validation['allowed'];
     }
 
     public static function form(Form $form): Form
