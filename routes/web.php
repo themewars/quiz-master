@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\PollResultController;
 use App\Http\Controllers\RazorpayController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SubscriptionController;
@@ -71,6 +72,8 @@ Route::middleware('SetLanguage')->group(function () {
     Route::get('p/{code}', [PollResultController::class, 'create'])->name('poll.create');
     Route::post('p/vote-poll', [PollResultController::class, 'store'])->name('store.poll_result');
     
+    // Sitemap route
+    Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
     
 });
 
