@@ -1412,7 +1412,7 @@ section {
     background-color: white;
     border: 1px solid var(--slate-200);
     border-radius: var(--radius-lg);
-    padding: 1.25rem;
+    padding: 0.8rem;
     position: relative;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -1447,12 +1447,12 @@ section {
     right: 16px;
     background: linear-gradient(to right, var(--primary), var(--purple));
     color: white;
-    padding: 0.3rem 0.5rem;
+    padding: 0.2rem 0.4rem;
     border-radius: 0 0 8px 8px;
     clip-path: polygon(0 0, 100% 0, 84% 100%, 17% 100%);
-    width: 100px;
+    width: 80px;
     text-align: center;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     font-weight: 600;
 }
 
@@ -1476,29 +1476,29 @@ section {
 }
 
 .pricing-header {
-    margin-bottom: 1rem;
+    margin-bottom: 0.7rem;
 }
 
 .pricing-header h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
     font-weight: 600;
 }
 
 .price {
-    font-size: 1.8rem;
+    font-size: 1.3rem;
     font-weight: 700;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.1rem;
 }
 
 .price .frequency {
-    font-size: 1rem;
+    font-size: 0.75rem;
     font-weight: 400;
     color: var(--slate-800);
 }
 
 .price-period {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 400;
     color: var(--slate-600);
 }
@@ -1506,38 +1506,38 @@ section {
 .pricing-header p {
     color: var(--slate-500);
     margin-bottom: 0;
-    font-size: 0.8rem;
-    line-height: 1.3;
+    font-size: 0.65rem;
+    line-height: 1.2;
 }
 
 .pricing-divider {
     height: 1px;
     background-color: var(--slate-200);
-    margin: 1rem 0;
+    margin: 0.7rem 0;
 }
 
 .pricing-features {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     flex-grow: 1;
 }
 
 .feature-item {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
 }
 
 .feature-item span {
-    font-size: 0.75rem;
-    line-height: 1.3;
+    font-size: 0.65rem;
+    line-height: 1.2;
 }
 
 .feature-icon {
     color: var(--green);
-    margin-right: 0.5rem;
-    margin-top: 0.15rem;
-    width: 16px;
-    height: 16px;
+    margin-right: 0.4rem;
+    margin-top: 0.1rem;
+    width: 12px;
+    height: 12px;
     flex-shrink: 0;
 }
 
@@ -1571,10 +1571,10 @@ section {
 /* Button Styling for Pricing Cards */
 .pricing-card .btn {
     margin-top: auto;
-    padding: 0.6rem 1rem;
+    padding: 0.4rem 0.8rem;
     border-radius: var(--radius);
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     text-align: center;
     transition: all 0.2s ease;
     border: none;
