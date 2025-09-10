@@ -33,9 +33,10 @@ class EditQuizzes extends EditRecord
             '-text-tab' => Quiz::TEXT_TYPE,
             '-url-tab' => Quiz::URL_TYPE,
             '-upload-tab' => Quiz::UPLOAD_TYPE,
+            '-image-tab' => Quiz::IMAGE_TYPE,
         ];
 
-        $tabType[$tab] ?? Quiz::TEXT_TYPE;
+        return $tabType[$tab] ?? Quiz::TEXT_TYPE;
     }
 
     // protected function afterValidate(): void
@@ -300,6 +301,19 @@ class EditQuizzes extends EditRecord
                 $description = pdfToText($filePath);
             } elseif ($extension === 'docx') {
                 $description = docxToText($filePath);
+            }
+        }
+
+        // Handle image processing for OCR
+        if (isset($data['image_upload']) && is_array($data['image_upload'])) {
+            foreach ($data['image_upload'] as $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $extractedText = imageToText($file->getPathname());
+                    if ($extractedText) {
+                        $description = $extractedText;
+                        break; // Use first successfully processed image
+                    }
+                }
             }
         }
 

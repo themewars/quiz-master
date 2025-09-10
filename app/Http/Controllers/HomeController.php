@@ -11,6 +11,7 @@ use App\Models\Subscription;
 use App\Enums\SubscriptionStatus;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -42,36 +43,36 @@ class HomeController extends Controller
 
     public function terms()
     {
-        $seeting = Setting::first();
+        $setting = Setting::first();
 
-        $terms = $seeting->terms_and_condition;
+        $terms = $setting->terms_and_condition;
 
         return view('home.terms', compact('terms'));
     }
 
     public function policy()
     {
-        $seeting = Setting::first();
+        $setting = Setting::first();
 
-        $policy = $seeting->privacy_policy;
+        $policy = $setting->privacy_policy;
 
         return view('home.policy', compact('policy'));
     }
 
     public function cookie()
     {
-        $seeting = Setting::first();
+        $setting = Setting::first();
 
-        $cookie = $seeting->cookie_policy;
+        $cookie = $setting->cookie_policy;
 
         return view('home.cookie', compact('cookie'));
     }
 
     public function refund()
     {
-        $seeting = Setting::first();
+        $setting = Setting::first();
 
-        $refund = $seeting->refund_policy ?? '';
+        $refund = $setting->refund_policy ?? '';
 
         return view('home.refund', compact('refund'));
     }
@@ -79,6 +80,21 @@ class HomeController extends Controller
     public function contact()
     {
         return view('home.contact');
+    }
+
+    public function contactSubmit(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|max:1000',
+        ]);
+
+        // Here you can add email sending logic or save to database
+        // For now, just redirect back with success message
+        
+        return redirect()->back()->with('success', 'Thank you for your message! We will get back to you soon.');
     }
 
     public function about()

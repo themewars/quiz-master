@@ -21,6 +21,9 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Plan;
+use App\Models\BalanceTransaction;
+use App\Models\Subscription;
 
 class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar, MustVerifyEmail
 {
@@ -101,6 +104,11 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
     public function subscription()
     {
         return $this->hasOne(Subscription::class);
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
     }
 
     public function balanceTransactions()

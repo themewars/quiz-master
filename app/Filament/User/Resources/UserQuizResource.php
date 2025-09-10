@@ -28,7 +28,7 @@ class UserQuizResource extends Resource
         return __('messages.participant.participants');
     }
 
-    public static function getmodelLabel(): string
+    public static function getModelLabel(): string
     {
         return __('messages.participant.participants');
     }

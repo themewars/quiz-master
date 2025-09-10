@@ -287,7 +287,7 @@
             <h1>Pricing Plans</h1>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li><a href="/">Home</a></li>
+                    <li><a href="{{ route('home') }}">Home</a></li>
                     <li>Pricing Plans</li>
                 </ol>
             </nav>
@@ -312,7 +312,7 @@
                             @if(isset($plan->price) && $plan->price == 0)
                                 <span class="currency">Free</span>
                             @else
-                                <span class="currency">₹</span>
+                                <span class="currency">{{ $plan->currency->symbol ?? '₹' }}</span>
                                 <span class="amount">{{ number_format($plan->price ?? 0) }}</span>
                                 <span class="period">/{{ $plan->frequency ?? 'month' }}</span>
                             @endif
@@ -399,9 +399,9 @@
 
                     <div class="plan-action">
                         @if(isset($plan->price) && $plan->price == 0)
-                            <a href="/register" class="btn btn-outline">Get Started Free</a>
+                            <a href="{{ route('filament.auth.auth.register') }}" class="btn btn-outline">Get Started Free</a>
                         @else
-                            <a href="/login" class="btn btn-primary">Choose Plan</a>
+                            <a href="{{ route('filament.auth.auth.login') }}" class="btn btn-primary">Choose Plan</a>
                         @endif
                     </div>
                 </div>
@@ -409,7 +409,7 @@
                 <div class="no-plans" style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: #f8f9fa; border-radius: 12px; margin: 2rem 0;">
                     <h3>No Plans Available</h3>
                     <p>Pricing plans are currently being updated. Please check back later or contact us for more information.</p>
-                    <a href="/contact" class="btn btn-primary">Contact Us</a>
+                    <a href="{{ route('contact') }}" class="btn btn-primary">Contact Us</a>
                 </div>
                 @endforelse
             </div>
@@ -434,7 +434,7 @@
                     
                     <div class="faq-item">
                         <h4>Do you offer refunds?</h4>
-                        <p>Yes, we offer a 7-day money-back guarantee. Please check our <a href="/refund">Refund Policy</a> for details.</p>
+                        <p>Yes, we offer a 7-day money-back guarantee. Please check our <a href="{{ route('refund') }}">Refund Policy</a> for details.</p>
                     </div>
                 </div>
             </div>

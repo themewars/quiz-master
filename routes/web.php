@@ -69,6 +69,7 @@ Route::middleware('SetLanguage')->group(function () {
     Route::get('/cookie', [HomeController::class, 'cookie'])->name('cookie');
     Route::get('/refund', [HomeController::class, 'refund'])->name('refund');
     Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+    Route::post('/contact', [HomeController::class, 'contactSubmit'])->name('contact.submit');
     Route::get('/about', [HomeController::class, 'about'])->name('about');
     Route::get('/pricing', [HomeController::class, 'pricing'])->name('pricing');
 

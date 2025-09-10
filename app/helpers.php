@@ -613,20 +613,3 @@ if (! function_exists('imageToText')) {
     }
 }
 
-if (! function_exists('getTabType')) {
-    function getTabType()
-    {
-        $pre = URL::previous();
-        parse_str(parse_url($pre)['query'] ?? '', $queryParams);
-        $tab = $queryParams['tab'] ?? null;
-        $tabType = [
-            '-subject-tab' => Quiz::SUBJECT_TYPE,
-            '-text-tab' => Quiz::TEXT_TYPE,
-            '-url-tab' => Quiz::URL_TYPE,
-            '-upload-tab' => Quiz::UPLOAD_TYPE,
-            '-image-tab' => Quiz::IMAGE_TYPE,
-        ];
-
-        return $tabType[$tab] ?? Quiz::TEXT_TYPE;
-    }
-}

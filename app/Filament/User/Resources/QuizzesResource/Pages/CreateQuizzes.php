@@ -36,9 +36,10 @@ class CreateQuizzes extends CreateRecord
             '-text-tab' => Quiz::TEXT_TYPE,
             '-url-tab' => Quiz::URL_TYPE,
             '-upload-tab' => Quiz::UPLOAD_TYPE,
+            '-image-tab' => Quiz::IMAGE_TYPE,
         ];
 
-        $tabType[$tab] ?? Quiz::TEXT_TYPE;
+        return $tabType[$tab] ?? Quiz::TEXT_TYPE;
     }
 
     protected function handleRecordCreation(array $data): Model
@@ -47,10 +48,11 @@ class CreateQuizzes extends CreateRecord
         $activeTab = getTabType();
 
         $descriptionFields = [
-            Quiz::TEXT_TYPE => $data['quiz_description_text'],
-            Quiz::SUBJECT_TYPE => $data['quiz_description_sub'],
-            Quiz::URL_TYPE => $data['quiz_description_url'],
-            Quiz::IMAGE_TYPE => $data['quiz_description_image'] ?? null,
+            Quiz::TEXT_TYPE => $data['quiz_description_text'] ?? null,
+            Quiz::SUBJECT_TYPE => $data['quiz_description_sub'] ?? null,
+            Quiz::URL_TYPE => $data['quiz_description_url'] ?? null,
+            Quiz::UPLOAD_TYPE => null, // Will be processed from file upload
+            Quiz::IMAGE_TYPE => null, // Will be processed from image upload
         ];
 
         $description = $descriptionFields[$activeTab] ?? null;
@@ -93,6 +95,7 @@ class CreateQuizzes extends CreateRecord
             $readability->parse($response);
             $readability->getContent();
             $description = $readability->getExcerpt();
+            $input['type'] = Quiz::URL_TYPE; // Set type to URL
         }
 
         if (isset($this->data['file_upload']) && is_array($this->data['file_upload'])) {
@@ -104,8 +107,10 @@ class CreateQuizzes extends CreateRecord
 
                     if ($extension === 'pdf') {
                         $description = pdfToText($fileUrl);
+                        $input['type'] = Quiz::UPLOAD_TYPE; // Set type to upload
                     } elseif ($extension === 'docx') {
                         $description = docxToText($fileUrl);
+                        $input['type'] = Quiz::UPLOAD_TYPE; // Set type to upload
                     }
                 }
             }
@@ -120,6 +125,7 @@ class CreateQuizzes extends CreateRecord
                         $extractedText = $imageProcessingService->processUploadedImage($file);
                         if ($extractedText) {
                             $description = $extractedText;
+                            $input['type'] = Quiz::IMAGE_TYPE; // Set type to image
                             break; // Use first successfully processed image
                         }
                     }

@@ -33,7 +33,7 @@ class QuizzesResource extends Resource implements HasForms
         return __('messages.quiz.exams');
     }
 
-    public static function getmodelLabel(): string
+    public static function getModelLabel(): string
     {
         return __('messages.quiz.exams');
     }

@@ -21,7 +21,23 @@
                     <h2>Get in Touch</h2>
                     <p>Have questions about our exam generation platform? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
                     
-                    <form action="#" method="POST">
+                    @if(session('success'))
+                        <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; border: 1px solid #c3e6cb;">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    
+                    @if($errors->any())
+                        <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; border: 1px solid #f5c6cb;">
+                            <ul style="margin: 0; padding-left: 1.5rem;">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    
+                    <form action="{{ route('contact.submit') }}" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="name">Full Name *</label>
