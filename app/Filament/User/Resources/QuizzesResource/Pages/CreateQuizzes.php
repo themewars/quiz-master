@@ -339,6 +339,14 @@ class CreateQuizzes extends CreateRecord
                 }
             }
 
+            // Update monthly usage counters (1 exam, N questions)
+            try {
+                $questionsGenerated = is_array($quizQuestions) ? count($quizQuestions) : 0;
+                app(\App\Services\PlanValidationService::class)->updateUsage(1, $questionsGenerated);
+            } catch (\Throwable $e) {
+                // Silently ignore counter update errors to not block creation
+            }
+
             return $quiz;
         }
 
