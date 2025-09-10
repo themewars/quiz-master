@@ -80,6 +80,15 @@ Route::middleware('SetLanguage')->group(function () {
     // Sitemap route
     Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
     
+    // Reset usage counter route (for fixing old user data)
+    Route::post('/reset-usage-counter', function() {
+        if (auth()->check()) {
+            app(\App\Services\PlanValidationService::class)->forceResetUsageCounters();
+            return response()->json(['success' => true, 'message' => 'Usage counter reset successfully']);
+        }
+        return response()->json(['success' => false, 'message' => 'Not authenticated']);
+    })->name('reset.usage.counter');
+    
 });
 
 include 'auth.php';

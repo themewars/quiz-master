@@ -5,6 +5,7 @@ namespace App\Filament\User\Resources;
 use App\Enums\UserSidebar;
 use App\Filament\User\Resources\QuizzesResource\Pages;
 use App\Models\Quiz;
+use App\Services\PlanValidationService;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -120,6 +121,15 @@ class QuizzesResource extends Resource implements HasForms
                     ->size('lg')
                     ->visible(fn(Quiz $record): bool => $record->questions()->exists()),
                 Tables\Actions\EditAction::make()->hiddenLabel()->size('lg')->tooltip(__('messages.common.edit')),
+                Tables\Actions\Action::make('export')
+                    ->label(__('messages.common.export'))
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->tooltip(__('messages.common.export'))
+                    ->url(fn(Quiz $record) => QuizzesResource::getUrl('export', [$record->id]))
+                    ->openUrlInNewTab()
+                    ->hiddenLabel()
+                    ->visible(fn(Quiz $record): bool => $record->questions()->exists())
+                    ->size('lg'),
                 \App\Filament\Actions\CustomDeleteAction::make()
                     ->setCommonProperties()
                     ->successNotificationTitle(__('messages.quiz.quiz_deleted_success'))

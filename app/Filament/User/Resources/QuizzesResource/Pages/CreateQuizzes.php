@@ -381,4 +381,18 @@ class CreateQuizzes extends CreateRecord
             Action::make('cancel')->label(__('messages.common.cancel'))->color('gray')->url(QuizzesResource::getUrl('index')),
         ];
     }
+
+    protected function getHeaderActions(): array
+    {
+        $planCheck = app(\App\Services\PlanValidationService::class)->canCreateExam();
+        $examsRemaining = isset($planCheck['remaining']) ? $planCheck['remaining'] : 0;
+        
+        return [
+            Action::make('exams_remaining')
+                ->label(__('Exams Remaining: ') . ($examsRemaining === -1 ? __('Unlimited') : $examsRemaining))
+                ->color($examsRemaining > 10 ? 'success' : ($examsRemaining > 0 ? 'warning' : 'danger'))
+                ->disabled()
+                ->icon('heroicon-o-clipboard-document-list'),
+        ];
+    }
 }

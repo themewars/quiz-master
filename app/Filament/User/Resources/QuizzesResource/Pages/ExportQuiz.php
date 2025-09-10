@@ -4,6 +4,7 @@ namespace App\Filament\User\Resources\QuizzesResource\Pages;
 
 use App\Models\Quiz;
 use App\Services\ExamExportService;
+use App\Services\PlanValidationService;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\Page;
 use Filament\Notifications\Notification;
@@ -37,11 +38,29 @@ class ExportQuiz extends Page
 
     public function exportPDF()
     {
+        $planCheck = app(PlanValidationService::class)->canUseFeature('pdf_export');
+        if (!$planCheck['allowed']) {
+            Notification::make()
+                ->danger()
+                ->title('Feature Not Available')
+                ->body($planCheck['message'])
+                ->send();
+            return;
+        }
         $this->exportExamPaper('pdf');
     }
 
     public function exportWord()
     {
+        $planCheck = app(PlanValidationService::class)->canUseFeature('word_export');
+        if (!$planCheck['allowed']) {
+            Notification::make()
+                ->danger()
+                ->title('Feature Not Available')
+                ->body($planCheck['message'])
+                ->send();
+            return;
+        }
         $this->exportExamPaper('word');
     }
 
@@ -79,6 +98,19 @@ class ExportQuiz extends Page
     private function exportExamPaper($format)
     {
         try {
+            // Check answer key feature if answer key is included
+            if ($this->includeAnswerKey) {
+                $planCheck = app(PlanValidationService::class)->canUseFeature('answer_key');
+                if (!$planCheck['allowed']) {
+                    Notification::make()
+                        ->danger()
+                        ->title('Feature Not Available')
+                        ->body($planCheck['message'])
+                        ->send();
+                    return;
+                }
+            }
+
             Log::info('Export started', ['quiz_id' => $this->record->id, 'format' => $format]);
             
             $exportService = new ExamExportService();

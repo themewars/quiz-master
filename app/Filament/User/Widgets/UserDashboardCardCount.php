@@ -17,7 +17,7 @@ class UserDashboardCardCount extends BaseWidget
     protected function getViewData(): array
     {
         $subscription = Subscription::where('user_id', getLoggedInUserId())
-            ->where('status', SubscriptionStatus::ACTIVE)
+            ->where('status', SubscriptionStatus::ACTIVE->value)
             ->first();
 
         $totalQuizzes = Quiz::where('user_id', auth()->id())->count();
@@ -34,10 +34,13 @@ class UserDashboardCardCount extends BaseWidget
         $completedPer =  $participants > 0 ? round(($completedCount / $participants) * 100) : 0;
 
         // Plan usage summary
-        $planCheck = app(PlanValidationService::class)->canCreateExam();
-        $examsRemaining = isset($planCheck['remaining'])
-            ? ($planCheck['remaining'] === -1 ? __('messages.common.unlimited') : $planCheck['remaining'])
-            : 0;
+        $examsRemaining = 0;
+        if ($subscription) {
+            $planCheck = app(PlanValidationService::class)->canCreateExam();
+            $examsRemaining = isset($planCheck['remaining'])
+                ? ($planCheck['remaining'] === -1 ? __('messages.common.unlimited') : $planCheck['remaining'])
+                : 0;
+        }
 
         return  [
             'subscription' => $subscription,

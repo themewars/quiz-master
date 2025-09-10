@@ -1,5 +1,28 @@
 <x-filament-widgets::widget>
-    <div class=" grid gap-6 md:grid-cols-2 xl:grid-cols-4 custom-grids">
+    <!-- Exams Remaining Banner -->
+    @if($examsRemaining !== 0)
+    <div class="mb-6 p-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl text-white shadow-xl border border-white/20">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0 p-3 bg-white/20 rounded-full">
+                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2 2 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold">{{ __('Exams Remaining This Month') }}</h3>
+                    <p class="text-sm opacity-90 mt-1">{{ __('You have') }} <span class="font-bold text-2xl">{{ $examsRemaining }}</span> {{ __('exams remaining in your') }} <span class="font-semibold">{{ isset($subscription) ? $subscription->plan->name : __('Free Plan') }}</span></p>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="text-4xl font-black">{{ $examsRemaining }}</div>
+                <div class="text-sm opacity-90 font-medium">{{ __('remaining') }}</div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <div class=" grid gap-6 md:grid-cols-2 xl:grid-cols-5 custom-grids">
 
         <div class="flex">
             <div class="admin-dashboard-card flex w-full max-w-full flex-col break-words rounded-lg text-white p-4">
@@ -51,6 +74,36 @@
                         <span>{{ __('Exams remaining this month') . ':' }}</span>
                         <span class="font-semibold">{{ $examsRemaining }}</span>
                     </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex">
+            <div class="admin-dashboard-card flex w-full max-w-full flex-col break-words rounded-xl text-white p-6 bg-black shadow-lg border border-gray-700">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 bg-white/20 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2 2 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium opacity-90">{{ __('Exams Remaining') }}</p>
+                            <p class="text-xs opacity-70">{{ __('This Month') }}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-black">{{ $examsRemaining }}</div>
+                    </div>
+                </div>
+                <div class="mt-auto">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm opacity-80">{{ __('Plan') }}:</span>
+                        <span class="text-sm font-semibold bg-white/20 px-2 py-1 rounded-full">{{ isset($subscription) ? $subscription->plan->name : __('Free Plan') }}</span>
+                    </div>
                 </div>
             </div>
         </div>

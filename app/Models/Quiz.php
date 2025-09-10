@@ -295,7 +295,15 @@ class Quiz extends Model implements HasMedia
                                                         ->live()
                                                         ->validationAttribute(__('messages.quiz.url'))
                                                         ->url()
-                                                        ->placeholder(__('messages.quiz.please_enter_url')),
+                                                        ->placeholder(__('messages.quiz.please_enter_url'))
+                                                        ->disabled(function () {
+                                                            $planCheck = app(\App\Services\PlanValidationService::class)->canUseFeature('website_quiz');
+                                                            return !$planCheck['allowed'];
+                                                        })
+                                                        ->helperText(function () {
+                                                            $planCheck = app(\App\Services\PlanValidationService::class)->canUseFeature('website_quiz');
+                                                            return !$planCheck['allowed'] ? 'Website to Exam feature not available in your current plan' : '';
+                                                        }),
                                                 ]),
                                             Tab::make('Upload')
                                                 ->label(__('messages.quiz.upload'))
@@ -310,7 +318,15 @@ class Quiz extends Model implements HasMedia
                                                         })
                                                         ->live()
                                                         ->collection(Quiz::QUIZ_PATH)
-                                                        ->acceptedFileTypes(['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']),
+                                                        ->acceptedFileTypes(['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                                                        ->disabled(function () {
+                                                            $planCheck = app(\App\Services\PlanValidationService::class)->canUseFeature('pdf_to_exam');
+                                                            return !$planCheck['allowed'];
+                                                        })
+                                                        ->helperText(function () {
+                                                            $planCheck = app(\App\Services\PlanValidationService::class)->canUseFeature('pdf_to_exam');
+                                                            return !$planCheck['allowed'] ? 'PDF to Exam feature not available in your current plan' : '';
+                                                        }),
                                                 ]),
                                             Tab::make('Image')
                                                 ->label(__('messages.quiz.image'))

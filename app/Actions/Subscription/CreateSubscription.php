@@ -88,6 +88,13 @@ class CreateSubscription
                     ->whereNot('id', $subscription->id)
                     ->whereIn('status', [SubscriptionStatus::ACTIVE->value])
                     ->update(['status' => SubscriptionStatus::INACTIVE->value]);
+                
+                // Reset usage counters for new plan (fresh start)
+                $subscription->update([
+                    'exams_generated_this_month' => 0,
+                    'questions_generated_this_month' => 0,
+                    'usage_reset_date' => Carbon::now()->addMonth(),
+                ]);
             }
 
             if ($attachment != null && !empty($attachment)) {
