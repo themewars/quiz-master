@@ -15,8 +15,21 @@ class PlanValidationService
     public function __construct(User $user = null)
     {
         $this->user = $user ?? auth()->user();
-        $this->subscription = $this->user ? $this->user->subscriptions()->where('status', 'active')->first() : null;
-        $this->plan = $this->subscription ? $this->subscription->plan : null;
+
+        // Prefer an active subscription
+        $this->subscription = $this->user
+            ? $this->user->subscriptions()
+                ->whereIn('status', ['active', 'trial', 'trialing'])
+                ->orderByDesc('id')
+                ->first()
+            : null;
+
+        $this->plan = $this->subscription?->plan;
+
+        // Fallback to default plan if no active subscription is found
+        if (!$this->plan) {
+            $this->plan = Plan::where('assign_default', true)->first();
+        }
     }
 
     /**
