@@ -18,17 +18,21 @@ class PlanValidationService
     {
         $this->user = $user ?? auth()->user();
 
-        // Prefer an active subscription
+        // Pick latest subscription; avoid strict string status checks (DB may store ints)
         $this->subscription = $this->user
             ? $this->user->subscriptions()
-                ->whereIn('status', ['active', 'trial', 'trialing'])
                 ->orderByDesc('id')
                 ->first()
             : null;
 
+        // Ignore expired subscriptions
+        if ($this->subscription && method_exists($this->subscription, 'isExpired') && $this->subscription->isExpired()) {
+            $this->subscription = null;
+        }
+
         $this->plan = $this->subscription?->plan;
 
-        // Fallback to default plan if no active subscription is found
+        // Fallback to default plan if no valid subscription is found
         if (!$this->plan) {
             $this->plan = Plan::where('assign_default', true)->first();
         }
