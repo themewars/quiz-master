@@ -23,7 +23,12 @@ class EditPlan extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        if ($data['assign_default']) {
+        // Be defensive: key may be missing from form payload
+        if (!array_key_exists('assign_default', $data)) {
+            $data['assign_default'] = (bool) $record->assign_default;
+        }
+
+        if (!empty($data['assign_default'])) {
             $existingDefaultPlan = Plan::where('assign_default', 1)->where('id', '!=', $record->id)->first();
             if ($existingDefaultPlan) {
                 $existingDefaultPlan->update(['assign_default' => 0]);
