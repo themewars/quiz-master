@@ -67,16 +67,28 @@ class PlanValidationService
         }
 
         $examsPerMonth = $this->plan->exams_per_month ?? 0;
-        $usedExams = $this->subscription->exams_generated_this_month ?? 0;
 
-        // Fallback: derive actual created exams this month to avoid stale counters
+        // Derive actual created exams within current billing month window
+        $usedExams = 0;
         if ($this->user) {
             $now = Carbon::now();
-            $actualExams = Quiz::where('user_id', $this->user->id)
-                ->whereYear('created_at', $now->year)
-                ->whereMonth('created_at', $now->month)
+            $monthStart = $now->copy()->startOfMonth();
+            $monthEnd = $now->copy()->endOfMonth();
+
+            // Constrain to active subscription period if available
+            if ($this->subscription) {
+                $periodStart = $this->subscription->starts_at ? Carbon::parse($this->subscription->starts_at) : $monthStart;
+                $periodEnd = $this->subscription->ends_at ? Carbon::parse($this->subscription->ends_at) : $monthEnd;
+                $windowStart = $periodStart->greaterThan($monthStart) ? $periodStart : $monthStart;
+                $windowEnd = $periodEnd->lessThan($monthEnd) ? $periodEnd : $monthEnd;
+            } else {
+                $windowStart = $monthStart;
+                $windowEnd = $monthEnd;
+            }
+
+            $usedExams = Quiz::where('user_id', $this->user->id)
+                ->whereBetween('created_at', [$windowStart, $windowEnd])
                 ->count();
-            $usedExams = max((int) $usedExams, (int) $actualExams);
         }
 
         // If limit is 0 or below, treat as no monthly cap (backward compatible)
