@@ -86,7 +86,22 @@ class PlanValidationService
         }
 
         // Use subscription counter which is updated when exams are created and respects billing cycles
+        // Fallback to counting actual quizzes if counter column doesn't exist
         $usedExams = $this->subscription->exams_generated_this_month ?? 0;
+        
+        // If counter is 0 but user has quizzes, count actual quizzes (for migration compatibility)
+        if ($usedExams === 0 && $this->user) {
+            $actualQuizCount = Quiz::where('user_id', $this->user->id)->count();
+            if ($actualQuizCount > 0) {
+                $usedExams = $actualQuizCount;
+                // Update the counter for future use
+                try {
+                    $this->subscription->update(['exams_generated_this_month' => $actualQuizCount]);
+                } catch (\Exception $e) {
+                    // Silently ignore if column doesn't exist yet
+                }
+            }
+        }
 
         // If limit is 0 or below, treat as no monthly cap (backward compatible)
         if ($examsPerMonth <= 0) {
