@@ -161,7 +161,7 @@
             align-items: center;
             padding: 0.75rem 0;
             border-bottom: 1px solid #f0f0f0;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
         
         .feature-item:last-child {
@@ -172,13 +172,13 @@
             font-weight: 600;
             color: #333;
             flex: 1;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
         
         .feature-value {
             color: #007bff;
             font-weight: 600;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
         
         .check-icon {
@@ -186,7 +186,7 @@
             font-weight: bold;
             margin-right: 0.5rem;
             width: 20px;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
         
         .plan-action {
