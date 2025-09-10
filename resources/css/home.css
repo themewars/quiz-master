@@ -2039,6 +2039,103 @@ section {
     color: var(--primary);
 }
 
+/* Pricing Table Styles */
+.pricing-item {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    transition: all .3s ease;
+    margin-bottom: 30px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.pricing-item.active {
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(-10px);
+}
+
+.pricing-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.pricing-header .title {
+    font-size: 32px !important; /* Increased from default */
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--slate-800);
+}
+
+.pricing-header .price-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.pricing-header .price-wrap .currency {
+    font-size: 28px !important; /* Increased from default */
+    font-weight: 700;
+    margin-right: 8px;
+    color: var(--primary);
+}
+
+.pricing-header .price-wrap .amount {
+    font-size: 56px !important; /* Increased from default */
+    font-weight: 700;
+    line-height: 1;
+    color: var(--slate-800);
+}
+
+.pricing-header .price-wrap .period {
+    font-size: 24px !important; /* Increased from default */
+    font-weight: 500;
+    margin-left: 8px;
+    color: var(--slate-600);
+}
+
+.pricing-body {
+    margin-bottom: 30px;
+}
+
+.pricing-body .list-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pricing-body .list-items li {
+    font-size: 20px !important; /* Increased from default */
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    color: var(--slate-700);
+}
+
+.pricing-body .list-items li:last-child {
+    margin-bottom: 0;
+}
+
+.pricing-body .list-items li i {
+    font-size: 22px !important; /* Increased icon size */
+    margin-right: 12px;
+    color: var(--emerald);
+}
+
+.pricing-body .list-items li i.la-times {
+    color: var(--red);
+}
+
+.pricing-btn {
+    text-align: center;
+}
+
+.pricing-btn .btn {
+    width: 100%;
+    font-size: 18px !important; /* Increased button text */
+    padding: 15px 30px;
+}
+
 .dropdown-menu {
     max-height: 0;
     position: absolute;
