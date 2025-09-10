@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\SubscriptionStatus;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
@@ -18,9 +19,10 @@ class PlanValidationService
     {
         $this->user = $user ?? auth()->user();
 
-        // Pick latest subscription; avoid strict string status checks (DB may store ints)
+        // Pick latest ACTIVE subscription; avoid strict string status checks (DB may store ints)
         $this->subscription = $this->user
             ? $this->user->subscriptions()
+                ->where('status', SubscriptionStatus::ACTIVE->value)
                 ->orderByDesc('id')
                 ->first()
             : null;
