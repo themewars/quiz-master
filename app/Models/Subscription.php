@@ -31,6 +31,9 @@ class Subscription extends Model implements HasMedia
         'status',
         'notes',
         'payment_type',
+        'exams_generated_this_month',
+        'questions_generated_this_month',
+        'usage_reset_date',
     ];
 
 
@@ -48,6 +51,9 @@ class Subscription extends Model implements HasMedia
         'status' => 'integer',
         'notes' => 'string',
         'payment_type' => 'integer',
+        'exams_generated_this_month' => 'integer',
+        'questions_generated_this_month' => 'integer',
+        'usage_reset_date' => 'datetime',
     ];
 
     const ATTACHMENT = 'attachment';
@@ -109,16 +115,22 @@ class Subscription extends Model implements HasMedia
     {
         $now = Carbon::now();
 
-        if ($this->ends_at > $now) {
+        // Check if subscription end date is null or in the future
+        if (!$this->ends_at || $this->ends_at->gt($now)) {
             return false;
         }
 
-        // this means the subscription is ended.
-        if ((! empty($this->trial_ends_at) && $this->trial_ends_at < $now) || $this->ends_at < $now) {
+        // Check trial expiration if trial exists
+        if ($this->trial_ends_at && $this->trial_ends_at->lt($now)) {
             return true;
         }
 
-        // this means the subscription is not ended.
+        // Check if subscription has ended
+        if ($this->ends_at->lt($now)) {
+            return true;
+        }
+
+        // Subscription is still active
         return false;
     }
 }
