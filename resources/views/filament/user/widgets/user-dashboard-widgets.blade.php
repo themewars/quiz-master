@@ -47,6 +47,10 @@
                         <span>{{ __('messages.dashboard.total_quizzes') . ':' }}</span>
                         <span>{{ $totalQuizzes }}</span>
                     </p>
+                    <p class="text-sm opacity-70 mt-1">
+                        <span>{{ __('Exams remaining this month') . ':' }}</span>
+                        <span class="font-semibold">{{ $examsRemaining }}</span>
+                    </p>
                 </div>
             </div>
         </div>

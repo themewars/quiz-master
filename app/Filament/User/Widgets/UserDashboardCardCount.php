@@ -6,6 +6,7 @@ use App\Enums\SubscriptionStatus;
 use App\Models\Quiz;
 use App\Models\Subscription;
 use App\Models\UserQuiz;
+use App\Services\PlanValidationService;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class UserDashboardCardCount extends BaseWidget
@@ -32,12 +33,19 @@ class UserDashboardCardCount extends BaseWidget
 
         $completedPer =  $participants > 0 ? round(($completedCount / $participants) * 100) : 0;
 
+        // Plan usage summary
+        $planCheck = app(PlanValidationService::class)->canCreateExam();
+        $examsRemaining = isset($planCheck['remaining'])
+            ? ($planCheck['remaining'] === -1 ? __('messages.common.unlimited') : $planCheck['remaining'])
+            : 0;
+
         return  [
             'subscription' => $subscription,
             'totalQuizzes' => $totalQuizzes,
             'activeQuizzes' => $activeQuizzes,
             'participants' => $participants,
-            'completedPer' => $completedPer
+            'completedPer' => $completedPer,
+            'examsRemaining' => $examsRemaining,
         ];
     }
 }
