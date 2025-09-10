@@ -17,7 +17,7 @@ class UserDashboardCardCount extends BaseWidget
     protected function getViewData(): array
     {
         $subscription = Subscription::where('user_id', getLoggedInUserId())
-            ->where('status', SubscriptionStatus::ACTIVE)
+            ->where('status', SubscriptionStatus::ACTIVE->value)
             ->first();
 
         $totalQuizzes = Quiz::where('user_id', auth()->id())->count();

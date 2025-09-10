@@ -68,23 +68,10 @@ class PlanValidationService
 
         $examsPerMonth = $this->plan->exams_per_month ?? 0;
 
-        // Derive actual created exams within current billing month window
+        // Derive actual created exams within current billing-cycle window (based on subscription frequency)
         $usedExams = 0;
         if ($this->user) {
-            $now = Carbon::now();
-            $monthStart = $now->copy()->startOfMonth();
-            $monthEnd = $now->copy()->endOfMonth();
-
-            // Constrain to active subscription period if available
-            if ($this->subscription) {
-                $periodStart = $this->subscription->starts_at ? Carbon::parse($this->subscription->starts_at) : $monthStart;
-                $periodEnd = $this->subscription->ends_at ? Carbon::parse($this->subscription->ends_at) : $monthEnd;
-                $windowStart = $periodStart->greaterThan($monthStart) ? $periodStart : $monthStart;
-                $windowEnd = $periodEnd->lessThan($monthEnd) ? $periodEnd : $monthEnd;
-            } else {
-                $windowStart = $monthStart;
-                $windowEnd = $monthEnd;
-            }
+            [$windowStart, $windowEnd] = $this->getCurrentBillingWindow();
 
             $usedExams = Quiz::where('user_id', $this->user->id)
                 ->whereBetween('created_at', [$windowStart, $windowEnd])
@@ -119,6 +106,49 @@ class PlanValidationService
             'used' => $usedExams,
             'remaining' => $examsPerMonth - $usedExams
         ];
+    }
+
+    /**
+     * Compute current billing window [start, end] based on subscription frequency.
+     */
+    private function getCurrentBillingWindow(): array
+    {
+        $now = Carbon::now();
+
+        // Fallback to calendar month if no subscription
+        if (!$this->subscription) {
+            return [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()];
+        }
+
+        $startsAt = $this->subscription->starts_at ? Carbon::parse($this->subscription->starts_at) : $now->copy()->startOfMonth();
+        $endsAt = $this->subscription->ends_at ? Carbon::parse($this->subscription->ends_at) : null;
+
+        // Determine frequency: 7 days (weekly), 1 month (monthly), 1 year (yearly). Defaults to monthly.
+        $frequency = (int) ($this->subscription->plan_frequency ?? 0);
+        // 0/unknown => monthly, 1 => weekly, 2 => yearly (based on PlanFrequency enum ordering in codebase)
+        $cycleStart = $startsAt->copy();
+
+        // Move cycleStart forward in steps until it is the start of the current cycle containing now
+        if ($frequency === 1) { // weekly
+            while ($cycleStart->addWeek()->lte($now)) {}
+            $cycleStart = $cycleStart->subWeek();
+            $cycleEnd = $cycleStart->copy()->addWeek()->subSecond();
+        } elseif ($frequency === 2) { // yearly
+            while ($cycleStart->addYear()->lte($now)) {}
+            $cycleStart = $cycleStart->subYear();
+            $cycleEnd = $cycleStart->copy()->addYear()->subSecond();
+        } else { // monthly (default)
+            while ($cycleStart->addMonth()->lte($now)) {}
+            $cycleStart = $cycleStart->subMonth();
+            $cycleEnd = $cycleStart->copy()->addMonth()->subSecond();
+        }
+
+        // Respect hard subscription end date if present
+        if ($endsAt && $cycleEnd->gt($endsAt)) {
+            $cycleEnd = $endsAt->copy();
+        }
+
+        return [$cycleStart, $cycleEnd];
     }
 
     /**
