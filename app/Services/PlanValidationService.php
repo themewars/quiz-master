@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Models\Quiz;
+use Carbon\Carbon;
 
 class PlanValidationService
 {
@@ -60,6 +62,16 @@ class PlanValidationService
 
         $examsPerMonth = $this->plan->exams_per_month ?? 0;
         $usedExams = $this->subscription->exams_generated_this_month ?? 0;
+
+        // Fallback: derive actual created exams this month to avoid stale counters
+        if ($this->user) {
+            $now = Carbon::now();
+            $actualExams = Quiz::where('user_id', $this->user->id)
+                ->whereYear('created_at', $now->year)
+                ->whereMonth('created_at', $now->month)
+                ->count();
+            $usedExams = max((int) $usedExams, (int) $actualExams);
+        }
 
         // If limit is 0 or below, treat as no monthly cap (backward compatible)
         if ($examsPerMonth <= 0) {
