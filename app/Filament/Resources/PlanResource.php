@@ -67,7 +67,7 @@ class PlanResource extends Resource
                     ->alignEnd()
                     ->label(__('messages.common.price'))
                     ->formatStateUsing(function ($record) {
-                        $currencySymbol = $record->currency->symbol;
+                        $currencySymbol = $record->currency?->symbol ?? '₹';
                         return getCurrencyPosition() ? $currencySymbol . ' ' . number_format($record->price ?? 0, 2) : number_format($record->price ?? 0, 2) . ' ' . $currencySymbol;
                     })
                     ->default('-')

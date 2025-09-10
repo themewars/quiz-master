@@ -24,8 +24,8 @@ class EditPlan extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         if ($data['assign_default']) {
-            $existingDefaultPlan = Plan::where('assign_default', 1)->first();
-            if ($existingDefaultPlan && $existingDefaultPlan->count() > 0) {
+            $existingDefaultPlan = Plan::where('assign_default', 1)->where('id', '!=', $record->id)->first();
+            if ($existingDefaultPlan) {
                 $existingDefaultPlan->update(['assign_default' => 0]);
             }
         }

@@ -15,7 +15,11 @@ enum PlanFrequency: int implements HasColor, HasLabel
 
     public function getLabel(): string
     {
-        return Lang::get('messages.plan.' . $this->value);
+        return match($this) {
+            self::WEEKLY => 'Weekly',
+            self::MONTHLY => 'Monthly', 
+            self::YEARLY => 'Yearly',
+        };
     }
 
     public function getColor(): string | array | null

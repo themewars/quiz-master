@@ -314,7 +314,7 @@
                             @else
                                 <span class="currency">{{ $plan->currency->symbol ?? '₹' }}</span>
                                 <span class="amount">{{ number_format($plan->price ?? 0) }}</span>
-                                <span class="period">/{{ $plan->frequency ?? 'month' }}</span>
+                                <span class="period">/{{ $plan->frequency == 1 ? 'week' : ($plan->frequency == 2 ? 'month' : ($plan->frequency == 3 ? 'year' : 'month')) }}</span>
                             @endif
                         </div>
                         <p class="description">{{ $plan->description ?? 'No description available' }}</p>

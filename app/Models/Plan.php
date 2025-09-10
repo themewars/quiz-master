@@ -154,6 +154,22 @@ class Plan extends Model
         return $field ? (bool) $this->$field : false;
     }
 
+    /**
+     * Check if plan has specific feature (alias for allowsFeature)
+     */
+    public function has_feature(string $feature): bool
+    {
+        return $this->allowsFeature($feature);
+    }
+
+    /**
+     * Get create exams limit
+     */
+    public function getCreateExamsAttribute(): int
+    {
+        return $this->exams_per_month ?? 0;
+    }
+
     public static function getForm()
     {
         return [
@@ -210,7 +226,8 @@ class Plan extends Model
                     ->default(0)
                     ->required()
                     ->prefix(function (Get $get) {
-                        return $get('currency_id') ? Currency::find($get('currency_id'))->symbol : '$';
+                        $currency = $get('currency_id') ? Currency::find($get('currency_id')) : null;
+                        return $currency?->symbol ?? '$';
                     }),
                 Group::make([
                     Toggle::make('assign_default')

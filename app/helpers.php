@@ -613,3 +613,23 @@ if (! function_exists('imageToText')) {
     }
 }
 
+if (! function_exists('getCurrencyPosition')) {
+    function getCurrencyPosition()
+    {
+        // Return true for prefix position (symbol before amount)
+        // Return false for suffix position (symbol after amount)
+        return true; // Default to prefix position
+    }
+}
+
+if (! function_exists('has_feature')) {
+    function has_feature($plan, $feature)
+    {
+        if (!$plan) {
+            return false;
+        }
+        
+        return $plan->allowsFeature($feature);
+    }
+}
+
