@@ -61,6 +61,17 @@ class PlanValidationService
         $examsPerMonth = $this->plan->exams_per_month ?? 0;
         $usedExams = $this->subscription->exams_generated_this_month ?? 0;
 
+        // If limit is 0 or below, treat as no monthly cap (backward compatible)
+        if ($examsPerMonth <= 0) {
+            return [
+                'allowed' => true,
+                'message' => 'No monthly exam cap',
+                'limit' => 0,
+                'used' => $usedExams,
+                'remaining' => -1,
+            ];
+        }
+
         if ($usedExams >= $examsPerMonth) {
             return [
                 'allowed' => false,
@@ -120,6 +131,17 @@ class PlanValidationService
 
         $questionsPerMonth = $this->plan->max_questions_per_month ?? 0;
         $usedQuestions = $this->subscription->questions_generated_this_month ?? 0;
+
+        // If limit is 0 or below, treat as no monthly cap (backward compatible)
+        if ($questionsPerMonth <= 0) {
+            return [
+                'allowed' => true,
+                'message' => 'No monthly question cap',
+                'limit' => 0,
+                'used' => $usedQuestions,
+                'remaining' => -1,
+            ];
+        }
 
         if (($usedQuestions + $questionCount) > $questionsPerMonth) {
             return [
