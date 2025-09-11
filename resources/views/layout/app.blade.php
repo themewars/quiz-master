@@ -25,10 +25,16 @@
     <!-- Navigation -->
     <header class="sticky-header">
         <nav class="container">
+            @php
+                $userPlan = auth()->check() ? auth()->user()->subscriptions()->where('status', \App\Enums\SubscriptionStatus::ACTIVE->value)->orderByDesc('id')->first()?->plan : null;
+            @endphp
             <div class="logo">
                 <a href="{{ route('home') }}">
                     <img src="{{ getAppLogo() }}" alt="{{ getAppName() }}">
                 </a>
+                @if($userPlan && $userPlan->white_label_enabled)
+                    <span class="sr-only">{{ getAppName() }}</span>
+                @endif
             </div>
             <div class="header-menu">
                 <div id="navbar-scrollspy" class="mobile-view-nav">
@@ -109,12 +115,14 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-info">
-                    <div class="footer-logo">
-                        <a href="{{ route('home') }}">
-                            <img src="{{ getAppLogo() }}" alt="{{ getAppName() }}">
-                        </a>
-                        <span>{{ getAppName() }}</span>
-                    </div>
+                    @if(!$userPlan || !$userPlan->white_label_enabled)
+                        <div class="footer-logo">
+                            <a href="{{ route('home') }}">
+                                <img src="{{ getAppLogo() }}" alt="{{ getAppName() }}">
+                            </a>
+                            <span>{{ getAppName() }}</span>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="footer-links">
