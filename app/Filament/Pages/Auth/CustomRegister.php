@@ -10,6 +10,7 @@ use Filament\Events\Auth\Registered;
 use Filament\Notifications\Notification;
 use App\Actions\Subscription\CreateSubscription;
 use App\Http\Responses\CustomRegistrationResponse;
+use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
 use AbanoubNassem\FilamentGRecaptchaField\Forms\Components\GRecaptcha;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 
