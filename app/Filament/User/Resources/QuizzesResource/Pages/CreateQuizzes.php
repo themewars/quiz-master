@@ -95,6 +95,24 @@ class CreateQuizzes extends CreateRecord
             $readability->parse($response);
             $readability->getContent();
             $description = $readability->getExcerpt();
+
+            // Enforce website token cap per plan
+            $plan = app(\App\Services\PlanValidationService::class)->getUsageSummary();
+            $userPlan = auth()->user()?->subscriptions()->where('status', \App\Enums\SubscriptionStatus::ACTIVE->value)->orderByDesc('id')->first()?->plan;
+            $maxTokens = $userPlan?->max_website_tokens_allowed;
+            if ($maxTokens && $maxTokens > 0) {
+                $estimated = \App\Services\TokenEstimator::estimateTokens($description ?? '');
+                if ($estimated > $maxTokens) {
+                    // Truncate to allowed budget
+                    $charsAllowed = $maxTokens * 4; // inverse of 4 chars ≈ 1 token
+                    $description = mb_substr($description, 0, $charsAllowed, 'UTF-8');
+                    \Filament\Notifications\Notification::make()
+                        ->warning()
+                        ->title(__('Content truncated to fit your plan limit'))
+                        ->body(__('Your website content exceeded the allowed size for this plan. We used the first :tokens tokens.', ['tokens' => $maxTokens]))
+                        ->send();
+                }
+            }
             $input['type'] = Quiz::URL_TYPE; // Set type to URL
         }
 
@@ -107,6 +125,23 @@ class CreateQuizzes extends CreateRecord
 
                     if ($extension === 'pdf') {
                         $description = pdfToText($fileUrl);
+                        // Best-effort page count: split on form feed or fallback by heuristics
+                        $pages = substr_count($description, "\f");
+                        $pages = $pages > 0 ? $pages : null;
+                        $userPlan = auth()->user()?->subscriptions()->where('status', \App\Enums\SubscriptionStatus::ACTIVE->value)->orderByDesc('id')->first()?->plan;
+                        if ($userPlan && $userPlan->max_pdf_pages_allowed && $userPlan->max_pdf_pages_allowed > 0 && $pages && $pages > $userPlan->max_pdf_pages_allowed) {
+                            \Filament\Notifications\Notification::make()->danger()->title(__('This PDF is too large for your current plan. Please upgrade to a higher plan.'))->send();
+                            $this->halt();
+                        }
+                        // Token budget guard as well
+                        if ($userPlan && $userPlan->max_website_tokens_allowed) {
+                            $estimated = \App\Services\TokenEstimator::estimateTokens($description ?? '');
+                            $maxTokens = $userPlan->max_website_tokens_allowed; // reuse same cap for pdf text if set
+                            if ($maxTokens > 0 && $estimated > $maxTokens) {
+                                \Filament\Notifications\Notification::make()->danger()->title(__('Your file exceeds the allowed limit for this plan. Please upgrade to continue.'))->send();
+                                $this->halt();
+                            }
+                        }
                         $input['type'] = Quiz::UPLOAD_TYPE; // Set type to upload
                     } elseif ($extension === 'docx') {
                         $description = docxToText($fileUrl);
@@ -119,6 +154,12 @@ class CreateQuizzes extends CreateRecord
         // Process image uploads for OCR
         if (isset($this->data['image_upload']) && is_array($this->data['image_upload'])) {
             $imageProcessingService = new ImageProcessingService();
+            $userPlan = auth()->user()?->subscriptions()->where('status', \App\Enums\SubscriptionStatus::ACTIVE->value)->orderByDesc('id')->first()?->plan;
+            $maxImages = $userPlan?->max_images_allowed;
+            if ($maxImages && $maxImages > 0 && count($this->data['image_upload']) > $maxImages) {
+                \Filament\Notifications\Notification::make()->danger()->title(__('Your file exceeds the allowed limit for this plan. Please upgrade to continue.'))->send();
+                $this->halt();
+            }
             foreach ($this->data['image_upload'] as $file) {
                 if ($file instanceof \Illuminate\Http\UploadedFile) {
                     if ($imageProcessingService->validateImageFile($file)) {
@@ -126,6 +167,15 @@ class CreateQuizzes extends CreateRecord
                         if ($extractedText) {
                             $description = $extractedText;
                             $input['type'] = Quiz::IMAGE_TYPE; // Set type to image
+                            // Guard token budget for OCR result too
+                            if ($userPlan && $userPlan->max_website_tokens_allowed) {
+                                $estimated = \App\Services\TokenEstimator::estimateTokens($description ?? '');
+                                $maxTokens = $userPlan->max_website_tokens_allowed;
+                                if ($maxTokens > 0 && $estimated > $maxTokens) {
+                                    \Filament\Notifications\Notification::make()->danger()->title(__('Your file exceeds the allowed limit for this plan. Please upgrade to continue.'))->send();
+                                    $this->halt();
+                                }
+                            }
                             break; // Use first successfully processed image
                         }
                     }

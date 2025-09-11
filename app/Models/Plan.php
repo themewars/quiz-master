@@ -41,6 +41,9 @@ class Plan extends Model
         'exams_per_month',
         'max_questions_per_exam',
         'max_questions_per_month',
+        'max_pdf_pages_allowed',
+        'max_images_allowed',
+        'max_website_tokens_allowed',
         'pdf_export_enabled',
         'word_export_enabled',
         'website_quiz_enabled',
@@ -72,6 +75,9 @@ class Plan extends Model
         'exams_per_month' => 'integer',
         'max_questions_per_exam' => 'integer',
         'max_questions_per_month' => 'integer',
+        'max_pdf_pages_allowed' => 'integer',
+        'max_images_allowed' => 'integer',
+        'max_website_tokens_allowed' => 'integer',
         'pdf_export_enabled' => 'boolean',
         'word_export_enabled' => 'boolean',
         'website_quiz_enabled' => 'boolean',
@@ -276,6 +282,24 @@ class Plan extends Model
                             ->default(0),
                     ])->columns(3),
                     
+                    Group::make([
+                        TextInput::make('max_pdf_pages_allowed')
+                            ->label('Max PDF Pages Allowed')
+                            ->placeholder('e.g., 10 for Basic, 50 for Pro')
+                            ->numeric()
+                            ->helperText('Leave empty for unlimited'),
+                        TextInput::make('max_images_allowed')
+                            ->label('Max Images Allowed (OCR)')
+                            ->placeholder('e.g., 5 for Basic, 20 for Pro')
+                            ->numeric()
+                            ->helperText('Leave empty for unlimited'),
+                        TextInput::make('max_website_tokens_allowed')
+                            ->label('Max Website Tokens Allowed')
+                            ->placeholder('e.g., 5000 for Basic, 50000 for Pro')
+                            ->numeric()
+                            ->helperText('Leave empty for unlimited'),
+                    ])->columns(3),
+
                     Group::make([
                         Toggle::make('pdf_export_enabled')
                             ->label('PDF Export Enabled')
