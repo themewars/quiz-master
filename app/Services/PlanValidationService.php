@@ -113,6 +113,17 @@ class PlanValidationService
             }
         }
 
+        // Safety: if counter is larger than the new plan allowance (e.g., user upgraded from Free to Pro),
+        // normalize by resetting the counter to 0 so remaining reflects the new plan immediately.
+        if ($examsPerMonth > 0 && $usedExams > $examsPerMonth) {
+            try {
+                $this->subscription->update(['exams_generated_this_month' => 0]);
+            } catch (\Exception $e) {
+                // ignore write failure, we will use normalized value only for response
+            }
+            $usedExams = 0;
+        }
+
         // If limit is 0 or below, treat as no monthly cap (backward compatible)
         if ($examsPerMonth <= 0) {
             return [
