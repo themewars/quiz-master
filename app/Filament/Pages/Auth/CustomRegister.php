@@ -137,11 +137,32 @@ class CustomRegister extends Register
 
         event(new Registered($user));
 
-        $user->sendEmailVerificationNotification();
-        Notification::make()
-            ->success()
-            ->title(__('messages.home.email_verification_link_sent'))
-            ->send();
+        // Check if email verification is enabled in settings
+        $setting = \App\Models\Setting::first();
+        if ($setting && $setting->send_mail_verification) {
+            try {
+                $user->sendEmailVerificationNotification();
+                Notification::make()
+                    ->success()
+                    ->title(__('messages.home.email_verification_link_sent'))
+                    ->send();
+            } catch (\Exception $e) {
+                \Log::error('Email verification failed: ' . $e->getMessage());
+                Notification::make()
+                    ->warning()
+                    ->title(__('Registration successful'))
+                    ->body(__('Email verification could not be sent. Please contact support if needed.'))
+                    ->send();
+            }
+        } else {
+            // Auto-verify email if verification is disabled
+            $user->update(['email_verified_at' => now()]);
+            Notification::make()
+                ->success()
+                ->title(__('Registration successful'))
+                ->body(__('Your account has been created successfully.'))
+                ->send();
+        }
 
         return app(CustomRegistrationResponse::class);
     }
