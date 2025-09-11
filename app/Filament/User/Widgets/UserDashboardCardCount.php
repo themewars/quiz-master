@@ -42,17 +42,25 @@ class UserDashboardCardCount extends BaseWidget
             // Plan usage summary - Use PlanValidationService for accurate calculation
             $examsRemaining = 0;
             try {
-                $planValidationService = app(PlanValidationService::class);
-                $planCheck = $planValidationService->canCreateExam();
-                
+                // Bind explicitly to current user to avoid any container edge cases
+                $planCheck = (new PlanValidationService(auth()->user()))->canCreateExam();
+
                 if (isset($planCheck['remaining'])) {
                     if ($planCheck['remaining'] === -1) {
                         $examsRemaining = __('messages.common.unlimited');
                     } else {
-                        $examsRemaining = max(0, $planCheck['remaining']); // Ensure non-negative
+                        $examsRemaining = max(0, $planCheck['remaining']);
                     }
                 } else {
                     $examsRemaining = 0;
+                }
+
+                // Safety: if service returns limit/used, recompute as guard
+                if (isset($planCheck['limit'], $planCheck['used']) && is_numeric($planCheck['limit']) && is_numeric($planCheck['used'])) {
+                    $computed = (int) $planCheck['limit'] - (int) $planCheck['used'];
+                    if ($computed >= 0 && $examsRemaining !== __('messages.common.unlimited')) {
+                        $examsRemaining = $computed;
+                    }
                 }
             } catch (\Exception $e) {
                 \Log::error('Error calculating exams remaining: ' . $e->getMessage(), [
