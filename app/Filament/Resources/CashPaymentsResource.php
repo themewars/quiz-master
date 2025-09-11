@@ -103,6 +103,20 @@ class CashPaymentsResource extends Resource
                                     ->whereNot('id', $record->id)
                                     ->whereIn('status', [SubscriptionStatus::ACTIVE->value])
                                     ->update(['status' => SubscriptionStatus::INACTIVE->value]);
+
+                                // Reset usage counters when a manual payment is approved
+                                try {
+                                    $record->update([
+                                        'exams_generated_this_month' => 0,
+                                        'questions_generated_this_month' => 0,
+                                        'usage_reset_date' => now()->addMonth(),
+                                    ]);
+                                } catch (\Throwable $e) {
+                                    \Log::warning('Failed resetting usage counters on manual approval', [
+                                        'subscription_id' => $record->id,
+                                        'error' => $e->getMessage(),
+                                    ]);
+                                }
                             }
 
                             Notification::make()
