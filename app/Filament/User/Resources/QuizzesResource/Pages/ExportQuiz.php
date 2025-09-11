@@ -38,7 +38,7 @@ class ExportQuiz extends Page
 
     public function exportPDF()
     {
-        $planCheck = app(PlanValidationService::class)->canUseFeature('pdf_export');
+        $planCheck = (new PlanValidationService(auth()->user()))->canUseFeature('pdf_export');
         if (!$planCheck['allowed']) {
             Notification::make()
                 ->danger()
@@ -52,7 +52,7 @@ class ExportQuiz extends Page
 
     public function exportWord()
     {
-        $planCheck = app(PlanValidationService::class)->canUseFeature('word_export');
+        $planCheck = (new PlanValidationService(auth()->user()))->canUseFeature('word_export');
         if (!$planCheck['allowed']) {
             Notification::make()
                 ->danger()
@@ -100,7 +100,7 @@ class ExportQuiz extends Page
         try {
             // Check answer key feature if answer key is included
             if ($this->includeAnswerKey) {
-                $planCheck = app(PlanValidationService::class)->canUseFeature('answer_key');
+                $planCheck = (new PlanValidationService(auth()->user()))->canUseFeature('answer_key');
                 if (!$planCheck['allowed']) {
                     Notification::make()
                         ->danger()
