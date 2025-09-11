@@ -99,17 +99,21 @@ class PlanValidationService
         // Fallback to counting actual quizzes if counter column doesn't exist
         $usedExams = $this->subscription->exams_generated_this_month ?? 0;
         
-        // If counter is 0 but user has quizzes, count actual quizzes (for migration compatibility)
+        // If counter is 0, approximate from quizzes created in the CURRENT BILLING WINDOW only
+        // (older quizzes from previous plans/cycles should NOT reduce current allowance)
         if ($usedExams === 0 && $this->user) {
-            $actualQuizCount = Quiz::where('user_id', $this->user->id)->count();
-            if ($actualQuizCount > 0) {
-                $usedExams = $actualQuizCount;
-                // Update the counter for future use
-                try {
+            try {
+                [$windowStart, $windowEnd] = $this->getCurrentBillingWindow();
+                $actualQuizCount = Quiz::where('user_id', $this->user->id)
+                    ->whereBetween('created_at', [$windowStart, $windowEnd])
+                    ->count();
+                if ($actualQuizCount > 0) {
+                    $usedExams = $actualQuizCount;
+                    // Persist for future requests
                     $this->subscription->update(['exams_generated_this_month' => $actualQuizCount]);
-                } catch (\Exception $e) {
-                    // Silently ignore if column doesn't exist yet
                 }
+            } catch (\Exception $e) {
+                // ignore fallback issues
             }
         }
 
@@ -133,6 +137,21 @@ class PlanValidationService
                 'used' => $usedExams,
                 'remaining' => -1,
             ];
+        }
+
+        // Final guard: if usedExams is 0 and plan limit is large (e.g., 200) but UI still shows a small
+        // number like 3, force a refresh from DB to pick the latest ACTIVE subscription again.
+        // This helps right after upgrade without needing a re-login.
+        if ($usedExams === 0 && $this->user) {
+            try {
+                $latestActive = $this->user->subscriptions()
+                    ->where('status', SubscriptionStatus::ACTIVE->value)
+                    ->orderByDesc('id')
+                    ->first();
+                if ($latestActive && $latestActive->id !== ($this->subscription->id ?? null)) {
+                    $this->subscription = $latestActive;
+                }
+            } catch (\Exception $e) {}
         }
 
         if ($usedExams >= $examsPerMonth) {
