@@ -42,8 +42,8 @@ class CustomRegistrationResponse implements RegistrationResponseContract
                 }
             }
 
-            // If no authenticated user, try to get user from session or request
-            $userId = session('registered_user_id') ?? $request->session()->get('registered_user_id');
+            // If no authenticated user, try to get user from session
+            $userId = session('registered_user_id');
             if ($userId) {
                 $user = User::find($userId);
                 if ($user) {
@@ -61,8 +61,8 @@ class CustomRegistrationResponse implements RegistrationResponseContract
                 }
             }
 
-            // Fallback: redirect to login with success message
-            return redirect()->route('filament.auth.auth.login')
+            // Final fallback: redirect to home page
+            return redirect()->route('home')
                 ->with('success', 'Registration successful! Please login to continue.');
                 
         } catch (\Exception $e) {
@@ -71,8 +71,8 @@ class CustomRegistrationResponse implements RegistrationResponseContract
                 'trace' => $e->getTraceAsString()
             ]);
             
-            // Fallback redirect
-            return redirect()->route('filament.auth.auth.login')
+            // Fallback redirect to home
+            return redirect()->route('home')
                 ->with('success', 'Registration completed successfully! Please login to continue.');
         }
     }
