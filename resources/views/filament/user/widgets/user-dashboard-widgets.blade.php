@@ -11,12 +11,12 @@
                 </div>
                 <div>
                     <h3 class="text-xl font-bold">{{ __('Exams Remaining This Month') }}</h3>
-                    <p class="text-sm opacity-90 mt-1">{{ __('You have') }} <span class="font-bold text-2xl">{{ $examsRemaining }}</span> {{ __('exams remaining in your') }} <span class="font-semibold">{{ isset($subscription) ? $subscription->plan->name : __('Free Plan') }}</span></p>
+                    <p class="text-sm mt-1">{{ __('You have') }} <span class="font-bold text-2xl">{{ $examsRemaining }}</span> {{ __('exams remaining in your') }} <span class="font-semibold">{{ isset($subscription) ? $subscription->plan->name : __('Free Plan') }}</span></p>
                 </div>
             </div>
             <div class="text-right">
                 <div class="text-4xl font-black">{{ $examsRemaining }}</div>
-                <div class="text-sm opacity-90 font-medium">{{ __('remaining') }}</div>
+                <div class="text-sm font-medium">{{ __('remaining') }}</div>
             </div>
         </div>
     </div>
@@ -37,11 +37,11 @@
                 </div>
                 <div class="py-5 my-5"></div>
                 <div class="pt-3">
-                    <p class="text-sm font-medium opacity-70">{{ __('messages.dashboard.expiry_date') }}</p>
+                    <p class="text-sm font-medium">{{ __('messages.dashboard.expiry_date') }}</p>
                     <h4 class="text-3xl font-bold tracking-tight xl:text-2xl">
                         {{ isset($subscription) ? date('d/m/Y', strtotime($subscription->ends_at)) : __('messages.common.n/a') }}
                     </h4>
-                    <p class="text-sm opacity-70">
+                    <p class="text-sm">
                         <span>{{ __('messages.dashboard.your_current_plan') . ':' }}</span>
                         <span
                             class="font-semibold text-primary">{{ isset($subscription) ? $subscription->plan->name : __('messages.common.n/a') }}</span>
@@ -64,13 +64,13 @@
                 </div>
                 <div class="py-5 my-5"></div>
                 <div class="pt-3">
-                    <p class="text-sm font-medium opacity-70">{{ __('messages.dashboard.active_quizzes') }}</p>
+                    <p class="text-sm font-medium">{{ __('messages.dashboard.active_quizzes') }}</p>
                     <h4 class="text-3xl font-bold tracking-tight xl:text-2xl">{{ $activeQuizzes }}</h4>
-                    <p class="text-sm opacity-70">
+                    <p class="text-sm">
                         <span>{{ __('messages.dashboard.total_quizzes') . ':' }}</span>
                         <span>{{ $totalQuizzes }}</span>
                     </p>
-                    <p class="text-sm opacity-70 mt-1">
+                    <p class="text-sm mt-1">
                         <span>{{ __('Exams remaining this month') . ':' }}</span>
                         <span class="font-semibold">{{ $examsRemaining }}</span>
                     </p>
@@ -91,8 +91,8 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="text-sm font-medium opacity-90">{{ __('Exams Remaining') }}</p>
-                            <p class="text-xs opacity-70">{{ __('This Month') }}</p>
+                            <p class="text-sm font-medium">{{ __('Exams Remaining') }}</p>
+                            <p class="text-xs">{{ __('This Month') }}</p>
                         </div>
                     </div>
                     <div class="text-right">
@@ -101,7 +101,7 @@
                 </div>
                 <div class="mt-auto">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm opacity-80">{{ __('Plan') }}:</span>
+                        <span class="text-sm">{{ __('Plan') }}:</span>
                         <span class="text-sm font-semibold bg-white/20 px-2 py-1 rounded-full">{{ isset($subscription) ? $subscription->plan->name : __('Free Plan') }}</span>
                     </div>
                 </div>
@@ -122,9 +122,9 @@
                 </div>
                 <div class="py-5 my-5"></div>
                 <div class="pt-3">
-                    <p class="text-sm font-medium opacity-70">{{ __('messages.dashboard.participants') }}</p>
+                    <p class="text-sm font-medium">{{ __('messages.dashboard.participants') }}</p>
                     <h4 class="text-3xl font-bold tracking-tight xl:text-2xl">{{ $participants }}</h4>
-                    <p class="text-sm opacity-70">
+                    <p class="text-sm">
                         <span>{{ $completedPer }}%</span>
                         <span>{{ __('messages.dashboard.participants_completed_quiz') }}</span>
                     </p>
@@ -145,12 +145,12 @@
                 </div>
                 <div class="py-5 my-5"></div>
                 <div class="pt-3">
-                    <p class="text-sm font-medium opacity-70">{{ __('messages.user.balance') }}</p>
+                    <p class="text-sm font-medium">{{ __('messages.user.balance') }}</p>
                     <h4 class="text-3xl font-bold tracking-tight xl:text-2xl">
                         ${{ number_format(auth()->user()->balance ?? 0, 2) }}
                     </h4>
 
-                    <p class="text-sm opacity-70">
+                    <p class="text-sm">
                         <span>{{ __('messages.user.remaining_balance') }}: </span>
                         <span>${{ number_format(auth()->user()->remaining_balance ?? 0, 2) }}</span>
                     </p>
