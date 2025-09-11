@@ -95,6 +95,14 @@ class CreateSubscription
                     'questions_generated_this_month' => 0,
                     'usage_reset_date' => Carbon::now()->addMonth(),
                 ]);
+
+                // Log the plan upgrade for debugging
+                \Log::info('Plan upgrade completed', [
+                    'user_id' => $subscription->user_id,
+                    'old_plan_id' => $currentSubscription['plan_id'] ?? 'unknown',
+                    'new_plan_id' => $subscription->plan_id,
+                    'subscription_id' => $subscription->id,
+                ]);
             }
 
             if ($attachment != null && !empty($attachment)) {

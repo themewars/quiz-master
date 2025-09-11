@@ -40,6 +40,8 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
         'password',
         'balance',
         'used_balance',
+        'status',
+        'email_verified_at',
     ];
 
     /**
@@ -62,6 +64,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar,
         'password' => 'hashed',
         'balance' => 'decimal:2',
         'used_balance' => 'decimal:2',
+        'status' => 'boolean',
     ];
 
     const ADMIN_ROLE = 'admin';

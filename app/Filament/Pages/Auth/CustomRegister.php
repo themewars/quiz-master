@@ -9,7 +9,7 @@ use Filament\Pages\Auth\Register;
 use Filament\Events\Auth\Registered;
 use Filament\Notifications\Notification;
 use App\Actions\Subscription\CreateSubscription;
-use Filament\Http\Responses\Auth\RegistrationResponse;
+use App\Http\Responses\CustomRegistrationResponse;
 use AbanoubNassem\FilamentGRecaptchaField\Forms\Components\GRecaptcha;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 
@@ -87,15 +87,51 @@ class CustomRegister extends Register
             return $user;
         });
 
-        $plan = Plan::where('assign_default', true)->first();
-        if ($plan) {
-            $data['plan'] = $plan->load('currency')->toArray();
-            $data['user_id'] = $user->id;
-            $data['payment_type'] = Subscription::TYPE_FREE;
-            if ($plan->trial_days != null && $plan->trial_days > 0) {
-                $data['trial_days'] = $plan->trial_days;
+        // Create subscription for new user
+        try {
+            $plan = Plan::where('assign_default', true)->where('status', true)->first();
+            if ($plan) {
+                $data['plan'] = $plan->load('currency')->toArray();
+                $data['user_id'] = $user->id;
+                $data['payment_type'] = Subscription::TYPE_FREE;
+                if ($plan->trial_days != null && $plan->trial_days > 0) {
+                    $data['trial_days'] = $plan->trial_days;
+                }
+                CreateSubscription::run($data);
+                
+                \Log::info('Subscription created successfully for new user', [
+                    'user_id' => $user->id,
+                    'user_email' => $user->email,
+                    'plan_id' => $plan->id,
+                    'plan_name' => $plan->name
+                ]);
+            } else {
+                \Log::error('No active default plan found during user registration', [
+                    'user_id' => $user->id,
+                    'user_email' => $user->email,
+                    'available_plans' => Plan::where('status', true)->count()
+                ]);
+                
+                // Show user-friendly error message
+                Notification::make()
+                    ->warning()
+                    ->title(__('Registration completed with limited access'))
+                    ->body(__('Please contact administrator to assign a plan for full access.'))
+                    ->send();
             }
-            CreateSubscription::run($data);
+        } catch (\Exception $e) {
+            \Log::error('Error creating subscription during registration: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Show user-friendly error message
+            Notification::make()
+                ->warning()
+                ->title(__('Registration completed with limited access'))
+                ->body(__('There was an issue setting up your account. Please contact support.'))
+                ->send();
         }
 
         event(new Registered($user));
@@ -106,6 +142,6 @@ class CustomRegister extends Register
             ->title(__('messages.home.email_verification_link_sent'))
             ->send();
 
-        return app(RegistrationResponse::class);
+        return app(CustomRegistrationResponse::class);
     }
 }

@@ -20,6 +20,13 @@ class PlanValidationService
         try {
             $this->user = $user ?? auth()->user();
 
+            // If no user, return early
+            if (!$this->user) {
+                $this->subscription = null;
+                $this->plan = null;
+                return;
+            }
+
             // Pick latest ACTIVE subscription; avoid strict string status checks (DB may store ints)
             $this->subscription = $this->user
                 ? $this->user->subscriptions()
@@ -41,12 +48,15 @@ class PlanValidationService
                 
                 // If still no plan found, log error and use a minimal fallback
                 if (!$this->plan) {
-                    \Log::error('No default plan found in PlanValidationService');
+                    \Log::error('No default plan found in PlanValidationService for user: ' . $this->user->id);
                     $this->plan = null;
                 }
             }
         } catch (\Exception $e) {
-            \Log::error('Error in PlanValidationService constructor: ' . $e->getMessage());
+            \Log::error('Error in PlanValidationService constructor: ' . $e->getMessage(), [
+                'user_id' => $this->user?->id,
+                'trace' => $e->getTraceAsString()
+            ]);
             $this->user = null;
             $this->subscription = null;
             $this->plan = null;
@@ -131,6 +141,36 @@ class PlanValidationService
             'used' => $usedExams,
             'remaining' => $examsPerMonth - $usedExams
         ];
+    }
+
+    /**
+     * Reset usage counters when user upgrades plan
+     */
+    public function resetUsageOnPlanUpgrade(): void
+    {
+        if (!$this->subscription || !$this->user) {
+            return;
+        }
+
+        try {
+            // Reset counters to 0 for fresh start with new plan
+            $this->subscription->update([
+                'exams_generated_this_month' => 0,
+                'questions_generated_this_month' => 0,
+                'usage_reset_date' => Carbon::now()->addMonth(),
+            ]);
+
+            \Log::info('Usage counters reset on plan upgrade', [
+                'user_id' => $this->user->id,
+                'subscription_id' => $this->subscription->id,
+                'plan_id' => $this->subscription->plan_id,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error resetting usage on plan upgrade: ' . $e->getMessage(), [
+                'user_id' => $this->user?->id,
+                'subscription_id' => $this->subscription?->id,
+            ]);
+        }
     }
 
     /**
