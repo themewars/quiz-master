@@ -350,15 +350,15 @@ nav {
 }
 
 .badge-purple-light {
-    background-color: var(--primary-light);
-    color: #0050ff;
-    border: 1px solid #0050ff;
+    background-color: #ede9fe; /* lighter bg for contrast */
+    color: #1f2937; /* darker text */
+    border: 1px solid #7c3aed; /* purple-600 */
 }
 
 .badge-primary-light {
-    background-color: var(--primary-light);
-    color: var(--primary);
-    border: 1px solid var(--primary);
+    background-color: #eef2ff; /* indigo-100 */
+    color: #1f2937; /* slate-800 */
+    border: 1px solid #4f46e5; /* indigo-600 */
 }
 
 .badge-blue {
@@ -676,7 +676,7 @@ section {
 }
 
 .section-header.pricing p {
-    color: var(--slate-600);
+    color: #374151; /* slate-700 for better contrast */
 }
 
 /* Features Section */
@@ -2007,7 +2007,7 @@ section {
 }
 
 .text-light-gray {
-    color: var(--light-gray);
+    color: #374151; /* bump contrast for body copy in cards */
 }
 
 .mx-auto {
