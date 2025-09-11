@@ -137,6 +137,24 @@ class Quiz extends Model implements HasMedia
         ];
     }
 
+    protected static function booted()
+    {
+        static::created(function (Quiz $quiz) {
+            try {
+                // Increment monthly exam usage when a quiz is created
+                $user = $quiz->user()->first();
+                if ($user) {
+                    (new \App\Services\PlanValidationService($user))->updateUsage(1, 0);
+                }
+            } catch (\Throwable $e) {
+                \Log::warning('Failed to bump usage on quiz create', [
+                    'quiz_id' => $quiz->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
