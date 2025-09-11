@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Plan;
 use App\Models\Currency;
-use App\Models\Role;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
