@@ -164,6 +164,12 @@ class CustomRegister extends Register
                 ->send();
         }
 
+        // Log the user in automatically after registration
+        auth()->login($user);
+        
+        // Store user ID in session for CustomRegistrationResponse
+        session(['registered_user_id' => $user->id]);
+
         return app(CustomRegistrationResponse::class);
     }
 }

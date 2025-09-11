@@ -20,21 +20,50 @@ class CustomRegistrationResponse implements RegistrationResponseContract
             /** @var User $user */
             $user = auth()->user();
 
+            // If user is authenticated, redirect to appropriate dashboard
             if ($user) {
                 $role = $user->roles()->first();
 
                 if ($role && $role->name === User::ADMIN_ROLE) {
-                    return redirect()->route('filament.admin.pages.dashboard');
+                    return redirect()->route('filament.admin.pages.dashboard')
+                        ->with('success', 'Welcome! Registration successful.');
                 }
 
                 if ($role && $role->name === User::USER_ROLE) {
-                    return redirect()->route('filament.user.pages.dashboard');
+                    return redirect()->route('filament.user.pages.dashboard')
+                        ->with('success', 'Welcome! Registration successful.');
+                }
+
+                // If user has no role, assign default user role and redirect
+                if (!$role) {
+                    $user->assignRole(User::USER_ROLE);
+                    return redirect()->route('filament.user.pages.dashboard')
+                        ->with('success', 'Welcome! Registration successful.');
                 }
             }
 
-            // If no user or role, redirect to login
+            // If no authenticated user, try to get user from session or request
+            $userId = session('registered_user_id') ?? $request->session()->get('registered_user_id');
+            if ($userId) {
+                $user = User::find($userId);
+                if ($user) {
+                    // Log the user in
+                    auth()->login($user);
+                    
+                    $role = $user->roles()->first();
+                    if ($role && $role->name === User::ADMIN_ROLE) {
+                        return redirect()->route('filament.admin.pages.dashboard')
+                            ->with('success', 'Welcome! Registration successful.');
+                    }
+                    
+                    return redirect()->route('filament.user.pages.dashboard')
+                        ->with('success', 'Welcome! Registration successful.');
+                }
+            }
+
+            // Fallback: redirect to login with success message
             return redirect()->route('filament.auth.auth.login')
-                ->with('message', 'Registration successful. Please login to continue.');
+                ->with('success', 'Registration successful! Please login to continue.');
                 
         } catch (\Exception $e) {
             Log::error('Error in CustomRegistrationResponse: ' . $e->getMessage(), [
@@ -44,7 +73,7 @@ class CustomRegistrationResponse implements RegistrationResponseContract
             
             // Fallback redirect
             return redirect()->route('filament.auth.auth.login')
-                ->with('error', 'Registration completed but there was an issue. Please try logging in.');
+                ->with('success', 'Registration completed successfully! Please login to continue.');
         }
     }
 }
