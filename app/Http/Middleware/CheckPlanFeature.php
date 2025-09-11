@@ -17,7 +17,8 @@ class CheckPlanFeature
      */
     public function handle(Request $request, Closure $next, string $feature): Response
     {
-        $planCheck = app(PlanValidationService::class)->canUseFeature($feature);
+        // Bind validation to the currently authenticated user explicitly to avoid context issues
+        $planCheck = (new PlanValidationService(auth()->user()))->canUseFeature($feature);
 
         if (!($planCheck['allowed'] ?? false)) {
             Notification::make()
