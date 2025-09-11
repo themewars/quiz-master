@@ -342,7 +342,17 @@ class PlanValidationService
             ];
         }
 
-        $allowed = $this->plan->allowsFeature($feature);
+        // Normalize common synonyms coming from routes/middleware so checks remain robust
+        $featureSynonyms = [
+            'website_to_exam' => 'website_quiz',
+            'website-exam' => 'website_quiz',
+            'website' => 'website_quiz',
+            'pdf-to-exam' => 'pdf_to_exam',
+            'pdf2exam' => 'pdf_to_exam',
+        ];
+        $normalizedFeature = $featureSynonyms[$feature] ?? $feature;
+
+        $allowed = $this->plan->allowsFeature($normalizedFeature);
 
         return [
             'allowed' => $allowed,
