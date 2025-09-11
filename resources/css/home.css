@@ -1485,19 +1485,19 @@ section {
 }
 
 .pricing-header h3 {
-    font-size: 1.125rem;
+    font-size: 1.375rem; /* bigger like homepage */
     margin-bottom: 0.2rem;
     font-weight: 600;
 }
 
 .price {
-    font-size: 1.75rem;
+    font-size: 2.25rem;
     font-weight: 700;
     margin-bottom: 0.1rem;
 }
 
 .price .frequency {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 400;
     color: var(--slate-800);
 }
@@ -1511,7 +1511,7 @@ section {
 .pricing-header p {
     color: var(--slate-600);
     margin-bottom: 0;
-    font-size: 0.85rem;
+    font-size: 1rem;
     line-height: 1.2;
 }
 
@@ -1533,7 +1533,7 @@ section {
 }
 
 .feature-item span {
-    font-size: 0.9rem;
+    font-size: 1rem;
     line-height: 1.2;
 }
 
@@ -1576,10 +1576,10 @@ section {
 /* Button Styling for Pricing Cards */
 .pricing-card .btn {
     margin-top: auto;
-    padding: 0.8rem 1rem;
+    padding: 1rem 1.25rem;
     border-radius: var(--radius);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.125rem;
     text-align: center;
     transition: all 0.2s ease;
     border: none;
