@@ -122,15 +122,22 @@
                         <li><a href="{{ route('about') }}">About Us</a></li>
                         <li><a href="{{ route('pricing') }}">Pricing</a></li>
                         <li><a href="{{ route('contact') }}">Contact</a></li>
-                        @if (getSetting() && getSetting()->terms_and_condition)
-                            <li><a href="{{ route('terms') }}">{{ __('messages.home.terms_and_conditions') }}</a></li>
-                        @endif
-                        @if (getSetting() && getSetting()->privacy_policy)
-                            <li><a href="{{ route('policy') }}">{{ __('messages.home.privacy_policy') }}</a></li>
-                        @endif
-                        @if (getSetting() && getSetting()->cookie_policy)
-                            <li><a href="{{ route('cookie') }}">{{ __('messages.home.cookie_policy') }}</a></li>
-                        @endif
+                        @php
+                            $legalPages = \App\Models\LegalPage::query()->where('status', true)->orderBy('title')->get();
+                        @endphp
+                        @forelse($legalPages as $lp)
+                            <li><a href="{{ route('legal.show', ['slug' => $lp->slug]) }}">{{ $lp->title }}</a></li>
+                        @empty
+                            @if (getSetting() && getSetting()->terms_and_condition)
+                                <li><a href="{{ route('terms') }}">{{ __('messages.home.terms_and_conditions') }}</a></li>
+                            @endif
+                            @if (getSetting() && getSetting()->privacy_policy)
+                                <li><a href="{{ route('policy') }}">{{ __('messages.home.privacy_policy') }}</a></li>
+                            @endif
+                            @if (getSetting() && getSetting()->cookie_policy)
+                                <li><a href="{{ route('cookie') }}">{{ __('messages.home.cookie_policy') }}</a></li>
+                            @endif
+                        @endforelse
                         <li><a href="{{ route('refund') }}">Refund Policy</a></li>
                     </ul>
                 </div>

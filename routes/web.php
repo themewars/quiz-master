@@ -7,6 +7,7 @@ use App\Http\Controllers\RazorpayController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\LegalPageController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserQuizController;
 use App\Http\Controllers\ExamShowcaseController;
@@ -72,6 +73,9 @@ Route::middleware('SetLanguage')->group(function () {
     Route::post('/contact', [HomeController::class, 'contactSubmit'])->name('contact.submit');
     Route::get('/about', [HomeController::class, 'about'])->name('about');
     Route::get('/pricing', [HomeController::class, 'pricing'])->name('pricing');
+
+    // Dynamic Legal Pages
+    Route::get('/legal/{slug}', [LegalPageController::class, 'show'])->name('legal.show');
 
     // Route of Poll votes
     Route::get('p/{code}', [PollResultController::class, 'create'])->name('poll.create');
