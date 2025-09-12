@@ -45,12 +45,15 @@ class GenerateQuizJob implements ShouldQueue
             try {
                 $batchPrompt = $this->prompt . "\n\nYou MUST return exactly {$take} questions in this response.";
 
+                // Use the same key naming as CreateQuizzes (open_api_key) with config fallback
+                $apiKey = getSetting()->open_api_key ?: (config('services.open_ai.open_api_key') ?? '');
+
                 $response = Http::withHeaders([
-                        'Authorization' => 'Bearer ' . (getSetting()->openai_api_key ?? ''),
+                        'Authorization' => 'Bearer ' . $apiKey,
                         'Content-Type' => 'application/json',
                     ])
-                    ->timeout(120)
-                    ->retry(2, 1500)
+                    ->timeout(300)
+                    ->retry(3, 2000)
                     ->post('https://api.openai.com/v1/chat/completions', [
                         'model' => $this->model,
                         'messages' => [
@@ -59,7 +62,9 @@ class GenerateQuizJob implements ShouldQueue
                     ]);
 
                 if ($response->failed()) {
-                    throw new \RuntimeException($response->json()['error']['message'] ?? 'OpenAI error');
+                    $body = $response->json();
+                    $message = is_array($body) ? ($body['error']['message'] ?? json_encode($body)) : 'OpenAI error';
+                    throw new \RuntimeException($message);
                 }
 
                 $content = $response['choices'][0]['message']['content'] ?? '';
