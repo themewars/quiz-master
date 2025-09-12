@@ -33,7 +33,7 @@ class EditQuizzes extends EditRecord
             console.log("Edit page progress bar script loaded");
             
             // Add progress bar HTML to the page
-            const progressBarHTML = `<div id="live-progress-container" class="mb-6" style="display: block; background: yellow; border: 2px solid red;"><div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"><div class="flex items-center justify-between mb-2"><h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">Generating Exam Questions...</h3><span id="progress-text" class="text-sm text-gray-600 dark:text-gray-400">0/0 (0%)</span></div><div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5"><div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-in-out" style="width: 0%"></div></div><div class="mt-2 text-xs text-gray-500 dark:text-gray-400">Please wait while questions are being generated in the background...</div></div></div>`;
+            const progressBarHTML = `<div id="live-progress-container" class="mb-6" style="display: none;"><div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"><div class="flex items-center justify-between mb-2"><h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">Generating Exam Questions...</h3><span id="progress-text" class="text-sm text-gray-600 dark:text-gray-400">0/0 (0%)</span></div><div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5"><div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-in-out" style="width: 0%"></div></div><div class="mt-2 text-xs text-gray-500 dark:text-gray-400">Please wait while questions are being generated in the background...</div></div></div>`;
             
             function initializeProgressBar() {
                 console.log("Edit page - Looking for main content area...");
@@ -118,6 +118,7 @@ class EditQuizzes extends EditRecord
                                 updateProgressBar(data.quiz);
                                 
                                 if (data.quiz.status === "completed") {
+                                    console.log("Exam generation completed! Reloading page...");
                                     setTimeout(() => {
                                         window.location.reload();
                                     }, 1000);
@@ -165,7 +166,7 @@ class EditQuizzes extends EditRecord
                         }
                     }, 500);
                 } else {
-                    console.log("Edit page - Form not found, retrying in 500ms");
+                    console.log("Edit page - No target element found, retrying in 500ms");
                     setTimeout(initializeProgressBar, 500);
                 }
             }
@@ -178,6 +179,7 @@ class EditQuizzes extends EditRecord
             }
         ');
     }
+
     public function currentActiveTab()
     {
         $pre = URL::previous();
