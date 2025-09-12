@@ -644,6 +644,7 @@ class CreateQuizzes extends CreateRecord
         $create = parent::getFormActions()[0]
             ->label(__('Create Exam'))
             ->icon('heroicon-o-plus')
+            ->disabled(fn () => ($this->isProcessing || (app(\App\Services\PlanValidationService::class)->canCreateExam()['allowed'] ?? true) === false))
             ->extraAttributes([
                 'wire:target' => 'create',
                 'wire:loading.attr' => 'disabled',
@@ -672,12 +673,21 @@ class CreateQuizzes extends CreateRecord
         $planCheck = app(\App\Services\PlanValidationService::class)->canCreateExam();
         $examsRemaining = isset($planCheck['remaining']) ? $planCheck['remaining'] : 0;
         
-        return [
-            Action::make('exams_remaining')
-                ->label(__('Exams Remaining: ') . ($examsRemaining === -1 ? __('Unlimited') : $examsRemaining))
-                ->color($examsRemaining > 10 ? 'success' : ($examsRemaining > 0 ? 'warning' : 'danger'))
-                ->disabled()
-                ->icon('heroicon-o-clipboard-document-list'),
-        ];
+        $actions = [];
+        $actions[] = Action::make('exams_remaining')
+            ->label(__('Exams Remaining: ') . ($examsRemaining === -1 ? __('Unlimited') : $examsRemaining))
+            ->color($examsRemaining > 10 ? 'success' : ($examsRemaining > 0 ? 'warning' : 'danger'))
+            ->disabled()
+            ->icon('heroicon-o-clipboard-document-list');
+
+        // If no remaining exams, show disabled Create + upgrade hint
+        if ($examsRemaining === 0) {
+            $actions[] = Action::make('limit_reached')
+                ->label(__('Monthly exam limit reached'))
+                ->color('danger')
+                ->disabled();
+        }
+
+        return $actions;
     }
 }
