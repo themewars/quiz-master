@@ -657,18 +657,17 @@ class CreateQuizzes extends CreateRecord
     {
         $create = parent::getFormActions()[0]
             ->label(__('Create Exam'))
-            ->icon('heroicon-o-plus');
+            ->icon('heroicon-o-plus')
+            ->hidden(fn () => $this->isProcessing);
 
         $progress = Action::make('progress')
             ->label(fn () => ($this->getProgressLabel() !== '' ? $this->getProgressLabel() : __('Creating...')))
             ->disabled()
             ->color('gray')
-            ->extraAttributes([
-                'wire:loading' => '',
-            ]);
+            ->visible(fn () => $this->isProcessing);
 
         return [
-            $create->extraAttributes(['wire:loading.remove' => '']),
+            $create,
             $progress,
             Action::make('cancel')->label(__('messages.common.cancel'))->color('gray')->url(QuizzesResource::getUrl('index')),
         ];
