@@ -705,7 +705,7 @@ class CreateQuizzes extends CreateRecord
         ];
     }
 
-    protected function getView(): string
+    public function getView(): string
     {
         return 'filament.user.resources.quizzes-resource.pages.create-quizzes';
     }
