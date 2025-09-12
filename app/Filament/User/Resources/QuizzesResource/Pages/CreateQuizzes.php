@@ -471,52 +471,74 @@ class CreateQuizzes extends CreateRecord
             }
             $quizQuestions = json_decode($quizData, true);
 
+            // Validate that we got valid questions
+            if (!is_array($quizQuestions) || empty($quizQuestions)) {
+                Notification::make()
+                    ->danger()
+                    ->title(__('Failed to generate questions'))
+                    ->body(__('The AI response was invalid or empty. Please try again.'))
+                    ->send();
+                $this->halt();
+            }
+
             $quiz = Quiz::create($input);
 
-            if (is_array($quizQuestions)) {
-                foreach ($quizQuestions as $question) {
-                    if (isset($question['question'], $question['answers'])) {
-                        $questionModel = Question::create([
-                            'quiz_id' => $quiz->id,
-                            'title' => $question['question'],
-                        ]);
+            $questionsCreated = 0;
+            foreach ($quizQuestions as $question) {
+                if (isset($question['question'], $question['answers'])) {
+                    $questionModel = Question::create([
+                        'quiz_id' => $quiz->id,
+                        'title' => $question['question'],
+                    ]);
 
-                        foreach ($question['answers'] as $answer) {
-                            $isCorrect = false;
-                            $correctKey = $question['correct_answer_key'];
+                    foreach ($question['answers'] as $answer) {
+                        $isCorrect = false;
+                        $correctKey = $question['correct_answer_key'];
 
-                            if (is_array($correctKey)) {
-                                $isCorrect = in_array($answer['title'], $correctKey);
-                            } else {
-                                $isCorrect = $answer['title'] === $correctKey;
-                            }
-
-                            Answer::create([
-                                'question_id' => $questionModel->id,
-                                'title' => $answer['title'],
-                                'is_correct' => $isCorrect,
-                            ]);
+                        if (is_array($correctKey)) {
+                            $isCorrect = in_array($answer['title'], $correctKey);
+                        } else {
+                            $isCorrect = $answer['title'] === $correctKey;
                         }
+
+                        Answer::create([
+                            'question_id' => $questionModel->id,
+                            'title' => $answer['title'],
+                            'is_correct' => $isCorrect,
+                        ]);
                     }
+                    $questionsCreated++;
                 }
             }
 
-            // Update monthly usage counters (1 exam, N questions)
-            try {
-                $questionsGenerated = is_array($quizQuestions) ? count($quizQuestions) : 0;
-                app(\App\Services\PlanValidationService::class)->updateUsage(1, $questionsGenerated);
-            } catch (\Throwable $e) {
-                // Silently ignore counter update errors to not block creation
+            // Only show success if questions were actually created
+            if ($questionsCreated > 0) {
+                // Update monthly usage counters (1 exam, N questions)
+                try {
+                    app(\App\Services\PlanValidationService::class)->updateUsage(1, $questionsCreated);
+                } catch (\Throwable $e) {
+                    // Silently ignore counter update errors to not block creation
+                }
+
+                // Clear loading notifications and show success
+                Notification::make()
+                    ->success()
+                    ->title(__('Exam created successfully!'))
+                    ->body(__('Your exam has been generated with :count questions.', ['count' => $questionsCreated]))
+                    ->send();
+
+                return $quiz;
+            } else {
+                // Delete the quiz if no questions were created
+                $quiz->delete();
+                
+                Notification::make()
+                    ->danger()
+                    ->title(__('Failed to create exam'))
+                    ->body(__('No valid questions were generated. Please try again.'))
+                    ->send();
+                $this->halt();
             }
-
-            // Clear loading notifications and show success
-            Notification::make()
-                ->success()
-                ->title(__('Exam created successfully!'))
-                ->body(__('Your exam has been generated with :count questions.', ['count' => count($quizQuestions)]))
-                ->send();
-
-            return $quiz;
         }
 
         Notification::make()
