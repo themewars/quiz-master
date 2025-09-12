@@ -22,6 +22,24 @@ use App\Services\ImageProcessingService;
 class CreateQuizzes extends CreateRecord
 {
     protected static string $resource = QuizzesResource::class;
+    
+    // Inline progress state
+    public bool $isProcessing = false;
+    public int $progressTotal = 0;
+    public int $progressCreated = 0;
+
+    protected function getProgressLabel(): string
+    {
+        if (! $this->isProcessing || $this->progressTotal <= 0) {
+            return '';
+        }
+        $percent = (int) round(($this->progressCreated / max(1, $this->progressTotal)) * 100);
+        return __('Creating... :created/:total (:percent%)', [
+            'created' => $this->progressCreated,
+            'total' => $this->progressTotal,
+            'percent' => $percent,
+        ]);
+    }
 
     protected static bool $canCreateAnother = false;
 
@@ -45,13 +63,10 @@ class CreateQuizzes extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        // Show loading notification
-        Notification::make()
-            ->info()
-            ->title(__('Creating your exam...'))
-            ->body(__('Please wait while we generate your exam questions. This may take a few moments.'))
-            ->persistent()
-            ->send();
+        // Initialize inline progress state (total is set after form data read)
+        $this->isProcessing = true;
+        $this->progressTotal = 0;
+        $this->progressCreated = 0;
 
         $userId = Auth::id();
         $activeTab = getTabType();
@@ -430,16 +445,9 @@ class CreateQuizzes extends CreateRecord
 
         $aiType = getSetting()->ai_type;
 
-        // Create progressive loading notifications
+        // Initialize total for inline progress
         $totalQuestions = (int) $data['max_questions'];
-        
-        // Initial progress notification
-        Notification::make()
-            ->info()
-            ->title(__('Generating questions with AI...'))
-            ->body(__('Starting AI generation... 0 of :total questions created', ['total' => $totalQuestions]))
-            ->persistent()
-            ->send();
+        $this->progressTotal = $totalQuestions;
 
         if ($aiType == Quiz::GEMINI_AI) {
             $geminiApiKey = getSetting()->gemini_api_key;
@@ -526,14 +534,9 @@ class CreateQuizzes extends CreateRecord
 
             $quizText = $quizResponse['choices'][0]['message']['content'] ?? null;
             
-            // Update progress notification after AI response
+            // AI response received - continue to DB creation phase
             if ($quizText) {
-                Notification::make()
-                    ->info()
-                    ->title(__('Processing AI response...'))
-                    ->body(__('AI has generated questions. Now creating exam...'))
-                    ->persistent()
-                    ->send();
+                // keep inline indicator
             }
         }
 
@@ -547,11 +550,9 @@ class CreateQuizzes extends CreateRecord
 
             // Validate that we got valid questions
             if (!is_array($quizQuestions) || empty($quizQuestions)) {
-                Notification::make()
-                    ->danger()
-                    ->title(__('Failed to generate questions'))
-                    ->body(__('The AI response was invalid or empty. Please try again.'))
-                    ->send();
+                $this->isProcessing = false;
+                $this->progressTotal = 0;
+                $this->progressCreated = 0;
                 $this->halt();
             }
 
@@ -560,14 +561,9 @@ class CreateQuizzes extends CreateRecord
             $generatedQuestions = count($quizQuestions);
             
             if ($generatedQuestions !== $requestedQuestions) {
-                Notification::make()
-                    ->warning()
-                    ->title(__('Question count mismatch'))
-                    ->body(__('Requested :requested questions but generated :generated. Please try again.', [
-                        'requested' => $requestedQuestions,
-                        'generated' => $generatedQuestions
-                    ]))
-                    ->send();
+                $this->isProcessing = false;
+                $this->progressTotal = 0;
+                $this->progressCreated = 0;
                 $this->halt();
             }
 
@@ -600,21 +596,8 @@ class CreateQuizzes extends CreateRecord
                         ]);
                     }
                     $questionsCreated++;
-                    
-                    // Update progress notification every 5 questions or on completion
-                    if ($questionsCreated % 5 == 0 || $questionsCreated == $totalQuestions) {
-                        $progressPercent = round(($questionsCreated / $totalQuestions) * 100);
-                        Notification::make()
-                            ->info()
-                            ->title(__('Generating questions with AI...'))
-                            ->body(__(':created of :total questions created (:percent%)', [
-                                'created' => $questionsCreated,
-                                'total' => $totalQuestions,
-                                'percent' => $progressPercent
-                            ]))
-                            ->persistent()
-                            ->send();
-                    }
+                    // Update inline progress for each question
+                    $this->progressCreated = $questionsCreated;
                 }
             }
 
@@ -627,31 +610,21 @@ class CreateQuizzes extends CreateRecord
                     // Silently ignore counter update errors to not block creation
                 }
 
-                // Clear loading notifications and show success
-                Notification::make()
-                    ->success()
-                    ->title(__('Exam created successfully!'))
-                    ->body(__('Your exam has been generated with :count questions.', ['count' => $questionsCreated]))
-                    ->send();
+                // Mark complete; Filament will redirect per getRedirectUrl
+                $this->isProcessing = false;
 
                 return $quiz;
             } else {
                 // Delete the quiz if no questions were created
                 $quiz->delete();
-                
-                Notification::make()
-                    ->danger()
-                    ->title(__('Failed to create exam'))
-                    ->body(__('No valid questions were generated. Please try again.'))
-                    ->send();
+                $this->isProcessing = false;
+                $this->progressTotal = 0;
+                $this->progressCreated = 0;
                 $this->halt();
             }
         }
 
-        Notification::make()
-            ->danger()
-            ->title(__('messages.setting.something_went_wrong'))
-            ->send();
+        $this->isProcessing = false;
         $this->halt();
     }
 
@@ -674,10 +647,19 @@ class CreateQuizzes extends CreateRecord
 
     protected function getFormActions(): array
     {
+        $create = parent::getFormActions()[0]
+            ->label(__('Create Exam'))
+            ->icon('heroicon-o-plus');
+
+        $progress = Action::make('progress')
+            ->label(fn () => $this->getProgressLabel())
+            ->disabled()
+            ->color('gray')
+            ->visible(fn () => $this->isProcessing && $this->progressTotal > 0);
+
         return [
-            parent::getFormActions()[0]
-                ->label(__('Create Exam'))
-                ->icon('heroicon-o-plus'),
+            $create,
+            $progress,
             Action::make('cancel')->label(__('messages.common.cancel'))->color('gray')->url(QuizzesResource::getUrl('index')),
         ];
     }
