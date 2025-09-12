@@ -3,9 +3,10 @@
 <head>
     <meta charset="utf-8">
     <title>{{ $quiz->title }} - Exam Paper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Noto Sans Devanagari', 'Mangal', 'Arial Unicode MS', Arial, sans-serif;
             margin: 20px;
             line-height: 1.6;
         }

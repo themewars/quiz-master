@@ -13,6 +13,7 @@
 
     <link rel="preconnect" href="//fonts.bunny.net">
     <link href="//fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <script src="{{ asset('js/bootstrap.min.js') }}" ></script>
     <script async src="https://www.google.com/recaptcha/api.js"></script>
@@ -58,6 +59,16 @@
     </div>
 
     @yield('content')
+
+    <script>
+        // Apply Hindi font to elements with Hindi content
+        document.addEventListener('DOMContentLoaded', function() {
+            const hindiElements = document.querySelectorAll('[data-language="hi"], .hindi-content');
+            hindiElements.forEach(function(element) {
+                element.classList.add('hindi-text');
+            });
+        });
+    </script>
 
 </body>
 

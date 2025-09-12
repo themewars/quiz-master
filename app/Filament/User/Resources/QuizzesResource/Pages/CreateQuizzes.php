@@ -411,7 +411,7 @@ class CreateQuizzes extends CreateRecord
 
     **Instructions:**
 
-    1. **Language Requirement**: Write all quiz questions and answers in {$data['language']}.
+    1. **Language Requirement**: Write all quiz questions and answers in {$data['language']}. If the language is Hindi (hi), use proper Devanagari script with correct Hindi characters and grammar.
     2. **CRITICAL - Number of Questions**: You MUST create EXACTLY {$data['max_questions']} questions. Not more, not less. Count them carefully.
     3. **Difficulty Level**: Ensure each question adheres to the specified difficulty level: {$quizData['Difficulty']}.
     4. **Description Alignment**: Ensure that each question is relevant to and reflects key aspects of the provided description.
