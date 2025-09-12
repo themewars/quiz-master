@@ -476,8 +476,7 @@ class CreateQuizzes extends CreateRecord
         return [
             parent::getFormActions()[0]
                 ->label(__('Create Exam'))
-                ->icon('heroicon-o-plus')
-                ->loadingText(__('Creating Exam...')),
+                ->icon('heroicon-o-plus'),
             Action::make('cancel')->label(__('messages.common.cancel'))->color('gray')->url(QuizzesResource::getUrl('index')),
         ];
     }
