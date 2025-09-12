@@ -546,15 +546,19 @@ class CreateQuizzes extends CreateRecord
                 $this->halt();
             }
 
-            // Validate that we got the exact number of questions requested
+            // Normalize to requested count; allow partials and slice extras
             $requestedQuestions = (int) $data['max_questions'];
             $generatedQuestions = count($quizQuestions);
-            
-            if ($generatedQuestions !== $requestedQuestions) {
-                $this->isProcessing = false;
-                $this->progressTotal = 0;
-                $this->progressCreated = 0;
-                $this->halt();
+            if ($generatedQuestions > $requestedQuestions) {
+                $quizQuestions = array_slice($quizQuestions, 0, $requestedQuestions);
+                $generatedQuestions = count($quizQuestions);
+            } elseif ($generatedQuestions < $requestedQuestions) {
+                if ($generatedQuestions < 1) {
+                    $this->isProcessing = false;
+                    $this->progressTotal = 0;
+                    $this->progressCreated = 0;
+                    $this->halt();
+                }
             }
 
             $quiz = Quiz::create($input);
