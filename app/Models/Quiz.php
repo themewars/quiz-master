@@ -64,6 +64,8 @@ class Quiz extends Model implements HasMedia
         'max_questions' => 'integer',
         'unique_code' => 'string',
         'view_count' => 'integer',
+        'generation_progress_total' => 'integer',
+        'generation_progress_done' => 'integer',
     ];
 
     const TEXT_TYPE = 1;
