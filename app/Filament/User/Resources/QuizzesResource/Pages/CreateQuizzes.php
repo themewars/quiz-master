@@ -430,11 +430,14 @@ class CreateQuizzes extends CreateRecord
 
         $aiType = getSetting()->ai_type;
 
-        // Update loading notification for AI processing
+        // Create progressive loading notifications
+        $totalQuestions = (int) $data['max_questions'];
+        
+        // Initial progress notification
         Notification::make()
             ->info()
             ->title(__('Generating questions with AI...'))
-            ->body(__('Our AI is creating your exam questions. Almost done!'))
+            ->body(__('Starting AI generation... 0 of :total questions created', ['total' => $totalQuestions]))
             ->persistent()
             ->send();
 
@@ -522,6 +525,16 @@ class CreateQuizzes extends CreateRecord
             }
 
             $quizText = $quizResponse['choices'][0]['message']['content'] ?? null;
+            
+            // Update progress notification after AI response
+            if ($quizText) {
+                Notification::make()
+                    ->info()
+                    ->title(__('Processing AI response...'))
+                    ->body(__('AI has generated questions. Now creating exam...'))
+                    ->persistent()
+                    ->send();
+            }
         }
 
         if ($quizText) {
@@ -561,7 +574,9 @@ class CreateQuizzes extends CreateRecord
             $quiz = Quiz::create($input);
 
             $questionsCreated = 0;
-            foreach ($quizQuestions as $question) {
+            $totalQuestions = count($quizQuestions);
+            
+            foreach ($quizQuestions as $index => $question) {
                 if (isset($question['question'], $question['answers'])) {
                     $questionModel = Question::create([
                         'quiz_id' => $quiz->id,
@@ -585,6 +600,21 @@ class CreateQuizzes extends CreateRecord
                         ]);
                     }
                     $questionsCreated++;
+                    
+                    // Update progress notification every 5 questions or on completion
+                    if ($questionsCreated % 5 == 0 || $questionsCreated == $totalQuestions) {
+                        $progressPercent = round(($questionsCreated / $totalQuestions) * 100);
+                        Notification::make()
+                            ->info()
+                            ->title(__('Generating questions with AI...'))
+                            ->body(__(':created of :total questions created (:percent%)', [
+                                'created' => $questionsCreated,
+                                'total' => $totalQuestions,
+                                'percent' => $progressPercent
+                            ]))
+                            ->persistent()
+                            ->send();
+                    }
                 }
             }
 
