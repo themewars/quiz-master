@@ -406,7 +406,7 @@ class CreateQuizzes extends CreateRecord
     **Instructions:**
 
     1. **Language Requirement**: Write all quiz questions and answers in {$data['language']}.
-    2. **Number of Questions**: Create exactly {$data['max_questions']} questions.
+    2. **CRITICAL - Number of Questions**: You MUST create EXACTLY {$data['max_questions']} questions. Not more, not less. Count them carefully.
     3. **Difficulty Level**: Ensure each question adheres to the specified difficulty level: {$quizData['Difficulty']}.
     4. **Description Alignment**: Ensure that each question is relevant to and reflects key aspects of the provided description.
     5. **Question Type**: ALL questions must be of the type: {$quizData['question_type']}. Do not mix different question types.
@@ -419,6 +419,9 @@ class CreateQuizzes extends CreateRecord
     - The correct_answer_key should match the correct answer's title value.
     - Ensure that each question is diverse and well-crafted, covering various relevant concepts.
     - Do not create questions of any other type - only {$quizData['question_type']} questions.
+    - **IMPORTANT**: Before submitting, count your questions to ensure you have created exactly {$data['max_questions']} questions.
+
+    **Final Check**: Your JSON response must contain exactly {$data['max_questions']} question objects in the array.
 
     Your responses should be formatted impeccably in JSON, capturing the essence of the provided quiz details.
 
@@ -520,6 +523,22 @@ class CreateQuizzes extends CreateRecord
                     ->danger()
                     ->title(__('Failed to generate questions'))
                     ->body(__('The AI response was invalid or empty. Please try again.'))
+                    ->send();
+                $this->halt();
+            }
+
+            // Validate that we got the exact number of questions requested
+            $requestedQuestions = (int) $data['max_questions'];
+            $generatedQuestions = count($quizQuestions);
+            
+            if ($generatedQuestions !== $requestedQuestions) {
+                Notification::make()
+                    ->warning()
+                    ->title(__('Question count mismatch'))
+                    ->body(__('Requested :requested questions but generated :generated. Please try again.', [
+                        'requested' => $requestedQuestions,
+                        'generated' => $generatedQuestions
+                    ]))
                     ->send();
                 $this->halt();
             }
