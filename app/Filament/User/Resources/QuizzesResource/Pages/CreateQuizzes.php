@@ -14,6 +14,7 @@ use fivefilters\Readability\Readability;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use App\Services\ImageProcessingService;
@@ -485,20 +486,31 @@ class CreateQuizzes extends CreateRecord
                 $this->halt();
             }
 
-            $quizResponse = Http::withToken($openAiKey)
-                ->withHeaders([
-                    'Content-Type' => 'application/json',
-                ])
-                ->timeout(90)
-                ->post('https://api.openai.com/v1/chat/completions', [
-                    'model' => $model,
-                    'messages' => [
-                        [
-                            'role' => 'user',
-                            'content' => $prompt,
+            try {
+                $quizResponse = Http::withToken($openAiKey)
+                    ->withHeaders([
+                        'Content-Type' => 'application/json',
+                    ])
+                    ->timeout(180)
+                    ->retry(3, 2000)
+                    ->post('https://api.openai.com/v1/chat/completions', [
+                        'model' => $model,
+                        'messages' => [
+                            [
+                                'role' => 'user',
+                                'content' => $prompt,
+                            ],
                         ],
-                    ],
-                ]);
+                    ]);
+            } catch (\Exception $e) {
+                Notification::make()
+                    ->danger()
+                    ->title(__('API Connection Failed'))
+                    ->body(__('Unable to connect to OpenAI API. Please try again or contact support if the issue persists.'))
+                    ->send();
+                Log::error('OpenAI API connection error: ' . $e->getMessage());
+                $this->halt();
+            }
 
             if ($quizResponse->failed()) {
                 $error = $quizResponse->json()['error']['message'] ?? 'Unknown error occurred';
