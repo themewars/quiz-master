@@ -6,7 +6,7 @@ use App\Filament\Pages\Auth\CustomLogin;
 use App\Filament\Pages\Auth\CustomRegister;
 use App\Filament\Pages\Auth\CustomRequestPasswordReset;
 use App\Filament\Pages\Auth\CustomResetPassword;
-use Filament\Http\Middleware\Authenticate;
+use App\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
