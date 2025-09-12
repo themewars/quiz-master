@@ -705,99 +705,18 @@ class CreateQuizzes extends CreateRecord
         ];
     }
 
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            \Filament\Widgets\Widget::make()
-                ->view('filament.user.resources.quizzes-resource.pages.progress-bar')
-        ];
-    }
+    // Remove header widgets to avoid 500 error
+    // protected function getHeaderWidgets(): array
+    // {
+    //     return [
+    //         \Filament\Widgets\Widget::make()
+    //             ->view('filament.user.resources.quizzes-resource.pages.progress-bar')
+    //     ];
+    // }
 
     public function mount(): void
     {
         parent::mount();
-        
-        // Inject progress monitoring JavaScript
-        $this->js('
-            let progressCheckInterval;
-            let currentQuizId = null;
-
-            function startProgressMonitoring() {
-                const container = document.getElementById("live-progress-container");
-                if (container) {
-                    container.style.display = "block";
-                }
-                progressCheckInterval = setInterval(checkProgress, 2000);
-            }
-
-            function stopProgressMonitoring() {
-                if (progressCheckInterval) {
-                    clearInterval(progressCheckInterval);
-                    progressCheckInterval = null;
-                }
-                const container = document.getElementById("live-progress-container");
-                if (container) {
-                    container.style.display = "none";
-                }
-            }
-
-            function checkProgress() {
-                fetch("/api/quiz-progress", {
-                    method: "GET",
-                    headers: {
-                        "X-Requested-With": "XMLHttpRequest",
-                        "X-CSRF-TOKEN": document.querySelector("meta[name=\\"csrf-token\\"]").getAttribute("content")
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.quiz) {
-                        currentQuizId = data.quiz.id;
-                        updateProgressBar(data.quiz);
-                        
-                        if (data.quiz.status === "completed") {
-                            setTimeout(() => {
-                                window.location.href = `/user/quizzes/${data.quiz.id}/edit`;
-                            }, 1000);
-                        }
-                    } else {
-                        stopProgressMonitoring();
-                    }
-                })
-                .catch(error => {
-                    console.error("Error checking progress:", error);
-                });
-            }
-
-            function updateProgressBar(quiz) {
-                const progressBar = document.getElementById("progress-bar");
-                const progressText = document.getElementById("progress-text");
-                
-                if (progressBar && progressText) {
-                    const percentage = quiz.progress_total > 0 ? Math.round((quiz.progress_done / quiz.progress_total) * 100) : 0;
-                    progressBar.style.width = percentage + "%";
-                    progressText.textContent = `${quiz.progress_done}/${quiz.progress_total} (${percentage}%)`;
-                }
-            }
-
-            // Listen for form submission
-            document.addEventListener("DOMContentLoaded", function() {
-                const form = document.querySelector("form");
-                if (form) {
-                    form.addEventListener("submit", function() {
-                        setTimeout(startProgressMonitoring, 1000);
-                    });
-                }
-                
-                // Check if there is already a processing quiz
-                setTimeout(() => {
-                    checkProgress();
-                    if (currentQuizId) {
-                        startProgressMonitoring();
-                    }
-                }, 500);
-            });
-        ');
     }
 
     protected function getFormActions(): array
