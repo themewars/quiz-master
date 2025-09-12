@@ -51,6 +51,13 @@ class EditQuizzes extends EditRecord
                     if (addedBar) {
                         console.log("Progress bar is visible:", addedBar.style.display);
                         console.log("Progress bar computed style:", window.getComputedStyle(addedBar).display);
+                        
+                        // Force make it visible
+                        addedBar.style.display = "block";
+                        addedBar.style.background = "yellow";
+                        addedBar.style.border = "2px solid red";
+                        addedBar.style.padding = "10px";
+                        console.log("Forced progress bar to be visible");
                     }
                     
                     // Add progress monitoring functionality
