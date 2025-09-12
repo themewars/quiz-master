@@ -453,7 +453,7 @@ class CreateQuizzes extends CreateRecord
                     model: getSetting()->open_ai_model,
                     prompt: $prompt,
                     totalQuestions: $totalQuestions,
-                    batchSize: 10
+                    batchSize: 5
                 );
                 
                 Notification::make()
