@@ -106,17 +106,32 @@ class EditQuizzes extends EditRecord
                         })
                         .then(response => response.json())
                         .then(data => {
+                            console.log("Progress API response:", data);
                             if (data.quiz) {
                                 currentQuizId = data.quiz.id;
                                 updateProgressBar(data.quiz);
                                 
-                                if (data.quiz.status === "completed") {
+                                console.log("Quiz status:", data.quiz.status);
+                                console.log("Progress:", data.quiz.progress_done + "/" + data.quiz.progress_total);
+                                
+                                // Check if exam is completed (either by status or by progress)
+                                const isCompleted = data.quiz.status === "completed" || 
+                                                   (data.quiz.progress_done >= data.quiz.progress_total && data.quiz.progress_total > 0);
+                                
+                                if (isCompleted) {
                                     console.log("Exam generation completed! Reloading page...");
+                                    // Show completion message
+                                    const progressText = document.getElementById("progress-text");
+                                    if (progressText) {
+                                        progressText.textContent = "Exam generation completed! Redirecting...";
+                                    }
                                     setTimeout(() => {
+                                        console.log("Reloading page now...");
                                         window.location.reload();
-                                    }, 1000);
+                                    }, 2000);
                                 }
                             } else {
+                                console.log("No processing quiz found, stopping monitoring");
                                 stopProgressMonitoring();
                             }
                         })
