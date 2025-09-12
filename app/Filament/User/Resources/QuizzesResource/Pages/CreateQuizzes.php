@@ -487,11 +487,14 @@ class CreateQuizzes extends CreateRecord
             }
 
             try {
+                // Dynamic timeout based on question count
+                $timeout = $data['max_questions'] > 20 ? 300 : 180; // 5 minutes for large requests
+                
                 $quizResponse = Http::withToken($openAiKey)
                     ->withHeaders([
                         'Content-Type' => 'application/json',
                     ])
-                    ->timeout(180)
+                    ->timeout($timeout)
                     ->retry(3, 2000)
                     ->post('https://api.openai.com/v1/chat/completions', [
                         'model' => $model,
