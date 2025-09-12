@@ -45,8 +45,10 @@ class GenerateQuizJob implements ShouldQueue
             try {
                 $batchPrompt = $this->prompt . "\n\nYou MUST return exactly {$take} questions in this response.";
 
-                // Use the same key naming as CreateQuizzes (open_api_key) with config fallback
-                $apiKey = getSetting()->open_api_key ?: (config('services.open_ai.open_api_key') ?? '');
+                // IMPORTANT: Do NOT use getSetting() inside long-running workers (it caches statically).
+                // Read fresh from DB so changes in admin panel are picked up without restarting workers.
+                $settings = \App\Models\Setting::query()->select('open_api_key')->first();
+                $apiKey = ($settings?->open_api_key) ?: (config('services.open_ai.open_api_key') ?? '');
 
                 $response = Http::withHeaders([
                         'Authorization' => 'Bearer ' . $apiKey,
