@@ -439,6 +439,45 @@ class CreateQuizzes extends CreateRecord
         $totalQuestions = (int) $data['max_questions'];
         $this->progressTotal = $totalQuestions;
 
+        // If we want to avoid timeouts for large exams, dispatch async job FIRST
+        if ($totalQuestions >= 50) {
+            $quiz = Quiz::create($input + [
+                'generation_status' => 'processing',
+                'generation_progress_total' => $totalQuestions,
+                'generation_progress_done' => 0,
+            ]);
+
+            try {
+                \App\Jobs\GenerateQuizJob::dispatch(
+                    quizId: $quiz->id,
+                    model: getSetting()->open_ai_model,
+                    prompt: $prompt,
+                    totalQuestions: $totalQuestions,
+                    batchSize: 10
+                );
+                
+                Notification::make()
+                    ->success()
+                    ->title(__('Exam generation started in background.'))
+                    ->body(__('You will be redirected to the exam edit page once it\'s ready.'))
+                    ->send();
+            } catch (\Throwable $e) {
+                Log::error('Failed to dispatch GenerateQuizJob: ' . $e->getMessage());
+                Notification::make()
+                    ->danger()
+                    ->title(__('Failed to start background generation'))
+                    ->body(__('Please try again or contact support.'))
+                    ->send();
+                $this->halt();
+            }
+
+            // Set UI inline progress and return immediately; page will poll quiz status
+            $this->isProcessing = false; // Reset since we're dispatching to background
+            $this->progressTotal = 0;
+            $this->progressCreated = 0;
+            return $quiz;
+        }
+
         if ($aiType == Quiz::GEMINI_AI) {
             $geminiApiKey = getSetting()->gemini_api_key;
             $model = getSetting()->gemini_ai_model;
@@ -528,31 +567,6 @@ class CreateQuizzes extends CreateRecord
             if ($quizText) {
                 // keep inline indicator
             }
-        }
-
-        // If we want to avoid timeouts for large exams, dispatch async job
-        if ($totalQuestions >= 50) {
-            $quiz = Quiz::create($input + [
-                'generation_status' => 'processing',
-                'generation_progress_total' => $totalQuestions,
-                'generation_progress_done' => 0,
-            ]);
-
-            try {
-                \App\Jobs\GenerateQuizJob::dispatch(
-                    quizId: $quiz->id,
-                    model: getSetting()->openai_model,
-                    prompt: $prompt,
-                    totalQuestions: $totalQuestions,
-                    batchSize: 10
-                );
-            } catch (\Throwable $e) {}
-
-            // Set UI inline progress and return immediately; page will poll quiz status
-            $this->isProcessing = true;
-            $this->progressTotal = $totalQuestions;
-            $this->progressCreated = 0;
-            return $quiz;
         }
 
         if ($quizText) {
