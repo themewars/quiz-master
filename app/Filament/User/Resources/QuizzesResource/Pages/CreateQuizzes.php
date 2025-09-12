@@ -678,6 +678,33 @@ class CreateQuizzes extends CreateRecord
         return $recordId ? $this->getResource()::getUrl('edit', ['record' => $recordId]) : $this->getResource()::getUrl('index');
     }
 
+    public function getCurrentProcessingQuiz()
+    {
+        // Get the latest quiz that's currently processing
+        $quiz = \App\Models\Quiz::where('user_id', auth()->id())
+            ->where('generation_status', 'processing')
+            ->latest()
+            ->first();
+            
+        if ($quiz) {
+            return [
+                'id' => $quiz->id,
+                'progress_done' => $quiz->generation_progress_done ?? 0,
+                'progress_total' => $quiz->generation_progress_total ?? 0,
+                'status' => $quiz->generation_status,
+            ];
+        }
+        
+        return null;
+    }
+
+    protected function getViewData(): array
+    {
+        return [
+            'processingQuiz' => $this->getCurrentProcessingQuiz(),
+        ];
+    }
+
     protected function getFormActions(): array
     {
         $create = parent::getFormActions()[0]
