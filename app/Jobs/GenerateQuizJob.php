@@ -24,7 +24,7 @@ class GenerateQuizJob implements ShouldQueue
         public string $model,
         public string $prompt,
         public int $totalQuestions,
-        public int $batchSize = 10
+        public int $batchSize = 5
     ) {}
 
     public function handle(): void
@@ -54,7 +54,7 @@ class GenerateQuizJob implements ShouldQueue
                         'Authorization' => 'Bearer ' . $apiKey,
                         'Content-Type' => 'application/json',
                     ])
-                    ->timeout(300)
+                    ->timeout(600)
                     ->retry(3, 2000)
                     ->post('https://api.openai.com/v1/chat/completions', [
                         'model' => $this->model,
