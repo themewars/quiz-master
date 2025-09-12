@@ -23,6 +23,11 @@
     {{ $this->form }}
 
     <!-- Form Actions -->
+    <x-filament-panels::form.actions
+        :actions="$this->getFormActions()"
+    />
+
+    <!-- Form Actions Modals -->
     <x-filament-actions::modals />
 
     <!-- Live Progress JavaScript -->
