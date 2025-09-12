@@ -729,9 +729,11 @@ class CreateQuizzes extends CreateRecord
             function initializeProgressBar() {
                 console.log("Looking for form...");
                 const form = document.querySelector("form");
+                console.log("Form element:", form);
                 if (form) {
                     console.log("Form found, adding progress bar");
                     form.insertAdjacentHTML("beforebegin", progressBarHTML);
+                    console.log("Progress bar HTML added");
                     
                     // Add progress monitoring functionality
                     let progressCheckInterval;
