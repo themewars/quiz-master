@@ -702,6 +702,7 @@ class CreateQuizzes extends CreateRecord
     {
         return [
             'processingQuiz' => $this->getCurrentProcessingQuiz(),
+            'showProgressBar' => true,
         ];
     }
 
@@ -717,6 +718,11 @@ class CreateQuizzes extends CreateRecord
     public function mount(): void
     {
         parent::mount();
+    }
+
+    public function getView(): string
+    {
+        return 'filament.user.resources.quizzes-resource.pages.create-quizzes';
     }
 
     protected function getFormActions(): array
