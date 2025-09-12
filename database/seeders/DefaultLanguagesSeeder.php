@@ -19,6 +19,10 @@ class DefaultLanguagesSeeder extends Seeder
                 'code' => 'en',
             ],
             [
+                'name' => 'Hindi',
+                'code' => 'hi',
+            ],
+            [
                 'name' => 'Arabic',
                 'code' => 'ar',
             ],
