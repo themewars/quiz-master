@@ -508,6 +508,7 @@ if (! function_exists('getAllLanguageFlags')) {
         return [
             'ar' => asset('images/flags/arabic.svg'),
             'en' => asset('images/flags/english.png'),
+            'hi' => asset('images/flags/india.png'),
             'fr' => asset('images/flags/france.png'),
             'de' => asset('images/flags/german.png'),
             'es' => asset('images/flags/spain.png'),
