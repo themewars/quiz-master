@@ -705,6 +705,11 @@ class CreateQuizzes extends CreateRecord
         ];
     }
 
+    protected function getView(): string
+    {
+        return 'filament.user.resources.quizzes-resource.pages.create-quizzes';
+    }
+
     protected function getFormActions(): array
     {
         $create = parent::getFormActions()[0]

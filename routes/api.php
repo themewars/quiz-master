@@ -19,8 +19,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Quiz progress API for live updates
-Route::middleware('auth:sanctum')->get('/quiz-progress', function (Request $request) {
-    $quiz = \App\Models\Quiz::where('user_id', $request->user()->id)
+Route::middleware('web')->get('/quiz-progress', function (Request $request) {
+    if (!auth()->check()) {
+        return response()->json(['quiz' => null]);
+    }
+    
+    $quiz = \App\Models\Quiz::where('user_id', auth()->id())
         ->where('generation_status', 'processing')
         ->latest()
         ->first();
