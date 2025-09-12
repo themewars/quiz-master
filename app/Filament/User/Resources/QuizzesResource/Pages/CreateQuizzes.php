@@ -228,6 +228,169 @@ class CreateQuizzes extends CreateRecord
             'language' => getAllLanguages()[$data['language']] ?? 'English',
         ];
 
+        // Generate dynamic prompt based on selected question type
+        $questionType = $quizData['question_type'];
+        $formatInstructions = '';
+        $guidelines = '';
+
+        switch ($questionType) {
+            case 'Multiple Choices':
+                $formatInstructions = <<<FORMAT
+    **Format for Multiple Choice Questions:**
+    - Structure your JSON with exactly four answer options
+    - Mark exactly one option as `is_correct: true`
+    - Use the following format:
+
+    [
+        {
+            "question": "Your question text here",
+            "answers": [
+                {
+                    "title": "Answer Option 1",
+                    "is_correct": false
+                },
+                {
+                    "title": "Answer Option 2",
+                    "is_correct": true
+                },
+                {
+                    "title": "Answer Option 3",
+                    "is_correct": false
+                },
+                {
+                    "title": "Answer Option 4",
+                    "is_correct": false
+                }
+            ],
+            "correct_answer_key": "Answer Option 2"
+        }
+    ]
+    FORMAT;
+                $guidelines = '- You must generate exactly **' . $data['max_questions'] . '** Multiple Choice questions with exactly four answer options each, with one option marked as `is_correct: true`.';
+                break;
+
+            case 'Single Choice':
+                $formatInstructions = <<<FORMAT
+    **Format for Single Choice Questions:**
+    - Structure your JSON with exactly two answer options
+    - Mark exactly one option as `is_correct: true`
+    - Use the following format:
+
+    [
+        {
+            "question": "Your question text here",
+            "answers": [
+                {
+                    "title": "Answer Option 1",
+                    "is_correct": false
+                },
+                {
+                    "title": "Answer Option 2",
+                    "is_correct": true
+                }
+            ],
+            "correct_answer_key": "Answer Option 2"
+        }
+    ]
+    FORMAT;
+                $guidelines = '- You must generate exactly **' . $data['max_questions'] . '** Single Choice questions with exactly two answer options each, with one option marked as `is_correct: true`.';
+                break;
+
+            case 'Short Answer':
+                $formatInstructions = <<<FORMAT
+    **Format for Short Answer Questions:**
+    - Structure your JSON with one correct answer
+    - Use the following format:
+
+    [
+        {
+            "question": "Your question text here",
+            "answers": [
+                {
+                    "title": "Expected short answer",
+                    "is_correct": true
+                }
+            ],
+            "correct_answer_key": "Expected short answer"
+        }
+    ]
+    FORMAT;
+                $guidelines = '- You must generate exactly **' . $data['max_questions'] . '** Short Answer questions with one correct answer each.';
+                break;
+
+            case 'Long Answer':
+                $formatInstructions = <<<FORMAT
+    **Format for Long Answer Questions:**
+    - Structure your JSON with one detailed correct answer
+    - Use the following format:
+
+    [
+        {
+            "question": "Your question text here",
+            "answers": [
+                {
+                    "title": "Expected detailed answer",
+                    "is_correct": true
+                }
+            ],
+            "correct_answer_key": "Expected detailed answer"
+        }
+    ]
+    FORMAT;
+                $guidelines = '- You must generate exactly **' . $data['max_questions'] . '** Long Answer questions with one detailed correct answer each.';
+                break;
+
+            case 'True/False':
+                $formatInstructions = <<<FORMAT
+    **Format for True/False Questions:**
+    - Structure your JSON with exactly two options: "True" and "False"
+    - Mark one option as `is_correct: true`
+    - Use the following format:
+
+    [
+        {
+            "question": "Your question text here",
+            "answers": [
+                {
+                    "title": "True",
+                    "is_correct": true
+                },
+                {
+                    "title": "False",
+                    "is_correct": false
+                }
+            ],
+            "correct_answer_key": "True"
+        }
+    ]
+    FORMAT;
+                $guidelines = '- You must generate exactly **' . $data['max_questions'] . '** True/False questions with exactly two options each: "True" and "False", with one marked as correct.';
+                break;
+
+            case 'Fill in the Blank':
+                $formatInstructions = <<<FORMAT
+    **Format for Fill in the Blank Questions:**
+    - Structure your JSON with one correct answer
+    - Use underscores (_____) in the question text for the blank
+    - Use the following format:
+
+    [
+        {
+            "question": "Your question text with _____ blank here",
+            "answers": [
+                {
+                    "title": "Correct word/phrase",
+                    "is_correct": true
+                }
+            ],
+            "correct_answer_key": "Correct word/phrase"
+        }
+    ]
+    FORMAT;
+                $guidelines = '- You must generate exactly **' . $data['max_questions'] . '** Fill in the Blank questions with underscores (_____) in the question text and one correct word/phrase as the answer.';
+                break;
+        }
+
         $prompt = <<<PROMPT
 
     You are an expert in crafting engaging quizzes. Based on the quiz details provided, your task is to meticulously generate questions according to the specified question type. Your output should be exclusively in properly formatted JSON.
@@ -246,136 +409,16 @@ class CreateQuizzes extends CreateRecord
     2. **Number of Questions**: Create exactly {$data['max_questions']} questions.
     3. **Difficulty Level**: Ensure each question adheres to the specified difficulty level: {$quizData['Difficulty']}.
     4. **Description Alignment**: Ensure that each question is relevant to and reflects key aspects of the provided description.
-    5. **Question Type**: Follow the format specified below based on the question type:
+    5. **Question Type**: ALL questions must be of the type: {$quizData['question_type']}. Do not mix different question types.
+    6. **Format**: Follow the format specified below for the selected question type ONLY:
 
-    **Question Formats:**
-
-    - **Multiple Choice**:
-        - Structure your JSON with four answer options. Mark exactly one option as `is_correct: true`. Use the following format:
-
-        [
-            {
-                "question": "Your question text here",
-                "answers": [
-                    {
-                        "title": "Answer Option 1",
-                        "is_correct": false
-                    },
-                    {
-                        "title": "Answer Option 2",
-                        "is_correct": true
-                    },
-                    {
-                        "title": "Answer Option 3",
-                        "is_correct": false
-                    },
-                    {
-                        "title": "Answer Option 4",
-                        "is_correct": false
-                    }
-                ],
-                "correct_answer_key": "Answer Option 2"
-            }
-        ]
-
-    - **Single Choice**:
-        - Use the following format with exactly two options. Mark one option as `is_correct: true` and the other as `is_correct: false`:
-
-        [
-            {
-                "question": "Your question text here",
-                "answers": [
-                    {
-                        "title": "Answer Option 1",
-                        "is_correct": false
-                    },
-                    {
-                        "title": "Answer Option 2",
-                        "is_correct": true
-                    }
-                ],
-                "correct_answer_key": "Answer Option 2"
-            }
-        ]
-
-    - **Short Answer**:
-        - Use the following format for short answer questions:
-
-        [
-            {
-                "question": "Your question text here",
-                "answers": [
-                    {
-                        "title": "Expected short answer",
-                        "is_correct": true
-                    }
-                ],
-                "correct_answer_key": "Expected short answer"
-            }
-        ]
-
-    - **Long Answer**:
-        - Use the following format for long answer questions:
-
-        [
-            {
-                "question": "Your question text here",
-                "answers": [
-                    {
-                        "title": "Expected detailed answer",
-                        "is_correct": true
-                    }
-                ],
-                "correct_answer_key": "Expected detailed answer"
-            }
-        ]
-
-    - **True/False**:
-        - Use the following format for true/false questions:
-
-        [
-            {
-                "question": "Your question text here",
-                "answers": [
-                    {
-                        "title": "True",
-                        "is_correct": true
-                    },
-                    {
-                        "title": "False",
-                        "is_correct": false
-                    }
-                ],
-                "correct_answer_key": "True"
-            }
-        ]
-
-    - **Fill in the Blank**:
-        - Use the following format for fill in the blank questions:
-
-        [
-            {
-                "question": "Your question text with _____ blank here",
-                "answers": [
-                    {
-                        "title": "Correct word/phrase",
-                        "is_correct": true
-                    }
-                ],
-                "correct_answer_key": "Correct word/phrase"
-            }
-        ]
+    {$formatInstructions}
 
     **Guidelines:**
-    - You must generate exactly **{$data['max_questions']}** questions.
-    - For Multiple Choice questions, ensure that there are exactly four answer options, with one option marked as `is_correct: true`.
-    - For Single Choice questions, ensure that there are exactly two answer options, with one option marked as `is_correct: true`.
-    - For Short Answer questions, provide one correct answer that represents the expected short response.
-    - For Long Answer questions, provide one correct answer that represents the expected detailed response.
-    - For True/False questions, provide exactly two options: "True" and "False", with one marked as correct.
-    - For Fill in the Blank questions, use underscores (_____) in the question text and provide the correct word/phrase as the answer.
-    - The correct_answer_key should match the correct answer's title value(s) for all question types.
+    {$guidelines}
+    - The correct_answer_key should match the correct answer's title value.
     - Ensure that each question is diverse and well-crafted, covering various relevant concepts.
+    - Do not create questions of any other type - only {$quizData['question_type']} questions.
 
     Your responses should be formatted impeccably in JSON, capturing the essence of the provided quiz details.
 
