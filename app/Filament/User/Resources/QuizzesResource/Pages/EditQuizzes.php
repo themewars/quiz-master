@@ -36,13 +36,32 @@ class EditQuizzes extends EditRecord
             const progressBarHTML = `<div id="live-progress-container" class="mb-6" style="display: block; background: yellow; border: 2px solid red;"><div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"><div class="flex items-center justify-between mb-2"><h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">Generating Exam Questions...</h3><span id="progress-text" class="text-sm text-gray-600 dark:text-gray-400">0/0 (0%)</span></div><div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5"><div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-in-out" style="width: 0%"></div></div><div class="mt-2 text-xs text-gray-500 dark:text-gray-400">Please wait while questions are being generated in the background...</div></div></div>`;
             
             function initializeProgressBar() {
-                console.log("Edit page - Looking for form...");
-                const form = document.querySelector("form");
-                console.log("Edit page - Form element:", form);
-                if (form) {
-                    console.log("Edit page - Form found, adding progress bar");
-                    console.log("Form parent:", form.parentElement);
-                    form.insertAdjacentHTML("beforebegin", progressBarHTML);
+                console.log("Edit page - Looking for main content area...");
+                
+                // Try different selectors to find the main content
+                let targetElement = null;
+                
+                // Try Filament page content
+                targetElement = document.querySelector(".fi-main-content");
+                if (targetElement) {
+                    console.log("Found .fi-main-content");
+                } else {
+                    // Try page header
+                    targetElement = document.querySelector("h1");
+                    if (targetElement) {
+                        console.log("Found h1 element");
+                    } else {
+                        // Try any main content div
+                        targetElement = document.querySelector("main");
+                        if (targetElement) {
+                            console.log("Found main element");
+                        }
+                    }
+                }
+                
+                if (targetElement) {
+                    console.log("Edit page - Target element found, adding progress bar");
+                    targetElement.insertAdjacentHTML("afterbegin", progressBarHTML);
                     console.log("Edit page - Progress bar HTML added");
                     
                     // Check if progress bar was actually added
