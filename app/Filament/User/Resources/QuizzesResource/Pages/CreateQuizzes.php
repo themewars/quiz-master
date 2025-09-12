@@ -726,9 +726,8 @@ class CreateQuizzes extends CreateRecord
             // Add progress bar HTML to the page
             const progressBarHTML = `<div id="live-progress-container" class="mb-6" style="display: none;"><div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"><div class="flex items-center justify-between mb-2"><h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">Generating Exam Questions...</h3><span id="progress-text" class="text-sm text-gray-600 dark:text-gray-400">0/0 (0%)</span></div><div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5"><div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-in-out" style="width: 0%"></div></div><div class="mt-2 text-xs text-gray-500 dark:text-gray-400">Please wait while questions are being generated in the background...</div></div></div>`;
             
-            // Insert progress bar at the top of the form
-            document.addEventListener("DOMContentLoaded", function() {
-                console.log("DOM loaded, looking for form");
+            function initializeProgressBar() {
+                console.log("Looking for form...");
                 const form = document.querySelector("form");
                 if (form) {
                     console.log("Form found, adding progress bar");
@@ -811,9 +810,17 @@ class CreateQuizzes extends CreateRecord
                         }
                     }, 500);
                 } else {
-                    console.log("Form not found");
+                    console.log("Form not found, retrying in 500ms");
+                    setTimeout(initializeProgressBar, 500);
                 }
-            });
+            }
+            
+            // Try immediately, then on DOM ready, then retry if needed
+            initializeProgressBar();
+            
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", initializeProgressBar);
+            }
         ');
     }
 
