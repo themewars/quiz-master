@@ -649,8 +649,8 @@ class CreateQuizzes extends CreateRecord
             ->label(fn () => ($this->getProgressLabel() !== '' ? $this->getProgressLabel() : __('Creating... Please wait')))
             ->disabled()
             ->color('gray')
-            ->extraAttributes([
-                'class' => 'fi-inline-progress hidden',
+            ->extraAttributes(fn () => [
+                'class' => $this->isProcessing ? '' : 'hidden',
                 'wire:loading.class.remove' => 'hidden',
                 'wire:loading' => '',
                 'wire:target' => 'create',
