@@ -251,7 +251,7 @@ class CreateQuizzes extends CreateRecord
     **Question Formats:**
 
     - **Multiple Choice**:
-        - Structure your JSON with four answer options. Mark exactly two options as `is_correct: true`. Use the following format:
+        - Structure your JSON with four answer options. Mark exactly one option as `is_correct: true`. Use the following format:
 
         [
             {
@@ -271,10 +271,10 @@ class CreateQuizzes extends CreateRecord
                     },
                     {
                         "title": "Answer Option 4",
-                        "is_correct": true
+                        "is_correct": false
                     }
                 ],
-                "correct_answer_key": ["Answer Option 2", "Answer Option 4"]
+                "correct_answer_key": "Answer Option 2"
             }
         ]
 
@@ -368,7 +368,7 @@ class CreateQuizzes extends CreateRecord
 
     **Guidelines:**
     - You must generate exactly **{$data['max_questions']}** questions.
-    - For Multiple Choice questions, ensure that there are exactly four answer options, with two options marked as `is_correct: true`.
+    - For Multiple Choice questions, ensure that there are exactly four answer options, with one option marked as `is_correct: true`.
     - For Single Choice questions, ensure that there are exactly two answer options, with one option marked as `is_correct: true`.
     - For Short Answer questions, provide one correct answer that represents the expected short response.
     - For Long Answer questions, provide one correct answer that represents the expected detailed response.
