@@ -44,6 +44,14 @@ class CreateQuizzes extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
+        // Show loading notification
+        Notification::make()
+            ->info()
+            ->title(__('Creating your exam...'))
+            ->body(__('Please wait while we generate your exam questions. This may take a few moments.'))
+            ->persistent()
+            ->send();
+
         $userId = Auth::id();
         $activeTab = getTabType();
 
@@ -76,6 +84,14 @@ class CreateQuizzes extends CreateRecord
         ];
 
         if ($activeTab == Quiz::URL_TYPE && $data['quiz_description_url'] != null) {
+            // Update loading notification for URL processing
+            Notification::make()
+                ->info()
+                ->title(__('Fetching website content...'))
+                ->body(__('Reading and processing the website content.'))
+                ->persistent()
+                ->send();
+
             $url = $data['quiz_description_url'];
 
             $ch = curl_init($url);
@@ -117,6 +133,14 @@ class CreateQuizzes extends CreateRecord
         }
 
         if (isset($this->data['file_upload']) && is_array($this->data['file_upload'])) {
+            // Update loading notification for file processing
+            Notification::make()
+                ->info()
+                ->title(__('Processing uploaded file...'))
+                ->body(__('Extracting text from your uploaded document.'))
+                ->persistent()
+                ->send();
+
             foreach ($this->data['file_upload'] as $file) {
                 if ($file instanceof \Illuminate\Http\UploadedFile) {
                     $filePath = $file->store('temp-file', 'public');
@@ -153,6 +177,14 @@ class CreateQuizzes extends CreateRecord
 
         // Process image uploads for OCR
         if (isset($this->data['image_upload']) && is_array($this->data['image_upload'])) {
+            // Update loading notification for image processing
+            Notification::make()
+                ->info()
+                ->title(__('Processing images...'))
+                ->body(__('Extracting text from your uploaded images using OCR.'))
+                ->persistent()
+                ->send();
+
             $imageProcessingService = new ImageProcessingService();
             $userPlan = auth()->user()?->subscriptions()->where('status', \App\Enums\SubscriptionStatus::ACTIVE->value)->orderByDesc('id')->first()?->plan;
             $maxImages = $userPlan?->max_images_allowed;
@@ -279,6 +311,14 @@ class CreateQuizzes extends CreateRecord
 
         $aiType = getSetting()->ai_type;
 
+        // Update loading notification for AI processing
+        Notification::make()
+            ->info()
+            ->title(__('Generating questions with AI...'))
+            ->body(__('Our AI is creating your exam questions. Almost done!'))
+            ->persistent()
+            ->send();
+
         if ($aiType == Quiz::GEMINI_AI) {
             $geminiApiKey = getSetting()->gemini_api_key;
             $model = getSetting()->gemini_ai_model;
@@ -397,6 +437,13 @@ class CreateQuizzes extends CreateRecord
                 // Silently ignore counter update errors to not block creation
             }
 
+            // Clear loading notifications and show success
+            Notification::make()
+                ->success()
+                ->title(__('Exam created successfully!'))
+                ->body(__('Your exam has been generated with :count questions.', ['count' => count($quizQuestions)]))
+                ->send();
+
             return $quiz;
         }
 
@@ -427,7 +474,10 @@ class CreateQuizzes extends CreateRecord
     protected function getFormActions(): array
     {
         return [
-            parent::getFormActions()[0],
+            parent::getFormActions()[0]
+                ->label(__('Create Exam'))
+                ->icon('heroicon-o-plus')
+                ->loadingText(__('Creating Exam...')),
             Action::make('cancel')->label(__('messages.common.cancel'))->color('gray')->url(QuizzesResource::getUrl('index')),
         ];
     }
