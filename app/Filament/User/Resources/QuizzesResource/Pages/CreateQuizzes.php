@@ -69,7 +69,9 @@ class CreateQuizzes extends CreateRecord
         $this->progressCreated = 0;
 
         $userId = Auth::id();
-        $activeTab = getTabType();
+        // Default active tab from user presets if available
+        $presetTab = getUserSettings('preset_default_tab');
+        $activeTab = $presetTab !== null ? (int) $presetTab : getTabType();
 
         $descriptionFields = [
             Quiz::TEXT_TYPE => $data['quiz_description_text'] ?? null,
@@ -81,6 +83,12 @@ class CreateQuizzes extends CreateRecord
 
         $description = $descriptionFields[$activeTab] ?? null;
 
+        // Apply user presets as defaults if provided
+        $presetLanguage = getUserSettings('preset_language');
+        $presetDifficulty = getUserSettings('preset_difficulty');
+        $presetQuestionType = getUserSettings('preset_question_type');
+        $presetQuestionCount = getUserSettings('preset_question_count');
+
         $input = [
             'user_id' => $userId,
             'title' => $data['title'],
@@ -88,11 +96,11 @@ class CreateQuizzes extends CreateRecord
             'quiz_description' => $description,
             'type' => $activeTab,
             'status' => 1,
-            'quiz_type' => $data['quiz_type'] ?? 0,
-            'max_questions' => $data['max_questions'] ?? 0,
-            'diff_level' => $data['diff_level'] ?? 0,
+            'quiz_type' => $data['quiz_type'] ?? ($presetQuestionType ?? 0),
+            'max_questions' => $data['max_questions'] ?? ($presetQuestionCount ?? 0),
+            'diff_level' => $data['diff_level'] ?? ($presetDifficulty ?? 0),
             'unique_code' => generateUniqueCode(),
-            'language' => $data['language'] ?? 'en',
+            'language' => $data['language'] ?? ($presetLanguage ?? 'en'),
             'time_configuration' => $data['time_configuration'] ?? 0,
             'time' => $data['time'] ?? 0,
             'time_type' => $data['time_type'] ?? null,
