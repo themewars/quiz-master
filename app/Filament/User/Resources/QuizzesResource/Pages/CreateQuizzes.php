@@ -298,11 +298,83 @@ class CreateQuizzes extends CreateRecord
             }
         ]
 
+    - **Short Answer**:
+        - Use the following format for short answer questions:
+
+        [
+            {
+                "question": "Your question text here",
+                "answers": [
+                    {
+                        "title": "Expected short answer",
+                        "is_correct": true
+                    }
+                ],
+                "correct_answer_key": "Expected short answer"
+            }
+        ]
+
+    - **Long Answer**:
+        - Use the following format for long answer questions:
+
+        [
+            {
+                "question": "Your question text here",
+                "answers": [
+                    {
+                        "title": "Expected detailed answer",
+                        "is_correct": true
+                    }
+                ],
+                "correct_answer_key": "Expected detailed answer"
+            }
+        ]
+
+    - **True/False**:
+        - Use the following format for true/false questions:
+
+        [
+            {
+                "question": "Your question text here",
+                "answers": [
+                    {
+                        "title": "True",
+                        "is_correct": true
+                    },
+                    {
+                        "title": "False",
+                        "is_correct": false
+                    }
+                ],
+                "correct_answer_key": "True"
+            }
+        ]
+
+    - **Fill in the Blank**:
+        - Use the following format for fill in the blank questions:
+
+        [
+            {
+                "question": "Your question text with _____ blank here",
+                "answers": [
+                    {
+                        "title": "Correct word/phrase",
+                        "is_correct": true
+                    }
+                ],
+                "correct_answer_key": "Correct word/phrase"
+            }
+        ]
+
     **Guidelines:**
     - You must generate exactly **{$data['max_questions']}** questions.
     - For Multiple Choice questions, ensure that there are exactly four answer options, with two options marked as `is_correct: true`.
     - For Single Choice questions, ensure that there are exactly two answer options, with one option marked as `is_correct: true`.
-    - The correct_answer_key should match the correct answer's title value(s) for Multiple Choice and Single Choice questions.
+    - For Short Answer questions, provide one correct answer that represents the expected short response.
+    - For Long Answer questions, provide one correct answer that represents the expected detailed response.
+    - For True/False questions, provide exactly two options: "True" and "False", with one marked as correct.
+    - For Fill in the Blank questions, use underscores (_____) in the question text and provide the correct word/phrase as the answer.
+    - The correct_answer_key should match the correct answer's title value(s) for all question types.
     - Ensure that each question is diverse and well-crafted, covering various relevant concepts.
 
     Your responses should be formatted impeccably in JSON, capturing the essence of the provided quiz details.

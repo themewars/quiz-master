@@ -109,17 +109,65 @@ class Quiz extends Model implements HasMedia
 
     const MULTIPLE_CHOICE = 0;
     const SINGLE_CHOICE = 1;
+    const SHORT_ANSWER = 2;
+    const LONG_ANSWER = 3;
+    const TRUE_FALSE = 4;
+    const FILL_BLANK = 5;
+    
     const QUIZ_TYPE = [
         self::MULTIPLE_CHOICE => 'Multiple Choices',
         self::SINGLE_CHOICE => 'Single Choice',
+        self::SHORT_ANSWER => 'Short Answer',
+        self::LONG_ANSWER => 'Long Answer',
+        self::TRUE_FALSE => 'True/False',
+        self::FILL_BLANK => 'Fill in the Blank',
     ];
 
     public static function getQuizTypeOptions()
     {
-        return [
-            0 => __('messages.home.multiple_choice'),
-            1 => __('messages.home.single_choice'),
+        // Get user's plan allowed question types
+        $userPlan = auth()->user()?->subscriptions()->where('status', \App\Enums\SubscriptionStatus::ACTIVE->value)->orderByDesc('id')->first()?->plan;
+        $allowedTypes = $userPlan?->getAllowedQuestionTypes() ?? ['mcq'];
+        
+        // Map question types to form options
+        $typeMapping = [
+            'mcq' => 0, // Multiple Choice
+            'short_answer' => 2, // Short Answer
+            'long_answer' => 3, // Long Answer
+            'true_false' => 4, // True/False
+            'fill_blank' => 5, // Fill in the Blank
         ];
+        
+        $options = [];
+        
+        // Add Multiple Choice if allowed
+        if (in_array('mcq', $allowedTypes)) {
+            $options[0] = __('messages.home.multiple_choice');
+        }
+        
+        // Add Single Choice if allowed (this is a subset of MCQ)
+        if (in_array('mcq', $allowedTypes)) {
+            $options[1] = __('messages.home.single_choice');
+        }
+        
+        // Add other question types if allowed
+        if (in_array('short_answer', $allowedTypes)) {
+            $options[2] = 'Short Answer';
+        }
+        
+        if (in_array('long_answer', $allowedTypes)) {
+            $options[3] = 'Long Answer';
+        }
+        
+        if (in_array('true_false', $allowedTypes)) {
+            $options[4] = 'True/False';
+        }
+        
+        if (in_array('fill_blank', $allowedTypes)) {
+            $options[5] = 'Fill in the Blank';
+        }
+        
+        return $options;
     }
 
     const DIFF_LEVEL = [
