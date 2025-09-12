@@ -640,7 +640,10 @@ class CreateQuizzes extends CreateRecord
         $create = parent::getFormActions()[0]
             ->label(__('Create Exam'))
             ->icon('heroicon-o-plus')
-            ->hidden(fn () => $this->isProcessing);
+            ->extraAttributes([
+                'wire:target' => 'create',
+                'wire:loading.attr' => 'disabled',
+            ]);
 
         $progress = Action::make('progress')
             ->label(fn () => ($this->getProgressLabel() !== '' ? $this->getProgressLabel() : __('Creating... Please wait')))
@@ -650,6 +653,7 @@ class CreateQuizzes extends CreateRecord
                 'class' => 'fi-inline-progress hidden',
                 'wire:loading.class.remove' => 'hidden',
                 'wire:loading' => '',
+                'wire:target' => 'create',
             ]);
 
         return [
