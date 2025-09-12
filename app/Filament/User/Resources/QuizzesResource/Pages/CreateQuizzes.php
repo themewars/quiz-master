@@ -108,13 +108,7 @@ class CreateQuizzes extends CreateRecord
         ];
 
         if ($activeTab == Quiz::URL_TYPE && $data['quiz_description_url'] != null) {
-            // Update loading notification for URL processing
-            Notification::make()
-                ->info()
-                ->title(__('Fetching website content...'))
-                ->body(__('Reading and processing the website content.'))
-                ->persistent()
-                ->send();
+            // Inline state only; no popups
 
             $url = $data['quiz_description_url'];
 
@@ -157,13 +151,7 @@ class CreateQuizzes extends CreateRecord
         }
 
         if (isset($this->data['file_upload']) && is_array($this->data['file_upload'])) {
-            // Update loading notification for file processing
-            Notification::make()
-                ->info()
-                ->title(__('Processing uploaded file...'))
-                ->body(__('Extracting text from your uploaded document.'))
-                ->persistent()
-                ->send();
+            // Process file silently; inline counter will handle UX
 
             foreach ($this->data['file_upload'] as $file) {
                 if ($file instanceof \Illuminate\Http\UploadedFile) {
@@ -199,15 +187,9 @@ class CreateQuizzes extends CreateRecord
             }
         }
 
-        // Process image uploads for OCR
+        // Process image uploads for OCR (silent)
         if (isset($this->data['image_upload']) && is_array($this->data['image_upload'])) {
-            // Update loading notification for image processing
-            Notification::make()
-                ->info()
-                ->title(__('Processing images...'))
-                ->body(__('Extracting text from your uploaded images using OCR.'))
-                ->persistent()
-                ->send();
+            // No popups; keep inline indicator
 
             $imageProcessingService = new ImageProcessingService();
             $userPlan = auth()->user()?->subscriptions()->where('status', \App\Enums\SubscriptionStatus::ACTIVE->value)->orderByDesc('id')->first()?->plan;
