@@ -112,6 +112,21 @@ class EditQuizzes extends EditRecord
                         checkProgress();
                         if (currentQuizId) {
                             startProgressMonitoring();
+                        } else {
+                            // If no processing quiz found, check if this quiz has 0 questions (might be processing)
+                            const url = window.location.pathname;
+                            const quizId = url.match(/\/quizzes\/(\d+)\//);
+                            if (quizId) {
+                                fetch(`/api/quiz-status/${quizId[1]}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.quiz && data.quiz.question_count === 0 && data.quiz.generation_status === "processing") {
+                                        console.log("Found processing quiz with 0 questions, starting monitoring");
+                                        startProgressMonitoring();
+                                    }
+                                })
+                                .catch(error => console.error("Error checking quiz status:", error));
+                            }
                         }
                     }, 500);
                 } else {
