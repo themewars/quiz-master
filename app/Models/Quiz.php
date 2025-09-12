@@ -232,11 +232,18 @@ class Quiz extends Model implements HasMedia
                                                 ->validationAttribute(__('messages.quiz.difficulty')),
                                             TextInput::make('max_questions')
                                                 ->numeric()
-                                                ->rules(['integer', 'max:25'])
+                                                ->rules(function () {
+                                                    $userPlan = auth()->user()?->subscriptions()->where('status', \App\Enums\SubscriptionStatus::ACTIVE->value)->orderByDesc('id')->first()?->plan;
+                                                    $maxQuestions = $userPlan?->max_questions_per_exam ?? 25;
+                                                    return ['integer', 'max:' . $maxQuestions];
+                                                })
                                                 ->integer()
                                                 ->required()
                                                 ->minValue(1)
-                                                ->maxValue(25)
+                                                ->maxValue(function () {
+                                                    $userPlan = auth()->user()?->subscriptions()->where('status', \App\Enums\SubscriptionStatus::ACTIVE->value)->orderByDesc('id')->first()?->plan;
+                                                    return $userPlan?->max_questions_per_exam ?? 25;
+                                                })
                                                 ->label(__('messages.quiz.num_of_questions') . ':')
                                                 ->hintIcon('heroicon-m-question-mark-circle', tooltip: __('messages.quiz.max_no_of_quiz'))
                                                 ->placeholder(__('messages.quiz.number_of_questions'))
