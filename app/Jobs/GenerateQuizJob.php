@@ -29,15 +29,21 @@ class GenerateQuizJob implements ShouldQueue
 
     public function handle(): void
     {
+        Log::info("Starting GenerateQuizJob for quiz {$this->quizId} with {$this->totalQuestions} questions");
+        
         $quiz = Quiz::find($this->quizId);
         if (!$quiz) {
+            Log::error("Quiz {$this->quizId} not found");
             return;
         }
 
         $quiz->update([
             'generation_status' => 'processing',
             'generation_progress_total' => $this->totalQuestions,
+            'generation_progress_done' => 0,
         ]);
+        
+        Log::info("Quiz {$this->quizId} status updated to processing");
 
         $remaining = $this->totalQuestions - ($quiz->generation_progress_done ?? 0);
         while ($remaining > 0) {
@@ -45,8 +51,15 @@ class GenerateQuizJob implements ShouldQueue
             try {
                 $batchPrompt = $this->prompt . "\n\nYou MUST return exactly {$take} questions in this response.";
 
+                $apiKey = \App\Models\Setting::first()?->openai_api_key ?? '';
+                if (empty($apiKey)) {
+                    throw new \RuntimeException('OpenAI API key not configured');
+                }
+                
+                Log::info("Making OpenAI API call for {$take} questions. Model: {$this->model}");
+                
                 $response = Http::withHeaders([
-                        'Authorization' => 'Bearer ' . (getSetting()->openai_api_key ?? ''),
+                        'Authorization' => 'Bearer ' . $apiKey,
                         'Content-Type' => 'application/json',
                     ])
                     ->timeout(120)
@@ -57,6 +70,8 @@ class GenerateQuizJob implements ShouldQueue
                             ['role' => 'user', 'content' => $batchPrompt],
                         ],
                     ]);
+                
+                Log::info("OpenAI API response status: " . $response->status());
 
                 if ($response->failed()) {
                     throw new \RuntimeException($response->json()['error']['message'] ?? 'OpenAI error');
@@ -99,7 +114,10 @@ class GenerateQuizJob implements ShouldQueue
                 }
 
                 $quiz->increment('generation_progress_done', $created);
+                $quiz->increment('question_count', $created);
                 $remaining -= $created;
+                
+                Log::info("Generated {$created} questions for quiz {$quiz->id}. Progress: {$quiz->generation_progress_done}/{$quiz->generation_progress_total}");
             } catch (\Throwable $e) {
                 Log::error('GenerateQuizJob failed: ' . $e->getMessage());
                 $quiz->update([
