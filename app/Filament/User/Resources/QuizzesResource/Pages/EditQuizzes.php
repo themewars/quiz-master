@@ -104,11 +104,11 @@ class EditQuizzes extends EditRecord
                                             "X-CSRF-TOKEN": document.querySelector("meta[name=\\"csrf-token\\"]").getAttribute("content")
                                         }
                                     })
-                                    .then(response => {
+                                    .then(function(response) {
                                         console.log("API response status:", response.status);
                                         return response.json();
                                     })
-                                    .then(data => {
+                                    .then(function(data) {
                                         console.log("Progress API response:", data);
                                         if (data.quiz) {
                                             currentQuizId = data.quiz.id;
@@ -165,7 +165,7 @@ class EditQuizzes extends EditRecord
                                             stopProgressMonitoring();
                                         }
                                     })
-                                    .catch(error => {
+                                    .catch(function(error) {
                                         console.error("Error checking progress:", error);
                                         console.log("Retrying in 3 seconds...");
                                         setTimeout(checkProgress, 3000);
@@ -202,8 +202,8 @@ class EditQuizzes extends EditRecord
                             if (quizId) {
                                 console.log("Checking quiz status for ID:", quizId[1]);
                                 fetch("/api/quiz-status/" + quizId[1])
-                                .then(response => response.json())
-                                .then(data => {
+                                .then(function(response) { return response.json(); })
+                                .then(function(data) {
                                     console.log("Quiz status response:", data);
                                     if (data.quiz && data.quiz.generation_status === "processing") {
                                         console.log("Found processing quiz, starting monitoring");
@@ -213,7 +213,7 @@ class EditQuizzes extends EditRecord
                                         // Don't start monitoring if quiz is not processing
                                     }
                                 })
-                                .catch(error => {
+                                .catch(function(error) {
                                     console.error("Error checking quiz status:", error);
                                     console.log("Not starting monitoring due to error");
                                     // Don't start monitoring on error
