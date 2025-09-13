@@ -55,9 +55,9 @@ class GenerateQuizJob implements ShouldQueue
         while ($remaining > 0) {
             $take = min($this->batchSize, $remaining);
             try {
-                $batchPrompt = $this->prompt . "\n\nYou MUST return exactly {$take} questions in this response.";
+                $batchPrompt = $this->prompt . "\n\nYou MUST return exactly {$take} questions in this response in the following JSON format:\n\n[\n  {\n    \"question\": \"Your question here\",\n    \"answers\": [\n      {\"title\": \"Option A\"},\n      {\"title\": \"Option B\"},\n      {\"title\": \"Option C\"},\n      {\"title\": \"Option D\"}\n    ],\n    \"correct_answer_key\": \"Option B\"\n  }\n]\n\nReturn ONLY the JSON array, no other text.";
 
-                $apiKey = \App\Models\Setting::first()?->openai_api_key ?? '';
+                $apiKey = \App\Models\Setting::first()?->open_api_key ?? '';
                 if (empty($apiKey)) {
                     throw new \RuntimeException('OpenAI API key not configured');
                 }
@@ -92,13 +92,21 @@ class GenerateQuizJob implements ShouldQueue
 
                 // Clean and parse JSON
                 $quizData = trim($content);
-                if (stripos($quizData, '```json') === 0) {
-                    $quizData = preg_replace('/^```json\s*|\s*```$/', '', $quizData);
+                
+                // Remove markdown code blocks
+                if (stripos($quizData, '```json') !== false) {
+                    $quizData = preg_replace('/```json\s*|\s*```/', '', $quizData);
                     $quizData = trim($quizData);
+                }
+                
+                // Remove any leading/trailing text and extract JSON array
+                if (preg_match('/\[[\s\S]*\]/', $quizData, $matches)) {
+                    $quizData = $matches[0];
                 }
 
                 $questions = json_decode($quizData, true);
                 if (!is_array($questions) || empty($questions)) {
+                    Log::error("Failed to parse JSON. Content: " . substr($content, 0, 500));
                     throw new \RuntimeException('Invalid JSON response from OpenAI');
                 }
 
@@ -150,6 +158,7 @@ class GenerateQuizJob implements ShouldQueue
 
             } catch (\Exception $e) {
                 Log::error("Error in GenerateQuizJob: " . $e->getMessage());
+                Log::error("Stack trace: " . $e->getTraceAsString());
                 
                 $quiz->update([
                     'generation_status' => 'failed',
@@ -161,8 +170,11 @@ class GenerateQuizJob implements ShouldQueue
         }
 
         // Mark as completed
+        $finalQuestionCount = Question::where('quiz_id', $this->quizId)->count();
         $quiz->update([
             'generation_status' => 'completed',
+            'generation_progress_done' => $finalQuestionCount,
+            'generation_progress_total' => $finalQuestionCount,
         ]);
 
         Log::info("GenerateQuizJob completed for quiz {$this->quizId}");
