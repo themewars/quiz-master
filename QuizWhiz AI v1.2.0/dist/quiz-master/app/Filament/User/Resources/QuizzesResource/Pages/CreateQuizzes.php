@@ -64,7 +64,7 @@ class CreateQuizzes extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         // Initialize inline progress state (total is set after form data read)
-        $this->isProcessing = false; // Don't show progress until job is dispatched
+        $this->isProcessing = false; // Do not show progress until job is dispatched
         $this->progressTotal = 0;
         $this->progressCreated = 0;
 
