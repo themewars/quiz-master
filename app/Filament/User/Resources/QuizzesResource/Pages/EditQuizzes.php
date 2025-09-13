@@ -33,7 +33,7 @@ class EditQuizzes extends EditRecord
             console.log("Edit page progress bar script loaded");
             
             // Add progress bar HTML to the page
-            const progressBarHTML = `<div id="live-progress-container" style="display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"><div class="flex items-center justify-between"><div class="flex items-center"><div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-3"></div><div><div class="text-sm font-medium">Generating Exam Questions...</div><div class="text-xs opacity-90">Please wait while questions are being generated in the background...</div></div></div><div class="flex items-center"><span id="progress-text" class="text-sm font-semibold bg-blue-500 text-white px-2 py-1 rounded">0/0 (0%)</span></div></div><div class="mt-2 w-full bg-white bg-opacity-20 rounded-full h-1"><div id="progress-bar" class="bg-white h-1 rounded-full transition-all duration-300 ease-in-out" style="width: 0%"></div></div></div>`;
+            const progressBarHTML = "<div id=\"live-progress-container\" style=\"display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);\"><div class=\"flex items-center justify-between\"><div class=\"flex items-center\"><div class=\"animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-3\"></div><div><div class=\"text-sm font-medium\">Generating Exam Questions...</div><div class=\"text-xs opacity-90\">Please wait while questions are being generated in the background...</div></div></div><div class=\"flex items-center\"><span id=\"progress-text\" class=\"text-sm font-semibold bg-blue-500 text-white px-2 py-1 rounded\">0/0 (0%)</span></div></div><div class=\"mt-2 w-full bg-white bg-opacity-20 rounded-full h-1\"><div id=\"progress-bar\" class=\"bg-white h-1 rounded-full transition-all duration-300 ease-in-out\" style=\"width: 0%\"></div></div></div>";
             
             function initializeProgressBar() {
                 console.log("Edit page - Adding progress bar to page top...");
@@ -180,8 +180,8 @@ class EditQuizzes extends EditRecord
                         if (progressBar && progressText) {
                             const percentage = quiz.progress_total > 0 ? Math.round((quiz.progress_done / quiz.progress_total) * 100) : 0;
                             progressBar.style.width = percentage + "%";
-                            progressText.textContent = `${quiz.progress_done}/${quiz.progress_total} (${percentage}%)`;
-                            console.log("Progress updated:", `${quiz.progress_done}/${quiz.progress_total} (${percentage}%)`);
+                            progressText.textContent = quiz.progress_done + "/" + quiz.progress_total + " (" + percentage + "%)";
+                            console.log("Progress updated:", quiz.progress_done + "/" + quiz.progress_total + " (" + percentage + "%)");
                         } else {
                             console.log("Progress bar elements not found:", {progressBar, progressText});
                         }
