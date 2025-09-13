@@ -122,20 +122,25 @@ class EditQuizzes extends EditRecord
                                             });
                                             
                                             if (isCompleted) {
-                                                console.log("Exam generation completed! Redirecting...");
+                                                console.log("🎉 EXAM COMPLETED! Starting redirect process...");
+                                                
                                                 // Show completion message
                                                 const progressText = document.getElementById("progress-text");
                                                 if (progressText) {
                                                     progressText.textContent = "✅ Completed! Redirecting...";
+                                                    progressText.style.background = "#10b981"; // Green background
                                                 }
                                                 
-                                                // Stop monitoring
+                                                // Stop monitoring immediately
                                                 stopProgressMonitoring();
                                                 
                                                 // Redirect after short delay
                                                 setTimeout(() => {
-                                                    console.log("Redirecting to exam edit page...");
-                                                    window.location.reload();
+                                                    console.log("🔄 Redirecting to exam edit page...");
+                                                    console.log("Current URL:", window.location.href);
+                                                    
+                                                    // Force reload the page to show completed exam
+                                                    window.location.href = window.location.href;
                                                 }, 1500);
                                             }
                                         } else {
