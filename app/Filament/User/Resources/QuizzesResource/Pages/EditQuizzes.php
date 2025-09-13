@@ -33,20 +33,20 @@ class EditQuizzes extends EditRecord
             console.log("Edit page progress bar script loaded");
             
             // Add progress bar HTML to the page
-            const progressBarHTML = "<div id=\"live-progress-container\" style=\"display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);\"><div class=\"flex items-center justify-between\"><div class=\"flex items-center\"><div class=\"animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-3\"></div><div><div class=\"text-sm font-medium\">Generating Exam Questions...</div><div class=\"text-xs opacity-90\">Please wait while questions are being generated in the background...</div></div></div><div class=\"flex items-center\"><span id=\"progress-text\" class=\"text-sm font-semibold bg-blue-500 text-white px-2 py-1 rounded\">0/0 (0%)</span></div></div><div class=\"mt-2 w-full bg-white bg-opacity-20 rounded-full h-1\"><div id=\"progress-bar\" class=\"bg-white h-1 rounded-full transition-all duration-300 ease-in-out\" style=\"width: 0%\"></div></div></div>";
+            var progressBarHTML = "<div id=\\"live-progress-container\\" style=\\"display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);\\"><div class=\\"flex items-center justify-between\\"><div class=\\"flex items-center\\"><div class=\\"animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-3\\"></div><div><div class=\\"text-sm font-medium\\">Generating Exam Questions...</div><div class=\\"text-xs opacity-90\\">Please wait while questions are being generated in the background...</div></div></div><div class=\\"flex items-center\\"><span id=\\"progress-text\\" class=\\"text-sm font-semibold bg-blue-500 text-white px-2 py-1 rounded\\">0/0 (0%)</span></div></div><div class=\\"mt-2 w-full bg-white bg-opacity-20 rounded-full h-1\\"><div id=\\"progress-bar\\" class=\\"bg-white h-1 rounded-full transition-all duration-300 ease-in-out\\" style=\\"width: 0%\\"></div></div></div>";
             
             function initializeProgressBar() {
                 console.log("Edit page - Adding progress bar to page top...");
                 
                 // Add progress bar at the very top of the page body
-                const body = document.querySelector("body");
+                var body = document.querySelector("body");
                 if (body) {
                     console.log("Found body element, adding progress bar at top");
                     body.insertAdjacentHTML("afterbegin", progressBarHTML);
                     console.log("Progress bar added to page top");
                     
                     // Progress bar is already styled inline
-                    const addedBar = document.getElementById("live-progress-container");
+                    var addedBar = document.getElementById("live-progress-container");
                     if (addedBar) {
                         console.log("Progress bar styled as fixed top banner");
                     }
@@ -69,7 +69,7 @@ class EditQuizzes extends EditRecord
 
                     function startProgressMonitoring() {
                         console.log("Edit page - Starting progress monitoring");
-                        const container = document.getElementById("live-progress-container");
+                        var container = document.getElementById("live-progress-container");
                         if (container) {
                             container.style.display = "block";
                             console.log("Progress bar made visible");
@@ -85,7 +85,7 @@ class EditQuizzes extends EditRecord
                             progressCheckInterval = null;
                             console.log("Progress interval cleared");
                         }
-                        const container = document.getElementById("live-progress-container");
+                        var container = document.getElementById("live-progress-container");
                         if (container) {
                             container.style.display = "none";
                             console.log("Progress container hidden");
@@ -118,7 +118,7 @@ class EditQuizzes extends EditRecord
                                             console.log("Progress:", data.quiz.progress_done + "/" + data.quiz.progress_total);
                                             
                                             // Check if exam is completed (multiple conditions)
-                                            const isCompleted = data.quiz.status === "completed" || 
+                                            var isCompleted = data.quiz.status === "completed" || 
                                                                (data.quiz.progress_done >= data.quiz.progress_total && data.quiz.progress_total > 0) ||
                                                                (data.quiz.question_count >= data.quiz.progress_total && data.quiz.progress_total > 0) ||
                                                                (data.quiz.question_count > 0 && data.quiz.status === "processing" && data.quiz.progress_total === 0 && data.quiz.question_count >= 10);
@@ -136,7 +136,7 @@ class EditQuizzes extends EditRecord
                                                 console.log("🎉 EXAM COMPLETED! Starting redirect process...");
                                                 
                                                 // Show completion message
-                                                const progressText = document.getElementById("progress-text");
+                                                var progressText = document.getElementById("progress-text");
                                                 if (progressText) {
                                                     progressText.textContent = "✅ Completed! Redirecting...";
                                                     progressText.style.background = "#10b981"; // Green background
@@ -174,11 +174,11 @@ class EditQuizzes extends EditRecord
 
                     function updateProgressBar(quiz) {
                         console.log("Updating progress bar with:", quiz);
-                        const progressBar = document.getElementById("progress-bar");
-                        const progressText = document.getElementById("progress-text");
+                        var progressBar = document.getElementById("progress-bar");
+                        var progressText = document.getElementById("progress-text");
                         
                         if (progressBar && progressText) {
-                            const percentage = quiz.progress_total > 0 ? Math.round((quiz.progress_done / quiz.progress_total) * 100) : 0;
+                            var percentage = quiz.progress_total > 0 ? Math.round((quiz.progress_done / quiz.progress_total) * 100) : 0;
                             progressBar.style.width = percentage + "%";
                             progressText.textContent = quiz.progress_done + "/" + quiz.progress_total + " (" + percentage + "%)";
                             console.log("Progress updated:", quiz.progress_done + "/" + quiz.progress_total + " (" + percentage + "%)");
@@ -197,8 +197,8 @@ class EditQuizzes extends EditRecord
                         } else {
                             console.log("No processing quiz found, checking current quiz...");
                             // If no processing quiz found, check if this quiz has 0 questions (might be processing)
-                            const url = window.location.pathname;
-                            const quizId = url.match(/\/quizzes\/(\d+)\//);
+                            var url = window.location.pathname;
+                            var quizId = url.match(/\/quizzes\/(\d+)\//);
                             if (quizId) {
                                 console.log("Checking quiz status for ID:", quizId[1]);
                                 fetch("/api/quiz-status/" + quizId[1])
