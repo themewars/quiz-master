@@ -65,6 +65,7 @@ class EditQuizzes extends EditRecord
                     // Add progress monitoring functionality
                     let progressCheckInterval;
                     let currentQuizId = null;
+                    let isRedirecting = false;
 
                     function startProgressMonitoring() {
                         console.log("Edit page - Starting progress monitoring");
@@ -76,14 +77,20 @@ class EditQuizzes extends EditRecord
                     }
 
                     function stopProgressMonitoring() {
+                        console.log("🛑 Stopping progress monitoring...");
                         if (progressCheckInterval) {
                             clearInterval(progressCheckInterval);
                             progressCheckInterval = null;
+                            console.log("Progress interval cleared");
                         }
                         const container = document.getElementById("live-progress-container");
                         if (container) {
                             container.style.display = "none";
+                            console.log("Progress container hidden");
                         }
+                        // Clear any pending timeouts
+                        currentQuizId = null;
+                        console.log("Progress monitoring stopped completely");
                     }
 
                                 function checkProgress() {
@@ -122,7 +129,8 @@ class EditQuizzes extends EditRecord
                                                 isCompleted: isCompleted
                                             });
                                             
-                                            if (isCompleted) {
+                                            if (isCompleted && !isRedirecting) {
+                                                isRedirecting = true;
                                                 console.log("🎉 EXAM COMPLETED! Starting redirect process...");
                                                 
                                                 // Show completion message
@@ -134,6 +142,12 @@ class EditQuizzes extends EditRecord
                                                 
                                                 // Stop monitoring immediately
                                                 stopProgressMonitoring();
+                                                
+                                                // Clear any existing intervals
+                                                if (progressCheckInterval) {
+                                                    clearInterval(progressCheckInterval);
+                                                    progressCheckInterval = null;
+                                                }
                                                 
                                                 // Redirect after short delay
                                                 setTimeout(() => {
