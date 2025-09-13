@@ -778,9 +778,13 @@ class CreateQuizzes extends CreateRecord
                     progressText.textContent = quiz.progress_done + "/" + quiz.progress_total + " (" + percentage + "%)";
                     
                     if (quiz.status === "completed" || (quiz.progress_done >= quiz.progress_total && quiz.progress_total > 0)) {
+                        console.log("Exam completed! Status:", quiz.status, "Progress:", quiz.progress_done + "/" + quiz.progress_total);
                         progressText.textContent = "✅ Completed! Redirecting...";
                         progressText.style.background = "#10b981";
-                        setTimeout(function() { window.location.href = "/user/quizzes/" + quiz.id + "/edit"; }, 1500);
+                        setTimeout(function() { 
+                            console.log("Redirecting to exam edit page...");
+                            window.location.href = "/user/quizzes/" + quiz.id + "/edit"; 
+                        }, 1500);
                     }
                 }
             }
