@@ -31,11 +31,16 @@ class GenerateQuizJob implements ShouldQueue
     {
         Log::info("Starting GenerateQuizJob for quiz {$this->quizId} with {$this->totalQuestions} questions");
         
+        // Wait a moment to ensure quiz is committed to database
+        sleep(2);
+        
         $quiz = Quiz::find($this->quizId);
         if (!$quiz) {
-            Log::error("Quiz {$this->quizId} not found");
+            Log::error("Quiz {$this->quizId} not found after waiting");
             return;
         }
+        
+        Log::info("Found quiz {$this->quizId}, proceeding with generation");
 
         $quiz->update([
             'generation_status' => 'processing',
