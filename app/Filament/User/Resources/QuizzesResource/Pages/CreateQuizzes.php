@@ -64,7 +64,7 @@ class CreateQuizzes extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         // Initialize inline progress state (total is set after form data read)
-        $this->isProcessing = true;
+        $this->isProcessing = false; // Don't show progress until job is dispatched
         $this->progressTotal = 0;
         $this->progressCreated = 0;
 
@@ -748,11 +748,15 @@ class CreateQuizzes extends CreateRecord
                     console.log("Quiz object:", data.quiz);
                     console.log("Quiz status:", data.quiz ? data.quiz.status : "null");
                     console.log("Quiz generation_status:", data.quiz ? data.quiz.generation_status : "null");
-                    if (data.quiz && data.quiz.status === "processing") {
+                    
+                    // Only show progress if we have a processing quiz AND we are on create page
+                    if (data.quiz && (data.quiz.status === "processing" || data.quiz.generation_status === "processing")) {
                         console.log("Found processing quiz:", data.quiz.id);
                         showProgressBar(data.quiz);
                     } else {
                         console.log("No processing quiz found or status:", data.quiz ? data.quiz.status : "null");
+                        // Hide progress bar if no processing quiz
+                        hideProgressBar();
                     }
                 })
                 .catch(function(error) { console.error("API Error:", error); });
@@ -777,8 +781,8 @@ class CreateQuizzes extends CreateRecord
                     progressBar.style.width = percentage + "%";
                     progressText.textContent = quiz.progress_done + "/" + quiz.progress_total + " (" + percentage + "%)";
                     
-                    if (quiz.status === "completed" || (quiz.progress_done >= quiz.progress_total && quiz.progress_total > 0)) {
-                        console.log("Exam completed! Status:", quiz.status, "Progress:", quiz.progress_done + "/" + quiz.progress_total);
+                    if (quiz.status === "completed" || quiz.generation_status === "completed" || (quiz.progress_done >= quiz.progress_total && quiz.progress_total > 0)) {
+                        console.log("Exam completed! Status:", quiz.status, "Generation Status:", quiz.generation_status, "Progress:", quiz.progress_done + "/" + quiz.progress_total);
                         progressText.textContent = "✅ Completed! Redirecting...";
                         progressText.style.background = "#10b981";
                         setTimeout(function() { 
@@ -786,6 +790,14 @@ class CreateQuizzes extends CreateRecord
                             window.location.href = "/user/quizzes/" + quiz.id + "/edit"; 
                         }, 1500);
                     }
+                }
+            }
+            
+            function hideProgressBar() {
+                var container = document.getElementById("live-progress-container");
+                if (container) {
+                    container.remove();
+                    console.log("Progress bar hidden");
                 }
             }
             
