@@ -201,7 +201,7 @@ class EditQuizzes extends EditRecord
                             const quizId = url.match(/\/quizzes\/(\d+)\//);
                             if (quizId) {
                                 console.log("Checking quiz status for ID:", quizId[1]);
-                                fetch(`/api/quiz-status/${quizId[1]}`)
+                                fetch("/api/quiz-status/" + quizId[1])
                                 .then(response => response.json())
                                 .then(data => {
                                     console.log("Quiz status response:", data);
