@@ -543,7 +543,7 @@ class CreateQuizzes extends CreateRecord
 
                 \App\Jobs\GenerateQuizJob::dispatch(
                     quizId: $quiz->id,
-                    model: getSetting()->openai_model,
+                    model: getSetting()->open_ai_model ?? 'gpt-4o-mini',
                     prompt: $prompt,
                     totalQuestions: $totalQuestions,
                     batchSize: 10
