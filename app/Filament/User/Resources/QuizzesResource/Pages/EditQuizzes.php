@@ -33,15 +33,22 @@ class EditQuizzes extends EditRecord
             console.log("Edit page progress bar script loaded");
             
             function checkProgress() {
+                console.log("Checking progress...");
                 fetch("/api/quiz-progress")
-                .then(function(response) { return response.json(); })
+                .then(function(response) { 
+                    console.log("API Response status:", response.status);
+                    return response.json(); 
+                })
                 .then(function(data) {
+                    console.log("API Response data:", data);
                     if (data.quiz && data.quiz.generation_status === "processing") {
                         console.log("Found processing quiz:", data.quiz.id);
                         showProgressBar(data.quiz);
+                    } else {
+                        console.log("No processing quiz found or status:", data.quiz ? data.quiz.generation_status : "null");
                     }
                 })
-                .catch(function(error) { console.error("Error:", error); });
+                .catch(function(error) { console.error("API Error:", error); });
             }
             
             function showProgressBar(quiz) {
