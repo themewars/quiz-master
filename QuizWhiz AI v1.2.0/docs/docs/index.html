@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Guide | ExamGenerator AI</title>
+    <meta name="generator" content="VuePress 1.7.1">
+    <link rel="icon" href="../images/favicon.png">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/fontawesome.css">
+    <link rel="stylesheet" href="../css/circular-std-font-face.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.3.2/js/lightgallery.js"></script>
+    <meta name="description"
+        content="Manage your projects at one place. Generate reports and invoices from the tasks of specific projects.">
+
+    <link rel="preload" href="../assets/css/0.styles.3ddff107.css" as="style">
+    <link rel="preload" href="../js/styles.js" as="script">
+    <link rel="preload" href="../js/1.js" as="script">
+    <link rel="preload" href="../js/2.js" as="script">
+    <link rel="preload" href="../js/10.js" as="script">
+    <link rel="prefetch" href="../js/11.js">
+    <link rel="prefetch" href="../js/12.js">
+    <link rel="prefetch" href="../js/3.js">
+    <link rel="prefetch" href="../js/4.js">
+    <link rel="prefetch" href="../js/5.js">
+    <link rel="prefetch" href="../js/6.js">
+    <link rel="prefetch" href="../js/7.js">
+    <link rel="prefetch" href="../js/8.js">
+    <link rel="prefetch" href="../js/9.js">
+    <link rel="stylesheet" href="../assets/css/0.styles.3ddff107.css">
+</head>
+
+<body>
+    <div id="app" data-server-rendered="true">
+        <div class="theme-container">
+            <header class="navbar">
+                <div class="sidebar-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512"
+                        class="icon">
+                        <path fill="currentColor"
+                            d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z">
+                        </path>
+                    </svg>
+                </div>
+                <a href="../index.html" class="home-link router-link-active">
+                    <img alt="ExamGenerator AI" class="logo" src="../images/logo.png">
+                    <span class="site-name an-hide">ExamGenerator AI</span>
+                </a>
+                <div class="links"><!---->
+                    <nav class="nav-links can-hide">
+                        <div class="nav-item"><a href="../index.html" class="nav-link">
+                                Home
+                            </a></div>
+                        <div class="nav-item">
+                            <a href="../docs/index.html" aria-current="page"
+                                class="nav-link router-link-exact-active router-link-active">
+                                Docs
+                            </a>
+                        </div>
+                        <div class="nav-item"><a href="../releases/index.html" class="nav-link">
+                                Releases
+                            </a></div>
+                        <div class="nav-item"><a href="../upgrade/index.html" class="nav-link">
+                                Upgrade Guide
+                            </a></div> <!---->
+                    </nav>
+                </div>
+            </header>
+            <div class="sidebar-mask"></div>
+            <aside class="sidebar">
+                <nav class="nav-links">
+                    <div class="nav-item"><a href="../index.html" class="nav-link">
+                            Home
+                        </a></div>
+                    <div class="nav-item">
+                        <a href="../docs/index.html" aria-current="page"
+                            class="nav-link router-link-exact-active router-link-active">
+                            Docs
+                        </a>
+                    </div>
+                    <div class="nav-item"><a href="../releases/index.html" class="nav-link">
+                            Releases
+                        </a></div>
+                    <div class="nav-item"><a href="../upgrade/index.html" class="nav-link">
+                            Upgrade Guide
+                        </a></div> <!---->
+                </nav>
+                <ul class="sidebar-links">
+                    <li>
+                        <section class="sidebar-group depth-0">
+                            <p class="sidebar-heading open"><span>Guide</span> <!---->
+                            </p>
+                            <ul class="sidebar-links sidebar-group-items">
+                                <li><a href="#technologies-used" class="sidebar-link">Technologies Used</a>
+                                    <ul class="sidebar-sub-headers"></ul>
+                                </li>
+                                <li><a href="#installation-guide" class="sidebar-link">Installation Guide</a>
+                                    <ul class="sidebar-sub-headers">
+                                        <li class="sidebar-sub-header"><a href="#system-requirement"
+                                                class="sidebar-link">System
+                                                Requirement</a></li>
+                                        <li class="sidebar-sub-header">
+                                            <a class="sidebar-link" href="#setup-ai-tutor-system">Setup
+                                                QuizWhiz AI
+                                                System</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#_1-copy-files-to-web-server" class="sidebar-link">1. Copy files to
+                                                web
+                                                server</a>
+                                        </li>
+                                        <li class="sidebar-sub-header"><a href="#_2-setup-default-db"
+                                                class="sidebar-link">2.
+                                                Setup Default DB</a></li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#_3-setup-environment-env-file" class="sidebar-link">3. Setup
+                                                environment .env
+                                                file</a>
+                                        </li>
+                                        <li class="sidebar-sub-header"><a href="#_4-admin-login" class="sidebar-link">4.
+                                                Admin login</a></li>
+                                    </ul>
+                                </li>
+                                <li><a class="sidebar-link" href="#setup-ai-tutor-into-local-environment">Setup
+                                        QuizWhiz AI into Local Environment</a>
+                                    <ul class="sidebar-sub-headers">
+                                        <li class="sidebar-sub-header">
+                                            <a href="#_1-install-xampp-wamp-if-you-don-t-have-it"
+                                                class="sidebar-link">1.
+                                                Install xampp/wamp (if you don't have it).</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#_2-create-folder-ai-tutor" class="sidebar-link">2. Create
+                                                folder
+                                                QuizWhiz AI</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a class="sidebar-link" href="#_3-unzip-dist-zip-to-ai-tutor-folder">3.
+                                                Unzip
+                                                dist zip to QuizWhiz AI folder</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#_4-point-the-domain-to-the-uploaded-folder"
+                                                class="sidebar-link">4.
+                                                Point the domain to the uploaded folder</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#key-features-and-concepts" class="sidebar-link">Key Features and
+                                        Concepts</a>
+                                </li>
+                                <li>
+                                    <a href="#admin-panel" class="sidebar-link">Admin Panel</a>
+                                    <ul class="sidebar-sub-headers">
+                                        <li class="sidebar-sub-header">
+                                            <a href="#admin-dashboard" class="sidebar-link">Dashboard</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#users" class="sidebar-link">Users</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#plan" class="sidebar-link">Plan</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#subscribed-plans" class="sidebar-link">Subscribed Plans</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#cash-payment" class="sidebar-link">Cash Payment</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#transactions" class="sidebar-link">Transactions</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#currencies" class="sidebar-link">Currencies</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#settings" class="sidebar-link">Settings</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#user-panel" class="sidebar-link">User Panel</a>
+                                    <ul class="sidebar-sub-headers">
+                                        <li class="sidebar-sub-header">
+                                            <a href="#user-dashboard" class="sidebar-link">Dashboard</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#user-quizzes" class="sidebar-link">Quizzes</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#user-quiz-overview" class="sidebar-link">Quiz Overview</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#user-participants" class="sidebar-link">Participants</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#user-poll-voting" class="sidebar-link">Poll & Voting</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#user-manage-subscription" class="sidebar-link">Manage
+                                                Subscription</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#participants" class="sidebar-link">Participants</a>
+                                    <ul class="sidebar-sub-headers">
+                                        <li class="sidebar-sub-header">
+                                            <a href="#participants-quizzes" class="sidebar-link">Quizzes</a>
+                                        </li>
+                                        <li class="sidebar-sub-header">
+                                            <a href="#participants-poll-voting" class="sidebar-link">Poll & Voting</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </section>
+                    </li>
+                </ul>
+            </aside>
+            <main class="page">
+                <div class="theme-default-content content__default">
+                    <h1 id="guide">
+                        <a href="#guide" class="header-anchor">#</a> Guide
+                    </h1>
+                    <p>The ExamGenerator AI is a web application that enables users to create, manage, and participate in
+                        exams using advanced OpenAI technology. This platform offers a seamless experience for
+                        designing exams with customizable question types and difficulty levels. Additionally, the
+                        ExamGenerator AI
+                        supports multiple languages and currencies, ensuring accessibility and usability for a
+                        diverse audience across different regions.
+                    </p>
+                    <h2 id="technologies-used"><a href="#technologies-used" class="header-anchor">#</a> Technologies
+                        Used
+                    </h2>
+                    <p>This system uses multiple technologies to give the best possible experience.</p>
+                    <ul>
+                        <li>PHP 8.2</li>
+                        <li>Laravel Framework 11.0</li>
+                        <li>MySQL 5.7+</li>
+                        <li>Tailwind 3.x</li>
+                        <li>Filament</li>
+                    </ul>
+                    <h2 id="installation-guide"><a href="#installation-guide" class="header-anchor">#</a> Installation
+                        Guide
+                    </h2>
+                    <p>We tried our best to make the installation of the system as easy as possible.
+                        System Requirements
+                        It is assumed that you have primary knowledge Laravel installation knowledge since this
+                        application
+                        is built on Laravel.</p>
+                    <h3 id="system-requirement"><a href="#system-requirement" class="header-anchor">#</a> System
+                        Requirement
+                    </h3>
+                    <p>It is assumed that you have primary knowledge Laravel and JS application installation knowledge
+                        since
+                        this application is built on Laravel with JS.</p>
+                    <p>You can read about laravel Requirements
+                        <a href="https://laravel.com/docs/11.x/deployment#server-requirements" target="_blank"
+                            rel="noopener noreferrer">here<span><svg xmlns="http://www.w3.org/2000/svg"
+                                    aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100"
+                                    width="15" height="15" class="icon outbound">
+                                    <path fill="currentColor"
+                                        d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z">
+                                    </path>
+                                    <polygon fill="currentColor"
+                                        points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9">
+                                    </polygon>
+                                </svg> <span class="sr-only">(opens new window)</span></span></a>
+                    </p>
+                    <p>You need update below variables in php.ini file if you want to send bigger files (Optional).</p>
+                    <p>upload_max_filesize = 50M</p>
+                    <p>max_file_uploads = 50</p>
+                    <p>post_max_size = 100M</p>
+                    <h3 id="setup-ai-tutor-system"><a class="header-anchor" href="#setup-ai-tutor-system">#</a>
+                        Setup QuizWhiz AI System</h3>
+                    <p>If you have purchased the ai-tutor system then you will be able to find the zip named
+                        <code>dist.zip</code>.
+                    </p>
+                    <p>If you want to setup <code>QuizWhiz AI</code> into your local environment then you can take
+                        help
+                        from <a href="#setup-ai-tutor-into-local-environment">here</a>.</p>
+                    <p>Now if you want to setup QuizWhiz AI on your server then you can directly copy the dist.zip
+                        folder
+                        to your web root directory on server and the following steps:</p>
+                    <h3 id="_1-copy-files-to-web-server"><a href="#_1-copy-files-to-web-server"
+                            class="header-anchor">#</a>
+                        1. Copy files to web server</h3>
+                    <p>Upload dist.zip to your web server's root (public_html) and extract it there. If you are
+                        installing
+                        it on subdomain then do extract it in your subdomain's root folder.</p>
+                    <h3 id="_2-setup-default-db"><a href="#_2-setup-default-db" class="header-anchor">#</a> 2. Setup
+                        Default
+                        DB</h3>
+                    <ol>
+                        <li>Open PHPMyAdmin on your server and do a login.</li>
+                    </ol>
+                    <ol start="2">
+                        <li>Click on the Databases tab.</li>
+                    </ol>
+                    <ol start="3">
+                        <li>Create a new database and specify a Database name of your choice and Click Create button.
+                        </li>
+                    </ol>
+                    <ol start="4">
+                        <li>Now on the left, select the database (ai_tutor) OR the one that you have created.
+                        </li>
+                    </ol>
+                    <ol start="4">
+                        <li>Click Import in the top menu
+                        </li>
+                    </ol>
+                    <ol start="5">
+                        <li>Under Import, choose the default sql file from dist/database/ai_tutor.sql and click
+                            button Go.
+                        </li>
+                    </ol>
+                    <h3 id="_3-setup-environment-env-file">
+                        <a href="#_3-setup-environment-env-file" class="header-anchor">#</a> 3. Setup environment .env
+                        file
+                    </h3>
+                    <ol>
+                        <li>Open .env file from your server's root folder.</li>
+                    </ol>
+                    <p><img src="../images/docs-images/setup.jpg" alt="Setup Default DB"></p>
+                    <ol start="2">
+                        <li>Update your .env file</li>
+                    </ol>
+                    <p>You need to change the following information into your environment (.env) file.<br>
+                        Make sure your app name wrapped between Quotes ("APP NAME").</p>
+                    <div class="language- extra-class">
+                        <pre><code>- APP_NAME="My App Name"
+- APP_URL="https://domain.com"
+- DB_HOST="DB Host"
+- DB_PORT="3306" // as per your DB
+- DB_DATABASE="your db name"
+- DB_USERNAME="your db username"
+- DB_PASSWORD="your db user's password"
+</code></pre>
+                    </div>
+                    <p>You will also need to set up mail configuration and update the following variables. You can use
+                        the
+                        below video for the
+                        reference on how to setup email configuration for cPanel servers.</p>
+                    <div class="language- extra-class">
+                        <pre><code>- MAIL_DRIVER=smtp
+- MAIL_HOST="email host"
+- MAIL_PORT="587 or 465"
+- MAIL_USERNAME="mail username"
+- MAIL_PASSWORD="mail password"
+- MAIL_ENCRYPTION="ssl or tls"
+- MAIL_FROM_ADDRESS="user's email address"
+- MAIL_FROM_NAME="Your App Name"
+</code></pre>
+                    </div>
+                    <p>Since this project requires OpenAI integration for its AI capabilities, you must configure the
+                        following variable. Without this key, the project will not function as intended.
+                        <a href="https://elephas.app/blog/how-to-create-openai-api-keys-cl5c4f21d281431po7k8fgyol0"
+                            target="_blank" rel="noopener noreferrer">Here </a>is link to generate and get the keys of
+                        openAI.
+
+                    </p>
+                    <div class="language- extra-class">
+                        <pre><code>- OPEN_AI_KEY="your openai key"</code></pre>
+                    </div>
+                    <p>If you want to store your files to direct your <code>s3</code> bucket then you have to use
+                        following
+                        <code>.env</code> variables.
+                        You need to change <code>FILESYSTEM_DRIVER</code> and <code>MEDIA_DISK</code> value to
+                        <code>s3</code> when you are using AWS file storage.
+                    </p>
+                    <div class="language- extra-class">
+                        <pre><code>- AWS_ACCESS_KEY_ID=
+- AWS_SECRET_ACCESS_KEY=
+- AWS_DEFAULT_REGION=us-east-1
+- AWS_BUCKET=
+- AWS_ENDPOINT=
+- AWS_URL=
+</code></pre>
+                    </div>
+                    <p>Or you can use your choice of storage driver to store your media assets if you want. All of your
+                        attachments will be placed into that.</p>
+                    <p>Set Stripe configuration in Settings, you can set it from the admin settings. Here are some links
+                        by using it
+                        you will get an idea about how
+                        to generate stripe API keys.</p>
+                    <ul>
+                        <li>You can find steps
+                            <a href="https://support.stripe.com/questions/locate-api-keys-in-the-dashboard"
+                                target="_blank" rel="noopener noreferrer">here
+                                1<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+                                        x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15"
+                                        class="icon outbound">
+                                        <path fill="currentColor"
+                                            d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z">
+                                        </path>
+                                        <polygon fill="currentColor"
+                                            points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9">
+                                        </polygon>
+                                    </svg> <span class="sr-only">(opens new window)</span></span></a>
+                            or
+                            <a href="https://help.sharetribe.com/en/articles/1055989-how-to-configure-your-stripe-account-and-get-api-keys-for-your-marketplace"
+                                target="_blank" rel="noopener noreferrer">here
+                                2<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+                                        x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15"
+                                        class="icon outbound">
+                                        <path fill="currentColor"
+                                            d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z">
+                                        </path>
+                                        <polygon fill="currentColor"
+                                            points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9">
+                                        </polygon>
+                                    </svg> <span class="sr-only">(opens new window)</span></span></a>
+                            to Stripe configuration.
+                        </li>
+                    </ul>
+                    <p>Set PayPal configuration in Settings, you can set it form the admin settings. Here are some links
+                        by using it
+                        you will get an idea about how
+                        to generate PayPal API keys.</p>
+                    <ul>
+                        <li>You can find steps
+                            <a href="https://www.paypal.com/us/smarthelp/home" target="_blank"
+                                rel="noopener noreferrer">here
+                                1<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+                                        x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15"
+                                        class="icon outbound">
+                                        <path fill="currentColor"
+                                            d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z">
+                                        </path>
+                                        <polygon fill="currentColor"
+                                            points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9">
+                                        </polygon>
+                                    </svg> <span class="sr-only">(opens new window)</span></span></a>
+                            or
+                            <a href="https://www.tucalendi.com/en/s/integrations/how-to-get-live-paypal-client-id-and-secret-key-171"
+                                target="_blank" rel="noopener noreferrer">here
+                                2</a>
+                            to PayPal configuration.
+                        </li>
+                    </ul>
+                    <p>Set Razorpay configuration in Settings: You can configure it from the admin settings. Here are
+                        some useful links to help you generate Razorpay API keys.</p>
+                    <ul>
+                        <li>You can find steps
+                            <a href="https://accounts.razorpay.com/auth/?redirecturl=https%3A%2F%2Feasy.razorpay.com&auth_intent=signup"
+                                target="_blank" rel="noopener noreferrer">here
+                                1<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+                                        x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15"
+                                        class="icon outbound">
+                                        <path fill="currentColor"
+                                            d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z">
+                                        </path>
+                                        <polygon fill="currentColor"
+                                            points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9">
+                                        </polygon>
+                                    </svg> <span class="sr-only">(opens new window)</span></span></a>
+                            or
+                            <a href="https://www.appypie.com/faqs/how-to-get-client-id-and-secret-key-from-razorpay"
+                                target="_blank" rel="noopener noreferrer">here
+                                2</a>
+                            to Razorpay configuration.
+                        </li>
+                    </ul>
+
+                    <h3 id="_4-admin-login"><a href="#_4-admin-login" class="header-anchor">#</a> 4. Admin login</h3>
+                    <p>You can log in as admin/user using below credentials.</p>
+                    <p><code>YOUR_APP_URL/login</code></p>
+                    <p>Admin's Login</p>
+                    <p>Admin email: admin@gmail.com</p>
+                    <p>Admin password: 123456</p>
+                    <p>Users' Login</p>
+                    <p>User email: user@gmail.com</p>
+                    <p>User password: 123456</p>
+                    <p>And you are ready to go.</p>
+                    <h2 id="setup-ai-tutor-into-local-environment">
+                        <a class="header-anchor" href="#setup-ai-tutor-into-local-environment">#</a> Setup
+                        QuizWhiz AI
+                        into Local Environment
+                    </h2>
+                    <p>You can setup QuizWhiz AI into your local by using both zip files, but we recommend to use
+                        dist
+                        file
+                        so you have to perform minimal steps.</p>
+                    <p>Here are some steps to setup QuizWhiz AI into your local environment :</p>
+                    <h3 id="_1-install-xampp-wamp-if-you-don-t-have-it">
+                        <a href="#_1-install-xampp-wamp-if-you-don-t-have-it" class="header-anchor">#</a> 1. Install
+                        xampp/wamp (if you don't have it).
+                    </h3>
+                    <h3 id="_2-create-folder-ai-tutor">
+                        <a class="header-anchor" href="#_2-create-folder-ai-tutor">#</a> 2. Create folder
+                        <code>QuizWhiz AI</code>
+                    </h3>
+                    <ul>
+                        <li>if you are using wamp then create quizwhiz-ai folder under you_path_to_wamp/www/</li>
+                        <li>if you are using xamp then create quizwhiz-ai folder under you_path_to_xamp/htdocs/</li>
+                    </ul>
+                    <h3 id="_3-unzip-dist-zip-to-quizwhiz-ai-folder">
+                        <a class="header-anchor" href="#_3-unzip-dist-zip-to-quizwhiz-ai-folder">#</a> 3. Unzip
+                        dist zip to quizwhiz-ai folder
+                    </h3>
+                    <h3 id="_4-point-the-domain-to-the-uploaded-folder">
+                        <a href="#_4-point-the-domain-to-the-uploaded-folder" class="header-anchor">#</a> 4. Point the
+                        domain to the uploaded folder
+                    </h3>
+                    <p>You need to create virtual host first to setup ai-tutor. You can find steps here to create
+                        virtual host.</p>
+                    <ul>
+                        <li>You can find steps
+                            <a href="https://medium.com/d6-digital/create-virtual-host-for-apache-on-windows-10-by-using-xampp-8664b0427567"
+                                target="_blank" rel="noopener noreferrer">here<span><svg
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px"
+                                        y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound">
+                                        <path fill="currentColor"
+                                            d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z">
+                                        </path>
+                                        <polygon fill="currentColor"
+                                            points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9">
+                                        </polygon>
+                                    </svg> <span class="sr-only">(opens new window)</span></span></a>
+                            to create virtual host on
+                            <code>XAMPP</code>.
+                        </li>
+                        <li>You can find steps
+                            <a href="http://codedecode.co.in/blog/wordpress/set-up-virtual-host-with-wamp/"
+                                target="_blank" rel="noopener noreferrer">here<span><svg
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px"
+                                        y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound">
+                                        <path fill="currentColor"
+                                            d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z">
+                                        </path>
+                                        <polygon fill="currentColor"
+                                            points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9">
+                                        </polygon>
+                                    </svg> <span class="sr-only">(opens new window)</span></span></a>
+                            to create virtual host on
+                            <code>WAMP</code>.
+                        </li>
+                    </ul>
+                    <p>Point your domain or subdomain to the ai-tutor folder.</p>
+                    <p>Please note that, QuizWhiz AI must be installed on a primary domain or subdomain. Installing
+                        on
+                        a
+                        sub-folder will not work, for example:</p>
+                    <div class="language- extra-class">
+                        <pre><code>    example.com/quizwhiz-ai (Invalid)
+    localhost/quizwhiz-ai (Invalid) (if you are putting it in sub folder or root website)
+    example.com (Valid)
+    local.quizwhiz-ai.com (Valid)
+    quizwhiz-ai.test (Valid)
+</code></pre>
+                    </div>
+                    <p>Open the link to the domain in the browser (Example: https://local.quizwhiz-ai.com).</p>
+                    <h2 id="key-features-and-concepts"><a href="#key-features-and-concepts" class="header-anchor">#</a>
+                        Key
+                        Features and Concepts</h2>
+                    <p>Here are some Key Features and Concepts that QuizWhiz AI provides.</p>
+
+                    <h3 id="dual-panel-system"><a href="#dual-panel-system" class="header-anchor">#</a>Dual Panel System
+                    </h3>
+                    <p>Offers an intuitive Admin Panel and User Panel for streamlined management and user interaction.
+                    </p>
+
+                    <h2 id="admin-panel"><a href="#admin-panel" class="header-anchor">#</a> Admin Panel</h2>
+
+                    <h3 id="admin-dashboard"><a href="#admin-dashboard" class="header-anchor">#</a> Dashboard</h3>
+                    <p>The Dashboard offers an insightful overview of essential metrics, empowering you to manage the
+                        QuizWhiz AI platform effectively. Key features include:</p>
+                    <ul>
+                        <li>
+                            Total Users / Active Users: Monitor the total number of registered users and those currently
+                            active on the platform.
+                        </li>
+                        <li>
+                            Paid Users: Track the number of users with active paid subscriptions.
+                        </li>
+                        <li>
+                            Active Quizzes: Stay updated on the number of quizzes currently available and active on the
+                            platform.
+                        </li>
+                        <li>
+                            Quiz Participants: View how many users are actively participating in quizzes.
+                        </li>
+                        <li>
+                            Recent Users: Quickly access the most recent users who have registered or engaged with
+                            the platform.
+                        </li>
+                        <li>
+                            Top Quizzes by Participants: Identify the most popular quizzes based on user participation.
+                        </li>
+                        <li>
+                            Subscriptions Chart: Analyze the revenue generated from subscription plan purchases over
+                            specific time periods.
+                        </li>
+                    </ul>
+                    <p>This streamlined dashboard ensures that all critical data is easily accessible, enabling informed
+                        decisions and enhancing platform performance.
+                    </p>
+
+                    <h3 id="users"><a href="#users" class="header-anchor">#</a>Users</h3>
+                    <p>The admin has full control over managing platform users. This includes creating new user
+                        accounts, editing existing user details, and deleting users as needed. Additionally, the admin
+                        can easily toggle user statuses between active and inactive, ensuring better control over user
+                        activity on the platform.
+                    </p>
+
+                    <h3 id="plan"><a href="#plan" class="header-anchor">#</a>Plan</h3>
+                    <p>Admins have the ability to create and manage subscription plans tailored to user needs. Each plan
+                        can be customized by setting the plan name, frequency, trial days, number of quizzes allowed,
+                        currency selection, and plan price. Admins can also update or delete existing plans, change a
+                        plan's status to active or inactive, and assign a default plan for new users. This feature
+                        ensures flexible plan management and easy adjustments to suit platform requirements.
+                    </p>
+
+                    <h3 id="subscribed-plans"><a href="#subscribed-plans" class="header-anchor">#</a>Subscribed Plans
+                    </h3>
+                    <p>This section provides an overview of all user subscriptions. Admins can view details of each
+                        user's subscribed plan, including the ability to edit the plan's end date. Additionally, admins
+                        can access and view the subscription invoices in PDF format, ensuring clear tracking and
+                        management of user subscriptions.
+                    </p>
+
+                    <h3 id="cash-payment"><a href="#cash-payment" class="header-anchor">#</a>Cash Payment</h3>
+                    <p>This section displays all user requests for cash payment. Admins have the authority to review,
+                        accept, or reject these payment requests, ensuring proper handling of manual transactions.
+                    </p>
+
+                    <h3 id="transactions"><a href="#transactions" class="header-anchor">#</a>Transactions</h3>
+                    <p>This section provides a comprehensive history of all payment transactions made through Stripe,
+                        PayPal, and Razorpay. Admins can view details of each transaction, including whether the payment
+                        was successful or failed, allowing for efficient financial tracking and management.
+                    </p>
+
+                    <h3 id="currencies"><a href="#currencies" class="header-anchor">#</a>Currencies
+                    </h3>
+                    <p>The Currencies section offers a comprehensive overview of the different currencies available on
+                        the platform. Admins can manage these currencies by adding new options, updating existing ones,
+                        or deleting those no longer needed. This flexibility ensures that users have a variety of
+                        currency choices for their transactions.
+                    </p>
+
+                    <h3 id="settings"><a href="#settings" class="header-anchor">#</a>Settings</h3>
+
+                    <h4 id="basic-settings"><a href="#basic-settings" class="header-anchor">#</a>Basic Settings</h4>
+                    <p>This section enables admins to configure essential settings for the application, including
+                        updating the application name, email, phone number, logo, and favicon. These foundational
+                        elements ensure the platform reflects the brand's identity.</p>
+
+                    <h4 id="payment-configuration"><a href="#payment-configuration" class="header-anchor">#</a>Payment
+                        Configuration</h4>
+                    <p>Admins can manage payment settings, configuring options for Razorpay, PayPal, Stripe, and manual
+                        payment methods. This section allows for comprehensive setup and customization to meet user
+                        needs and facilitate smooth financial transactions.</p>
+
+                    <h2 id="user-panel"><a href="#user-panel" class="header-anchor">#</a> User Panel</h2>
+
+                    <h3 id="user-dashboard"><a href="#user-dashboard" class="header-anchor">#</a> Dashboard</h3>
+                    <p>The User Dashboard offers an insightful overview of user-specific information, including: </p>
+                    <ul>
+                        <li>
+                            User Plan Details: Displays the current subscription plan and its features.
+                        </li>
+                        <li>
+                            Total Quizzes: Indicates the total number of quizzes created by the user.
+                        </li>
+                        <li>
+                            Total Quiz Participants: Shows the total number of participants across all quizzes.
+                        </li>
+                        <li>
+                            Top Quizzes by Participants: Highlights the quizzes with the highest participant engagement.
+                        </li>
+                        <li>
+                            Top 5 Scoring Participants: Lists the top five participants based on their quiz scores.
+                        </li>
+                        <li>
+                            Participants Chart: Visualizes participant data with filtering options for
+                            specific quizzes.
+                        </li>
+                    </ul>
+                    <p>This dashboard ensures users have access to essential metrics and analytics to track their
+                        performance and engagement effectively.
+                    </p>
+
+                    <h3 id="user-quizzes"><a href="#user-quizzes" class="header-anchor">#</a>Quizzes</h3>
+                    <p>The Quizzes feature empowers users to create dynamic quizzes effortlessly using OpenAI. Users can
+                        specify question types (multiple choice or single choice), set difficulty levels (Basic,
+                        Intermediate, Advanced), and determine the number of questions. They can generate questions
+                        through various methods, including inputting text, selecting subjects, providing URLs, or
+                        uploading documents.</p>
+                    <p>Users also have the ability to edit quizzes and customize generated questions and answers.
+                        Additionally, users can easily share the quiz URL with others, promoting engagement and
+                        participation in their quizzes. This feature enhances the overall experience by fostering a
+                        sense of community and competition among participants.</p>
+
+                    <h4 id="user-quiz-overview"><a href="#user-quiz-overview" class="header-anchor">#</a>Quiz
+                        Overview</h4>
+                    <p>The Quiz Overview section provides users with comprehensive insights into their quizzes,
+                        including: </p>
+                    <ul>
+                        <li>
+                            Overview: A summary of all questions and answers in the quiz.
+                        </li>
+                        <li>
+                            Leaderboard: Displays the top participants based on scores, highlighting the competitive
+                            aspect of the quiz.
+                        </li>
+                        <li>
+                            Reports: Detailed analytics on quiz performance, including total participants, average
+                            completion time, and insights into participant engagement.
+                        </li>
+                        <li>
+                            All Quiz Participants: A complete table view of all participants, their scores, and progress
+                            within the quiz.
+                        </li>
+                    </ul>
+                    <p>This structured organization ensures users can effectively create, analyze, and engage with
+                        quizzes and their results.
+                    </p>
+
+                    <h4 id="user-participants"><a href="#user-participants" class="header-anchor">#</a>Participants</h4>
+                    <p>The Participants feature allows users to view all quiz participants in a single view, providing
+                        detailed insights such as the number of questions answered, total time taken, completion status,
+                        and individual scores. This comprehensive overview enables users to track participant
+                        performance and engagement effectively.
+                    </p>
+
+                    <h4 id="user-poll-voting"><a href="#user-poll-voting" class="header-anchor">#</a>Poll & Voting</h4>
+                    <p>The Manage Poll & Voting feature enables users to create and manage polls effortlessly. Users can
+                        set a poll title, specify an end date, and add multiple options for participants. Additionally,
+                        users have the ability to edit, delete, and view polls, along with analyzing poll results
+                        through charts and detailed tables. Results can also be segmented by country, providing insights
+                        into participant demographics and engagement levels.</p>
+
+                    <h4 id="user-manage-subscription"><a href="#user-manage-subscription"
+                            class="header-anchor">#</a>Manage
+                        Subscription</h4>
+                    <p>The Manage Subscription feature empowers users to efficiently handle their subscription plans.
+                        Users can easily view and manage their current subscriptions, with the option to download
+                        invoices in PDF format for their records. The interface is designed to be visually appealing,
+                        making it simple for users to upgrade to more attractive plans. Additionally, users can purchase
+                        new plans based on their preferred payment configurations, ensuring a seamless and flexible
+                        subscription management experience.</p>
+
+
+                    <h2 id="participants"><a href="#participants" class="header-anchor">#</a> Participants</h2>
+                    <p>The Participants feature allows users to engage with quizzes and polls in an interactive and
+                        social manner. Key functionalities include: </p>
+
+                    <h4 id="participants-quizzes"><a href="#participants-quizzes" class="header-anchor">#</a>Quizzes
+                    </h4>
+                    <ul>
+                        <li>
+                            Quiz Access and View Page: Quiz users can share the quiz URL with others, enabling
+                            participants to easily access the quiz details and start playing by clicking the provided
+                            link.
+                        </li>
+                        <li>
+                            Start Quiz: Before starting the quiz, participants can select an avatar,
+                            enter a nickname, and provide their email address, personalizing their quiz experience.
+                        </li>
+                        <li>
+                            Question and Answer: Participants navigate through the quiz, answering questions
+                            presented to them in a user-friendly format.
+                        </li>
+                        <li>
+                            Results Overview: Upon completing the quiz, participants can view their results, which
+                            include all questions and answers, allowing them to review their performance.
+                        </li>
+                        <li>
+                            Social Sharing of Results: Participants can share their quiz results
+                            on multiple social media platforms, promoting engagement and competition. They can also view
+                            the leaderboard, which showcases rankings and scores, helping them understand their
+                            performance relative to others. This feature fosters a competitive atmosphere by displaying
+                            all participants.
+                        </li>
+                    </ul>
+                    <p>This feature enhances user engagement and interaction, making quizzes more enjoyable and
+                        community-oriented.
+                    </p>
+
+                    <h4 id="participants-poll-voting"><a href="#participants-poll-voting"
+                            class="header-anchor">#</a>Poll &
+                        Voting
+                    </h4>
+                    <p>The Poll & Voting feature allows participants to engage in polls by selecting one option to cast
+                        their vote. After voting, they can view real-time results, which are updated live as other users
+                        participate. Once the polling period concludes, voters can review the final results to gain
+                        insights into overall preferences and opinions.
+                    </p>
+
+                </div>
+                <footer class="page-edit"><!----> <!----></footer> <!---->
+            </main>
+        </div>
+        <div class="global-ui"></div>
+    </div>
+    <script src="../js/styles.js" defer></script>
+    <script src="../js/2.js" defer></script>
+    <script src="../js/10.js" defer></script>
+</body>
+
+</html>
