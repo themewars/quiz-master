@@ -541,9 +541,14 @@ class CreateQuizzes extends CreateRecord
 
                 \Log::info("Created quiz {$quiz->id} for async processing");
 
+                $model = getSetting()->open_ai_model;
+                if (empty($model)) {
+                    $model = 'gpt-4o-mini';
+                }
+                
                 \App\Jobs\GenerateQuizJob::dispatch(
                     quizId: $quiz->id,
-                    model: getSetting()->open_ai_model ?? 'gpt-4o-mini',
+                    model: $model,
                     prompt: $prompt,
                     totalQuestions: $totalQuestions,
                     batchSize: 10
