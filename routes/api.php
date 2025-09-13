@@ -29,7 +29,7 @@ Route::middleware('web')->get('/quiz-progress', function (Request $request) {
     $recentQuizzes = \App\Models\Quiz::where('user_id', $user->id)
         ->orderBy('created_at', 'desc')
         ->limit(3)
-        ->get(['id', 'generation_status', 'generation_progress_done', 'generation_progress_total', 'question_count']);
+        ->get(['id', 'generation_status', 'generation_progress_done', 'generation_progress_total']);
     
     \Log::info("Recent quizzes for user {$user->id}:", $recentQuizzes->toArray());
     
@@ -46,7 +46,6 @@ Route::middleware('web')->get('/quiz-progress', function (Request $request) {
                 'status' => $quiz->generation_status,
                 'progress_done' => $quiz->generation_progress_done ?? 0,
                 'progress_total' => $quiz->generation_progress_total ?? 0,
-                'question_count' => $quiz->question_count ?? 0
             ]
         ]);
     }
@@ -72,7 +71,6 @@ Route::middleware('web')->get('/quiz-status/{id}', function (Request $request, $
                 'status' => $quiz->generation_status,
                 'progress_done' => $quiz->generation_progress_done ?? 0,
                 'progress_total' => $quiz->generation_progress_total ?? 0,
-                'question_count' => $quiz->question_count ?? 0
             ]
         ]);
     }
