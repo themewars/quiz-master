@@ -38,7 +38,7 @@ Route::middleware('web')->get('/quiz-progress', function (Request $request) {
         ->orderBy('created_at', 'desc')
         ->first();
     
-    \Log::info("API Query result for user {$user->id}:", $quiz ? $quiz->toArray() : 'null');
+    \Log::info("API Query result for user {$user->id}:", $quiz ? $quiz->toArray() : ['result' => 'null']);
     
     if ($quiz) {
         \Log::info("Found processing quiz {$quiz->id} with status: {$quiz->generation_status}");
