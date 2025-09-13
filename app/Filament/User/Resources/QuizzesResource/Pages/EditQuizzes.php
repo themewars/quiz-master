@@ -86,51 +86,58 @@ class EditQuizzes extends EditRecord
                         }
                     }
 
-                    function checkProgress() {
-                        fetch("/api/quiz-progress", {
-                            method: "GET",
-                            headers: {
-                                "X-Requested-With": "XMLHttpRequest",
-                                "X-CSRF-TOKEN": document.querySelector("meta[name=\\"csrf-token\\"]").getAttribute("content")
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log("Progress API response:", data);
-                            if (data.quiz) {
-                                currentQuizId = data.quiz.id;
-                                updateProgressBar(data.quiz);
-                                
-                                console.log("Quiz status:", data.quiz.status);
-                                console.log("Progress:", data.quiz.progress_done + "/" + data.quiz.progress_total);
-                                
-                                // Check if exam is completed (either by status or by progress)
-                                const isCompleted = data.quiz.status === "completed" || 
-                                                   (data.quiz.progress_done >= data.quiz.progress_total && data.quiz.progress_total > 0);
-                                
-                                if (isCompleted) {
-                                    console.log("Exam generation completed! Reloading page...");
-                                    // Show completion message
-                                    const progressText = document.getElementById("progress-text");
-                                    if (progressText) {
-                                        progressText.textContent = "Exam generation completed! Redirecting...";
-                                    }
-                                    setTimeout(() => {
-                                        console.log("Reloading page now...");
-                                        window.location.reload();
-                                    }, 2000);
+                                function checkProgress() {
+                                    console.log("Checking progress...");
+                                    fetch("/api/quiz-progress", {
+                                        method: "GET",
+                                        headers: {
+                                            "X-Requested-With": "XMLHttpRequest",
+                                            "X-CSRF-TOKEN": document.querySelector("meta[name=\\"csrf-token\\"]").getAttribute("content")
+                                        }
+                                    })
+                                    .then(response => {
+                                        console.log("API response status:", response.status);
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log("Progress API response:", data);
+                                        if (data.quiz) {
+                                            currentQuizId = data.quiz.id;
+                                            updateProgressBar(data.quiz);
+                                            
+                                            console.log("Quiz status:", data.quiz.status);
+                                            console.log("Progress:", data.quiz.progress_done + "/" + data.quiz.progress_total);
+                                            
+                                            // Check if exam is completed (either by status or by progress)
+                                            const isCompleted = data.quiz.status === "completed" || 
+                                                               (data.quiz.progress_done >= data.quiz.progress_total && data.quiz.progress_total > 0);
+                                            
+                                            if (isCompleted) {
+                                                console.log("Exam generation completed! Reloading page...");
+                                                // Show completion message
+                                                const progressText = document.getElementById("progress-text");
+                                                if (progressText) {
+                                                    progressText.textContent = "Exam generation completed! Redirecting...";
+                                                }
+                                                setTimeout(() => {
+                                                    console.log("Reloading page now...");
+                                                    window.location.reload();
+                                                }, 2000);
+                                            }
+                                        } else {
+                                            console.log("No processing quiz found, stopping monitoring");
+                                            stopProgressMonitoring();
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error("Error checking progress:", error);
+                                        console.log("Retrying in 3 seconds...");
+                                        setTimeout(checkProgress, 3000);
+                                    });
                                 }
-                            } else {
-                                console.log("No processing quiz found, stopping monitoring");
-                                stopProgressMonitoring();
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Error checking progress:", error);
-                        });
-                    }
 
                     function updateProgressBar(quiz) {
+                        console.log("Updating progress bar with:", quiz);
                         const progressBar = document.getElementById("progress-bar");
                         const progressText = document.getElementById("progress-text");
                         
@@ -138,28 +145,46 @@ class EditQuizzes extends EditRecord
                             const percentage = quiz.progress_total > 0 ? Math.round((quiz.progress_done / quiz.progress_total) * 100) : 0;
                             progressBar.style.width = percentage + "%";
                             progressText.textContent = `${quiz.progress_done}/${quiz.progress_total} (${percentage}%)`;
+                            console.log("Progress updated:", `${quiz.progress_done}/${quiz.progress_total} (${percentage}%)`);
+                        } else {
+                            console.log("Progress bar elements not found:", {progressBar, progressText});
                         }
                     }
                     
                     // Check if there is already a processing quiz
                     setTimeout(() => {
+                        console.log("Initial progress check...");
                         checkProgress();
                         if (currentQuizId) {
+                            console.log("Found processing quiz, starting monitoring");
                             startProgressMonitoring();
                         } else {
+                            console.log("No processing quiz found, checking current quiz...");
                             // If no processing quiz found, check if this quiz has 0 questions (might be processing)
                             const url = window.location.pathname;
                             const quizId = url.match(/\/quizzes\/(\d+)\//);
                             if (quizId) {
+                                console.log("Checking quiz status for ID:", quizId[1]);
                                 fetch(`/api/quiz-status/${quizId[1]}`)
                                 .then(response => response.json())
                                 .then(data => {
-                                    if (data.quiz && data.quiz.question_count === 0 && data.quiz.generation_status === "processing") {
-                                        console.log("Found processing quiz with 0 questions, starting monitoring");
+                                    console.log("Quiz status response:", data);
+                                    if (data.quiz && (data.quiz.question_count === 0 || data.quiz.generation_status === "processing")) {
+                                        console.log("Found processing quiz, starting monitoring");
                                         startProgressMonitoring();
+                                    } else {
+                                        console.log("Quiz not processing, stopping monitoring");
+                                        stopProgressMonitoring();
                                     }
                                 })
-                                .catch(error => console.error("Error checking quiz status:", error));
+                                .catch(error => {
+                                    console.error("Error checking quiz status:", error);
+                                    console.log("Starting monitoring anyway...");
+                                    startProgressMonitoring();
+                                });
+                            } else {
+                                console.log("No quiz ID found in URL, starting monitoring anyway...");
+                                startProgressMonitoring();
                             }
                         }
                     }, 500);
