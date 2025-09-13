@@ -18,24 +18,26 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Quiz progress API for live updates
+// Quiz progress API routes
 Route::middleware('web')->get('/quiz-progress', function (Request $request) {
-    if (!auth()->check()) {
+    $user = auth()->user();
+    if (!$user) {
         return response()->json(['quiz' => null]);
     }
     
-    $quiz = \App\Models\Quiz::where('user_id', auth()->id())
+    $quiz = \App\Models\Quiz::where('user_id', $user->id)
         ->where('generation_status', 'processing')
-        ->latest()
+        ->orderBy('created_at', 'desc')
         ->first();
-        
+    
     if ($quiz) {
         return response()->json([
             'quiz' => [
                 'id' => $quiz->id,
+                'status' => $quiz->generation_status,
                 'progress_done' => $quiz->generation_progress_done ?? 0,
                 'progress_total' => $quiz->generation_progress_total ?? 0,
-                'status' => $quiz->generation_status,
+                'question_count' => $quiz->question_count ?? 0
             ]
         ]);
     }
@@ -43,24 +45,24 @@ Route::middleware('web')->get('/quiz-progress', function (Request $request) {
     return response()->json(['quiz' => null]);
 });
 
-// Quiz status API for individual quiz
 Route::middleware('web')->get('/quiz-status/{id}', function (Request $request, $id) {
-    if (!auth()->check()) {
+    $user = auth()->user();
+    if (!$user) {
         return response()->json(['quiz' => null]);
     }
     
-    $quiz = \App\Models\Quiz::where('user_id', auth()->id())
-        ->where('id', $id)
+    $quiz = \App\Models\Quiz::where('id', $id)
+        ->where('user_id', $user->id)
         ->first();
-        
+    
     if ($quiz) {
         return response()->json([
             'quiz' => [
                 'id' => $quiz->id,
-                'question_count' => $quiz->question_count ?? 0,
-                'generation_status' => $quiz->generation_status ?? 'completed',
+                'status' => $quiz->generation_status,
                 'progress_done' => $quiz->generation_progress_done ?? 0,
                 'progress_total' => $quiz->generation_progress_total ?? 0,
+                'question_count' => $quiz->question_count ?? 0
             ]
         ]);
     }

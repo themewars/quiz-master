@@ -24,7 +24,7 @@ class GenerateQuizJob implements ShouldQueue
         public string $model,
         public string $prompt,
         public int $totalQuestions,
-        public int $batchSize = 5
+        public int $batchSize = 10
     ) {}
 
     public function handle(): void
@@ -45,17 +45,12 @@ class GenerateQuizJob implements ShouldQueue
             try {
                 $batchPrompt = $this->prompt . "\n\nYou MUST return exactly {$take} questions in this response.";
 
-                // IMPORTANT: Do NOT use getSetting() inside long-running workers (it caches statically).
-                // Read fresh from DB so changes in admin panel are picked up without restarting workers.
-                $settings = \App\Models\Setting::query()->select('open_api_key')->first();
-                $apiKey = ($settings?->open_api_key) ?: (config('services.open_ai.open_api_key') ?? '');
-
                 $response = Http::withHeaders([
-                        'Authorization' => 'Bearer ' . $apiKey,
+                        'Authorization' => 'Bearer ' . (getSetting()->openai_api_key ?? ''),
                         'Content-Type' => 'application/json',
                     ])
-                    ->timeout(600)
-                    ->retry(3, 2000)
+                    ->timeout(120)
+                    ->retry(2, 1500)
                     ->post('https://api.openai.com/v1/chat/completions', [
                         'model' => $this->model,
                         'messages' => [
@@ -64,9 +59,7 @@ class GenerateQuizJob implements ShouldQueue
                     ]);
 
                 if ($response->failed()) {
-                    $body = $response->json();
-                    $message = is_array($body) ? ($body['error']['message'] ?? json_encode($body)) : 'OpenAI error';
-                    throw new \RuntimeException($message);
+                    throw new \RuntimeException($response->json()['error']['message'] ?? 'OpenAI error');
                 }
 
                 $content = $response['choices'][0]['message']['content'] ?? '';

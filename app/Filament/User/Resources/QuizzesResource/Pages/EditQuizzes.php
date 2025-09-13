@@ -33,7 +33,7 @@ class EditQuizzes extends EditRecord
             console.log("Edit page progress bar script loaded");
             
             // Add progress bar HTML to the page
-            const progressBarHTML = `<div id="live-progress-container" class="mb-2" style="display: none;"><div class="bg-purple-50 dark:bg-purple-900 border-l-4 border-purple-500 p-3"><div class="flex items-center justify-between"><div class="flex items-center"><div class="flex-shrink-0"><svg class="animate-spin h-4 w-4 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></div><div class="ml-3"><p class="text-sm font-medium text-purple-800 dark:text-purple-200">Generating Exam Questions...</p><p class="text-xs text-purple-600 dark:text-purple-300">Please wait while questions are being generated in the background...</p></div></div><div class="flex items-center"><span id="progress-text" class="text-sm font-semibold text-purple-800 dark:text-purple-200">0/0 (0%)</span></div></div><div class="mt-2 w-full bg-purple-200 dark:bg-purple-700 rounded-full h-1.5"><div id="progress-bar" class="bg-purple-500 h-1.5 rounded-full transition-all duration-300 ease-in-out" style="width: 0%"></div></div></div></div>`;
+            const progressBarHTML = `<div id="live-progress-container" style="display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"><div class="flex items-center justify-between"><div class="flex items-center"><div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-3"></div><div><div class="text-sm font-medium">Generating Exam Questions...</div><div class="text-xs opacity-90">Please wait while questions are being generated in the background...</div></div></div><div class="flex items-center"><span id="progress-text" class="text-sm font-semibold bg-white bg-opacity-20 px-2 py-1 rounded">0/0 (0%)</span></div></div><div class="mt-2 w-full bg-white bg-opacity-20 rounded-full h-1"><div id="progress-bar" class="bg-white h-1 rounded-full transition-all duration-300 ease-in-out" style="width: 0%"></div></div></div>`;
             
             function initializeProgressBar() {
                 console.log("Edit page - Adding progress bar to page top...");
@@ -45,17 +45,9 @@ class EditQuizzes extends EditRecord
                     body.insertAdjacentHTML("afterbegin", progressBarHTML);
                     console.log("Progress bar added to page top");
                     
-                    // Style it to be fixed at top
+                    // Progress bar is already styled inline
                     const addedBar = document.getElementById("live-progress-container");
                     if (addedBar) {
-                        addedBar.style.position = "fixed";
-                        addedBar.style.top = "0";
-                        addedBar.style.left = "0";
-                        addedBar.style.right = "0";
-                        addedBar.style.zIndex = "9999";
-                        addedBar.style.margin = "0";
-                        addedBar.style.borderRadius = "0";
-                        addedBar.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
                         console.log("Progress bar styled as fixed top banner");
                     }
                     
