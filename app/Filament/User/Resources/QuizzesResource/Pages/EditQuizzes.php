@@ -63,9 +63,9 @@ class EditQuizzes extends EditRecord
                     }
                     
                     // Add progress monitoring functionality
-                    let progressCheckInterval;
-                    let currentQuizId = null;
-                    let isRedirecting = false;
+                    var progressCheckInterval;
+                    var currentQuizId = null;
+                    var isRedirecting = false;
 
                     function startProgressMonitoring() {
                         console.log("Edit page - Starting progress monitoring");
@@ -152,7 +152,7 @@ class EditQuizzes extends EditRecord
                                                 }
                                                 
                                                 // Redirect after short delay
-                                                setTimeout(() => {
+                                                setTimeout(function() {
                                                     console.log("🔄 Redirecting to exam edit page...");
                                                     console.log("Current URL:", window.location.href);
                                                     
@@ -188,7 +188,7 @@ class EditQuizzes extends EditRecord
                     }
                     
                     // Check if there is already a processing quiz
-                    setTimeout(() => {
+                    setTimeout(function() {
                         console.log("Initial progress check...");
                         checkProgress();
                         if (currentQuizId) {
