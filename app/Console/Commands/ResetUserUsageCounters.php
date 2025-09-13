@@ -16,6 +16,16 @@ class ResetUserUsageCounters extends Command
     {
         $this->info('Starting usage counter reset...');
         
+<<<<<<< HEAD
+=======
+        // Check if the required columns exist
+        if (!$this->columnsExist()) {
+            $this->error('Required columns do not exist. Please run the migration first:');
+            $this->line('php artisan migrate');
+            return 1;
+        }
+        
+>>>>>>> 6e6a904f14e0a396dda1604dde54cd28910c35a2
         $subscriptions = Subscription::where('status', 'active')->get();
         $resetCount = 0;
         
@@ -42,4 +52,22 @@ class ResetUserUsageCounters extends Command
         $this->info("Reset completed! {$resetCount} users updated.");
         return 0;
     }
+<<<<<<< HEAD
+=======
+    
+    private function columnsExist(): bool
+    {
+        try {
+            $subscription = Subscription::first();
+            if ($subscription) {
+                // Try to access the column
+                $subscription->exams_generated_this_month;
+                return true;
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+>>>>>>> 6e6a904f14e0a396dda1604dde54cd28910c35a2
 }
