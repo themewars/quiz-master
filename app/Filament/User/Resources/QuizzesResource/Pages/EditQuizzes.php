@@ -52,10 +52,14 @@ class EditQuizzes extends EditRecord
             }
             
             function showProgressBar(quiz) {
+                console.log("showProgressBar called with quiz:", quiz);
                 var container = document.getElementById("live-progress-container");
+                console.log("Container exists:", !!container);
                 if (!container) {
+                    console.log("Creating progress bar container...");
                     var html = "<div id=\\"live-progress-container\\" style=\\"position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:8px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.15);\\"><div style=\\"display:flex;align-items:center;justify-content:space-between;\\"><div style=\\"display:flex;align-items:center;\\"><div style=\\"width:16px;height:16px;border:2px solid white;border-top:transparent;border-radius:50%;animation:spin 1s linear infinite;margin-right:12px;\\"></div><div><div style=\\"font-size:14px;font-weight:500;\\">Generating Exam Questions...</div><div style=\\"font-size:12px;opacity:0.9;\\">Please wait while questions are being generated...</div></div></div><div><span id=\\"progress-text\\" style=\\"font-size:14px;font-weight:600;background:#3b82f6;color:white;padding:4px 8px;border-radius:4px;\\">0/0 (0%)</span></div></div><div style=\\"margin-top:8px;width:100%;background:rgba(255,255,255,0.2);border-radius:9999px;height:4px;\\"><div id=\\"progress-bar\\" style=\\"background:white;height:4px;border-radius:9999px;transition:width 0.3s ease;width:0%;\\"></div></div></div>";
                     document.body.insertAdjacentHTML("afterbegin", html);
+                    console.log("Progress bar container created!");
                 }
                 
                 var progressBar = document.getElementById("progress-bar");
