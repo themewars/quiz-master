@@ -34,7 +34,7 @@ Route::middleware('web')->get('/quiz-progress', function (Request $request) {
     \Log::info("Recent quizzes for user {$user->id}:", $recentQuizzes->toArray());
     
     $quiz = \App\Models\Quiz::where('user_id', $user->id)
-        ->whereIn('generation_status', ['processing', 'completed'])
+        ->where('generation_status', 'processing')
         ->orderBy('created_at', 'desc')
         ->first();
     

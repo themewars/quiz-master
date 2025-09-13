@@ -736,6 +736,14 @@ class CreateQuizzes extends CreateRecord
         $this->js('
             console.log("Create page progress bar script loaded");
             
+            // Add CSS for progress bar animation
+            var style = document.createElement("style");
+            style.textContent = "@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }";
+            document.head.appendChild(style);
+            
+            // Hide any existing progress bar on page load
+            hideProgressBar();
+            
             function checkProgress() {
                 console.log("Checking progress...");
                 fetch("/api/quiz-progress")
@@ -749,8 +757,8 @@ class CreateQuizzes extends CreateRecord
                     console.log("Quiz status:", data.quiz ? data.quiz.status : "null");
                     console.log("Quiz generation_status:", data.quiz ? data.quiz.generation_status : "null");
                     
-                    // Only show progress if we have a processing quiz AND we are on create page
-                    if (data.quiz && (data.quiz.status === "processing" || data.quiz.generation_status === "processing")) {
+                    // Only show progress if we have a processing quiz
+                    if (data.quiz && data.quiz.status === "processing") {
                         console.log("Found processing quiz:", data.quiz.id);
                         showProgressBar(data.quiz);
                     } else {
@@ -781,8 +789,8 @@ class CreateQuizzes extends CreateRecord
                     progressBar.style.width = percentage + "%";
                     progressText.textContent = quiz.progress_done + "/" + quiz.progress_total + " (" + percentage + "%)";
                     
-                    if (quiz.status === "completed" || quiz.generation_status === "completed" || (quiz.progress_done >= quiz.progress_total && quiz.progress_total > 0)) {
-                        console.log("Exam completed! Status:", quiz.status, "Generation Status:", quiz.generation_status, "Progress:", quiz.progress_done + "/" + quiz.progress_total);
+                    if (quiz.status === "completed" || (quiz.progress_done >= quiz.progress_total && quiz.progress_total > 0)) {
+                        console.log("Exam completed! Status:", quiz.status, "Progress:", quiz.progress_done + "/" + quiz.progress_total);
                         progressText.textContent = "✅ Completed! Redirecting...";
                         progressText.style.background = "#10b981";
                         setTimeout(function() { 
@@ -801,7 +809,8 @@ class CreateQuizzes extends CreateRecord
                 }
             }
             
-            setTimeout(checkProgress, 1000);
+            // Don't check progress immediately, wait a bit to avoid showing old progress
+            setTimeout(checkProgress, 3000);
             setInterval(checkProgress, 3000);
         ');
     }
