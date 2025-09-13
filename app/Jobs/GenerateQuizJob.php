@@ -48,7 +48,11 @@ class GenerateQuizJob implements ShouldQueue
             'generation_progress_done' => 0,
         ]);
         
-        Log::info("Quiz {$this->quizId} status updated to processing");
+        Log::info("Quiz {$this->quizId} status updated to processing. Progress total: {$this->totalQuestions}");
+        
+        // Verify the update worked
+        $quiz->refresh();
+        Log::info("Quiz {$this->quizId} after update - Progress total: {$quiz->generation_progress_total}, Progress done: {$quiz->generation_progress_done}");
 
         $remaining = $this->totalQuestions - ($quiz->generation_progress_done ?? 0);
         while ($remaining > 0) {

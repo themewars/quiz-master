@@ -111,7 +111,8 @@ class EditQuizzes extends EditRecord
                                             // Check if exam is completed (multiple conditions)
                                             const isCompleted = data.quiz.status === "completed" || 
                                                                (data.quiz.progress_done >= data.quiz.progress_total && data.quiz.progress_total > 0) ||
-                                                               (data.quiz.question_count >= data.quiz.progress_total && data.quiz.progress_total > 0);
+                                                               (data.quiz.question_count >= data.quiz.progress_total && data.quiz.progress_total > 0) ||
+                                                               (data.quiz.question_count > 0 && data.quiz.status === "processing" && data.quiz.progress_total === 0 && data.quiz.question_count >= 10);
                                             
                                             console.log("Completion check:", {
                                                 status: data.quiz.status,
