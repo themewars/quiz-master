@@ -51,6 +51,10 @@ class Quiz extends Model implements HasMedia
         'time_type',
         'quiz_expiry_date',
         'is_show_home',
+        'generation_status',
+        'generation_progress_total',
+        'generation_progress_done',
+        'generation_error',
     ];
 
     protected $casts = [

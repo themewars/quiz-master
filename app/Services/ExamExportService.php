@@ -36,249 +36,125 @@ class ExamExportService
      */
     public function generatePreviewHtml(Quiz $quiz, $template = 'standard', bool $includeInstructions = true, bool $includeAnswerKey = false, string $fontSize = 'medium')
     {
-        $data = $this->prepareExamData($quiz, $includeInstructions, $includeAnswerKey, $fontSize, $compactMode, $includeStudentInfo, $includeTimestamp);
-        $data['template'] = $template;
-        $data['includeInstructions'] = $includeInstructions;
-        $data['includeAnswerKey'] = $includeAnswerKey;
-        $data['fontSize'] = $fontSize;
+        $data = $this->prepareExamData($quiz, $includeInstructions, $includeAnswerKey, $fontSize, false, true, true);
         
-        return view('exports.exam-paper-preview', $data)->render();
+        return view("exports.exam.{$template}", $data)->render();
     }
 
     /**
-     * Export to PDF format
+     * Export to PDF
      */
-    protected function exportToPDF(Quiz $quiz, $template, bool $includeInstructions, bool $includeAnswerKey, string $fontSize, string $pageSize = 'A4', string $orientation = 'portrait', bool $compactMode = false, bool $includeStudentInfo = true, bool $includeTimestamp = true)
+    protected function exportToPDF(Quiz $quiz, $template, bool $includeInstructions, bool $includeAnswerKey, string $fontSize, string $pageSize, string $orientation, bool $compactMode, bool $includeStudentInfo, bool $includeTimestamp)
     {
         $data = $this->prepareExamData($quiz, $includeInstructions, $includeAnswerKey, $fontSize, $compactMode, $includeStudentInfo, $includeTimestamp);
-        $data['template'] = $template;
-        $data['includeInstructions'] = $includeInstructions;
-        $data['includeAnswerKey'] = $includeAnswerKey;
-        $data['fontSize'] = $fontSize;
-        $data['pageSize'] = $pageSize;
-        $data['orientation'] = $orientation;
-        $data['compactMode'] = $compactMode;
-        $data['includeStudentInfo'] = $includeStudentInfo;
-        $data['includeTimestamp'] = $includeTimestamp;
         
-        $pdf = Pdf::loadView('exports.exam-paper-pdf', $data);
-        $pdf->setPaper($pageSize, $orientation);
+        $pdf = Pdf::loadView("exports.exam.{$template}", $data)
+            ->setPaper($pageSize, $orientation)
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'DejaVu Sans',
+            ]);
+
+        $filename = $this->generateFilename($quiz, 'pdf');
+        $filePath = "exports/{$filename}";
         
-        $filename = 'exam_' . $quiz->unique_code . '_' . time() . '.pdf';
-        if ($compactMode) {
-            $filename = 'exam_compact_' . $quiz->unique_code . '_' . time() . '.pdf';
-        }
-        $filepath = 'exports/' . $filename;
-        
-        Storage::disk('public')->put($filepath, $pdf->output());
+        Storage::disk('public')->put($filePath, $pdf->output());
         
         return [
-            'filepath' => $filepath,
+            'success' => true,
+            'file_path' => $filePath,
+            'download_url' => Storage::disk('public')->url($filePath),
             'filename' => $filename,
-            'download_url' => Storage::disk('public')->url($filepath)
         ];
     }
 
     /**
-     * Export to Word format (.docx)
+     * Export to Word
      */
-    protected function exportToWord(Quiz $quiz, $template, bool $includeInstructions, bool $includeAnswerKey, string $fontSize, string $pageSize = 'A4', string $orientation = 'portrait', bool $compactMode = false, bool $includeStudentInfo = true, bool $includeTimestamp = true)
+    protected function exportToWord(Quiz $quiz, $template, bool $includeInstructions, bool $includeAnswerKey, string $fontSize, string $pageSize, string $orientation, bool $compactMode, bool $includeStudentInfo, bool $includeTimestamp)
     {
+        $data = $this->prepareExamData($quiz, $includeInstructions, $includeAnswerKey, $fontSize, $compactMode, $includeStudentInfo, $includeTimestamp);
+        
         $phpWord = new PhpWord();
+        $phpWord->setDefaultFontName('Arial');
+        $phpWord->setDefaultFontSize(12);
         
-        // Set document properties
-        $phpWord->getDocInfo()->setCreator('ExamGenerator AI')
-                              ->setLastModifiedBy('ExamGenerator AI')
-                              ->setTitle($quiz->title)
-                              ->setSubject('Exam Paper')
-                              ->setDescription('Generated exam paper')
-                              ->setKeywords('exam, quiz, education')
-                              ->setCategory('Education');
-        
-        // Add a section
         $section = $phpWord->addSection([
             'marginTop' => 1134,
             'marginBottom' => 1134,
             'marginLeft' => 1134,
             'marginRight' => 1134,
         ]);
-        
-        // Title
-        $section->addText($quiz->title, [
-            'name' => 'Arial',
-            'size' => 16,
-            'bold' => true,
-            'color' => '000000'
-        ], [
-            'alignment' => 'center',
-            'spaceAfter' => 240
-        ]);
-        
-        // Instructions (if enabled)
+
+        // Add title
+        $section->addText($quiz->title, ['bold' => true, 'size' => 16]);
+        $section->addTextBreak();
+
+        // Add instructions if requested
         if ($includeInstructions) {
-            $section->addText('Instructions:', [
-                'name' => 'Arial',
-                'size' => 12,
-                'bold' => true,
-                'color' => '000000'
-            ], [
-                'spaceBefore' => 120,
-                'spaceAfter' => 60
-            ]);
-            
-            $instructions = [
-                'Read all questions carefully before answering.',
-                'Answer all questions.',
-                'Use black or blue ink only.',
-                'No calculators or electronic devices allowed.',
-                'Time limit: ' . ($quiz->time_limit ?? 'Not specified') . ' minutes.'
-            ];
-            
-            foreach ($instructions as $instruction) {
-                $section->addText('• ' . $instruction, [
-                    'name' => 'Arial',
-                    'size' => 11,
-                    'color' => '000000'
-                ], [
-                    'spaceAfter' => 60,
-                    'leftIndent' => 240
-                ]);
-            }
-            
-            $section->addText('', [], ['spaceAfter' => 240]);
+            $section->addText('Instructions:', ['bold' => true, 'size' => 12]);
+            $section->addText('• Read each question carefully before answering');
+            $section->addText('• Choose the best answer for each question');
+            $section->addText('• Mark your answers clearly');
+            $section->addTextBreak();
         }
-        
-        // Questions
-        $questions = $quiz->questions()->with('answers')->get();
-        $questionNumber = 1;
-        
-        foreach ($questions as $question) {
-            // Question text
-            $section->addText($questionNumber . '. ' . $question->title, [
-                'name' => 'Arial',
-                'size' => 12,
-                'bold' => true,
-                'color' => '000000'
-            ], [
-                'spaceBefore' => 120,
-                'spaceAfter' => 60
-            ]);
+
+        // Add questions
+        foreach ($data['questions'] as $index => $question) {
+            $section->addText(($index + 1) . '. ' . $question->title, ['bold' => true]);
             
-            // Answers
-            $answers = $question->answers;
-            $answerLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
-            
-            foreach ($answers as $index => $answer) {
-                if ($index < count($answerLabels)) {
-                    $section->addText($answerLabels[$index] . ') ' . $answer->title, [
-                        'name' => 'Arial',
-                        'size' => 11,
-                        'color' => '000000'
-                    ], [
-                        'spaceAfter' => 60,
-                        'leftIndent' => 240
-                    ]);
-                }
+            foreach ($question->answers as $answerIndex => $answer) {
+                $option = chr(65 + $answerIndex); // A, B, C, D
+                $section->addText("   {$option}. {$answer->title}");
             }
-            
-            $section->addText('', [], ['spaceAfter' => 120]);
-            $questionNumber++;
+            $section->addTextBreak();
         }
-        
-        // Answer Key (if enabled)
-        if ($includeAnswerKey) {
-            $section->addText('', [], ['spaceBefore' => 480]);
+
+        // Add answer key if requested
+        if ($includeAnswerKey && !empty($data['answerKey'])) {
+            $section->addPageBreak();
+            $section->addText('Answer Key', ['bold' => true, 'size' => 14]);
+            $section->addTextBreak();
             
-            $section->addText('ANSWER KEY', [
-                'name' => 'Arial',
-                'size' => 14,
-                'bold' => true,
-                'color' => '000000'
-            ], [
-                'alignment' => 'center',
-                'spaceAfter' => 120
-            ]);
-            
-            $questions = $quiz->questions()->with('answers')->get();
-            foreach ($questions as $index => $question) {
-                $correctAnswers = $question->answers()->where('is_correct', true)->get();
-                $correctOptions = [];
-                
-                foreach ($correctAnswers as $answer) {
-                    $answerIndex = $question->answers->search(function($item) use ($answer) {
-                        return $item->id === $answer->id;
-                    });
-                    $correctOptions[] = chr(65 + $answerIndex);
-                }
-                
-                $section->addText('Question ' . ($index + 1) . ': ' . implode(', ', $correctOptions), [
-                    'name' => 'Arial',
-                    'size' => 11,
-                    'color' => '000000'
-                ], [
-                    'spaceAfter' => 60,
-                    'leftIndent' => 120
-                ]);
+            foreach ($data['answerKey'] as $questionNum => $answer) {
+                $section->addText("Question {$questionNum}: {$answer}");
             }
         }
+
+        $filename = $this->generateFilename($quiz, 'docx');
+        $filePath = "exports/{$filename}";
         
-        // Footer (skip for white-label plans)
-        $plan = auth()->user()?->subscriptions()->where('status', \App\Enums\SubscriptionStatus::ACTIVE->value)->orderByDesc('id')->first()?->plan;
-        if (!$plan || !$plan->white_label_enabled) {
-            $section->addText('Generated by ' . (function_exists('getAppName') ? getAppName() : 'ExamGenerator') . ' - ' . now()->format('d/m/Y H:i'), [
-                'name' => 'Arial',
-                'size' => 9,
-                'color' => '666666'
-            ], [
-                'alignment' => 'center',
-                'spaceBefore' => 480
-            ]);
-        }
-        
-        // Save the document
-        $filename = 'exam_' . $quiz->unique_code . '_' . time() . '.docx';
-        $filepath = 'exports/' . $filename;
-        
-        // Ensure directory exists
-        $fullPath = Storage::disk('public')->path($filepath);
-        $directory = dirname($fullPath);
-        if (!is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
-        
-        // Write the document
-        $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
-        $objWriter->save($fullPath);
+        $writer = IOFactory::createWriter($phpWord, 'Word2007');
+        $writer->save(Storage::disk('public')->path($filePath));
         
         return [
-            'filepath' => $filepath,
+            'success' => true,
+            'file_path' => $filePath,
+            'download_url' => Storage::disk('public')->url($filePath),
             'filename' => $filename,
-            'download_url' => Storage::disk('public')->url($filepath)
         ];
     }
 
     /**
-     * Export to HTML format
+     * Export to HTML
      */
-    protected function exportToHTML(Quiz $quiz, $template, bool $includeInstructions, bool $includeAnswerKey, string $fontSize, string $pageSize = 'A4', string $orientation = 'portrait', bool $compactMode = false, bool $includeStudentInfo = true, bool $includeTimestamp = true)
+    protected function exportToHTML(Quiz $quiz, $template, bool $includeInstructions, bool $includeAnswerKey, string $fontSize, string $pageSize, string $orientation, bool $compactMode, bool $includeStudentInfo, bool $includeTimestamp)
     {
         $data = $this->prepareExamData($quiz, $includeInstructions, $includeAnswerKey, $fontSize, $compactMode, $includeStudentInfo, $includeTimestamp);
-        $data['template'] = $template;
-        $data['includeInstructions'] = $includeInstructions;
-        $data['includeAnswerKey'] = $includeAnswerKey;
-        $data['fontSize'] = $fontSize;
         
-        $html = view('exports.exam-paper-html', $data)->render();
+        $html = view("exports.exam.{$template}", $data)->render();
         
-        $filename = 'exam_' . $quiz->unique_code . '_' . time() . '.html';
-        $filepath = 'exports/' . $filename;
+        $filename = $this->generateFilename($quiz, 'html');
+        $filePath = "exports/{$filename}";
         
-        Storage::disk('public')->put($filepath, $html);
+        Storage::disk('public')->put($filePath, $html);
         
         return [
-            'filepath' => $filepath,
+            'success' => true,
+            'file_path' => $filePath,
+            'download_url' => Storage::disk('public')->url($filePath),
             'filename' => $filename,
-            'download_url' => Storage::disk('public')->url($filepath)
         ];
     }
 
@@ -329,6 +205,17 @@ class ExamExportService
     }
 
     /**
+     * Generate filename for export
+     */
+    protected function generateFilename(Quiz $quiz, string $extension): string
+    {
+        $title = preg_replace('/[^a-zA-Z0-9_-]/', '_', $quiz->title);
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        
+        return "exam_{$title}_{$timestamp}.{$extension}";
+    }
+
+    /**
      * Get available export templates
      */
     public function getAvailableTemplates()
@@ -348,8 +235,8 @@ class ExamExportService
     {
         return [
             'pdf' => 'PDF Document',
-            'word' => 'Microsoft Word',
-            'html' => 'HTML Web Page',
+            'word' => 'Word Document',
+            'html' => 'HTML File',
         ];
     }
 }
