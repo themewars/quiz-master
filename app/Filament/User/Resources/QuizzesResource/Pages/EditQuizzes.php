@@ -41,11 +41,14 @@ class EditQuizzes extends EditRecord
                 })
                 .then(function(data) {
                     console.log("API Response data:", data);
-                    if (data.quiz && data.quiz.generation_status === "processing") {
+                    console.log("Quiz object:", data.quiz);
+                    console.log("Quiz status:", data.quiz ? data.quiz.status : "null");
+                    console.log("Quiz generation_status:", data.quiz ? data.quiz.generation_status : "null");
+                    if (data.quiz && data.quiz.status === "processing") {
                         console.log("Found processing quiz:", data.quiz.id);
                         showProgressBar(data.quiz);
                     } else {
-                        console.log("No processing quiz found or status:", data.quiz ? data.quiz.generation_status : "null");
+                        console.log("No processing quiz found or status:", data.quiz ? data.quiz.status : "null");
                     }
                 })
                 .catch(function(error) { console.error("API Error:", error); });

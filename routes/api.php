@@ -40,6 +40,13 @@ Route::middleware('web')->get('/quiz-progress', function (Request $request) {
     
     if ($quiz) {
         \Log::info("Found processing quiz {$quiz->id} with status: {$quiz->generation_status}");
+        \Log::info("Quiz data being sent:", [
+            'id' => $quiz->id,
+            'status' => $quiz->generation_status,
+            'progress_done' => $quiz->generation_progress_done ?? 0,
+            'progress_total' => $quiz->generation_progress_total ?? 0,
+            'question_count' => $quiz->question_count ?? 0
+        ]);
         return response()->json([
             'quiz' => [
                 'id' => $quiz->id,
