@@ -25,12 +25,21 @@ Route::middleware('web')->get('/quiz-progress', function (Request $request) {
         return response()->json(['quiz' => null]);
     }
     
+    // Debug: Check all recent quizzes for this user
+    $recentQuizzes = \App\Models\Quiz::where('user_id', $user->id)
+        ->orderBy('created_at', 'desc')
+        ->limit(3)
+        ->get(['id', 'generation_status', 'generation_progress_done', 'generation_progress_total', 'question_count']);
+    
+    \Log::info("Recent quizzes for user {$user->id}:", $recentQuizzes->toArray());
+    
     $quiz = \App\Models\Quiz::where('user_id', $user->id)
         ->where('generation_status', 'processing')
         ->orderBy('created_at', 'desc')
         ->first();
     
     if ($quiz) {
+        \Log::info("Found processing quiz {$quiz->id} with status: {$quiz->generation_status}");
         return response()->json([
             'quiz' => [
                 'id' => $quiz->id,
@@ -42,6 +51,7 @@ Route::middleware('web')->get('/quiz-progress', function (Request $request) {
         ]);
     }
     
+    \Log::info("No processing quiz found for user {$user->id}");
     return response()->json(['quiz' => null]);
 });
 
