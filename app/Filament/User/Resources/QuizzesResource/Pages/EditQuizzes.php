@@ -108,21 +108,35 @@ class EditQuizzes extends EditRecord
                                             console.log("Quiz status:", data.quiz.status);
                                             console.log("Progress:", data.quiz.progress_done + "/" + data.quiz.progress_total);
                                             
-                                            // Check if exam is completed (either by status or by progress)
+                                            // Check if exam is completed (multiple conditions)
                                             const isCompleted = data.quiz.status === "completed" || 
-                                                               (data.quiz.progress_done >= data.quiz.progress_total && data.quiz.progress_total > 0);
+                                                               (data.quiz.progress_done >= data.quiz.progress_total && data.quiz.progress_total > 0) ||
+                                                               (data.quiz.question_count >= data.quiz.progress_total && data.quiz.progress_total > 0);
+                                            
+                                            console.log("Completion check:", {
+                                                status: data.quiz.status,
+                                                progress_done: data.quiz.progress_done,
+                                                progress_total: data.quiz.progress_total,
+                                                question_count: data.quiz.question_count,
+                                                isCompleted: isCompleted
+                                            });
                                             
                                             if (isCompleted) {
-                                                console.log("Exam generation completed! Reloading page...");
+                                                console.log("Exam generation completed! Redirecting...");
                                                 // Show completion message
                                                 const progressText = document.getElementById("progress-text");
                                                 if (progressText) {
-                                                    progressText.textContent = "Exam generation completed! Redirecting...";
+                                                    progressText.textContent = "✅ Completed! Redirecting...";
                                                 }
+                                                
+                                                // Stop monitoring
+                                                stopProgressMonitoring();
+                                                
+                                                // Redirect after short delay
                                                 setTimeout(() => {
-                                                    console.log("Reloading page now...");
+                                                    console.log("Redirecting to exam edit page...");
                                                     window.location.reload();
-                                                }, 2000);
+                                                }, 1500);
                                             }
                                         } else {
                                             console.log("No processing quiz found, stopping monitoring");
