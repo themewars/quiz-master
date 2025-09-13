@@ -72,8 +72,10 @@ class EditQuizzes extends EditRecord
                         const container = document.getElementById("live-progress-container");
                         if (container) {
                             container.style.display = "block";
+                            console.log("Progress bar made visible");
                         }
                         progressCheckInterval = setInterval(checkProgress, 2000);
+                        console.log("Progress monitoring interval started");
                     }
 
                     function stopProgressMonitoring() {
@@ -203,22 +205,22 @@ class EditQuizzes extends EditRecord
                                 .then(response => response.json())
                                 .then(data => {
                                     console.log("Quiz status response:", data);
-                                    if (data.quiz && (data.quiz.question_count === 0 || data.quiz.generation_status === "processing")) {
+                                    if (data.quiz && data.quiz.generation_status === "processing") {
                                         console.log("Found processing quiz, starting monitoring");
                                         startProgressMonitoring();
                                     } else {
-                                        console.log("Quiz not processing, stopping monitoring");
-                                        stopProgressMonitoring();
+                                        console.log("Quiz not processing, not starting monitoring");
+                                        // Don't start monitoring if quiz is not processing
                                     }
                                 })
                                 .catch(error => {
                                     console.error("Error checking quiz status:", error);
-                                    console.log("Starting monitoring anyway...");
-                                    startProgressMonitoring();
+                                    console.log("Not starting monitoring due to error");
+                                    // Don't start monitoring on error
                                 });
                             } else {
-                                console.log("No quiz ID found in URL, starting monitoring anyway...");
-                                startProgressMonitoring();
+                                console.log("No quiz ID found in URL, not starting monitoring");
+                                // Don't start monitoring if no quiz ID
                             }
                         }
                     }, 500);
